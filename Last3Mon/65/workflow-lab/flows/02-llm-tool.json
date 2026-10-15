@@ -1,0 +1,15 @@
+{
+  "name": "02 LLM + Tool",
+  "description": "Tool이 가져온 데이터를 LLM이 근거로 사용해 답변",
+  "inputs": ["city", "question"],
+  "nodes": [
+    {"id": "start", "type": "input"},
+    {"id": "weather", "type": "tool", "tool": "get_weather", "args": {"city": "{{input.city}}"}},
+    {"id": "answer", "type": "llm",
+     "system": "Answer only from the given weather data. Reply in Korean.",
+     "prompt": "날씨 데이터: {{nodes.weather.output}}\n질문: {{input.question}}",
+     "mock": {"template": "{{nodes.weather.output.city}}의 오늘 날씨는 {{nodes.weather.output.condition}}, 기온 {{nodes.weather.output.temp_c}}도, 강수 확률 {{nodes.weather.output.rain_chance}}%입니다."}},
+    {"id": "result", "type": "output", "value": "{{nodes.answer.output}}"}
+  ],
+  "edges": [["start", "weather"], ["weather", "answer"], ["answer", "result"]]
+}

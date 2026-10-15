@@ -1,0 +1,479 @@
+{
+  "name": "65-02 Webhook request router",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "request-route",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "8dc39098-cbf2-5da7-b6a3-0541c2838c7d",
+      "name": "Request webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "612ab961-6b30-5c73-a4b0-b113262a92e8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0e03d4eb-275c-5799-8c08-3e744e4692e2",
+              "leftValue": "={{ $json.body.text }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d19bdfca-d55e-5760-a488-458abc7a5480",
+      "name": "Has text?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"error\": \"text is required\" } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "5adfc553-1a2c-55fd-a4bd-d6564197222a",
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rule-based classification (no AI yet): the first rule whose keyword appears wins.\nconst rules = [\n  { category: 'account',  words: ['비밀번호', '계정', '로그인', '잠겨', '잠김'] },\n  { category: 'network',  words: ['vpn', '인터넷', '와이파이', '접속', '네트워크'] },\n  { category: 'device',   words: ['프린터', '모니터', '키보드', '마우스', '노트북'] },\n  { category: 'software', words: ['설치', '프로그램', '라이선스', '메일', '업데이트'] },\n];\nconst body = $input.first().json.body;\nconst text = String(body.text).toLowerCase();\nconst hit = rules.find(r => r.words.some(w => text.includes(w)));\nreturn [{ json: { user: body.user || 'anonymous', text: body.text, category: hit ? hit.category : 'other' } }];"
+      },
+      "id": "555904e3-48b4-5e74-bbe5-11a9f9153504",
+      "name": "Keyword classify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "befaac8f-1c7b-5a01-afb6-1dfca95d48c5",
+                    "leftValue": "={{ $json.category }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "account"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "account"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fd212d44-e661-5050-b426-360a5d39ad96",
+                    "leftValue": "={{ $json.category }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "network"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "network"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "eff4a459-e7e8-5c5a-84f1-3670a5bd03c6",
+                    "leftValue": "={{ $json.category }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "device"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "device"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "862c0a38-3a85-5499-99f8-f0ffee9a6825",
+                    "leftValue": "={{ $json.category }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "software"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "software"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "other"
+        }
+      },
+      "id": "2c251693-82e5-56cf-9a73-ed6bc2eebdf4",
+      "name": "Route by category",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        680,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "241fe967-6e70-51db-b65d-a59655f888b0",
+              "name": "team",
+              "value": "계정 관리 담당",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "65675630-6d1a-55f5-adaa-b40125e2d453",
+      "name": "Team account",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        -240
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "91e77bc6-3674-5f2a-a997-d831997f5a28",
+              "name": "team",
+              "value": "네트워크 담당",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "0b91914c-9289-5f56-adc2-6d697240358c",
+      "name": "Team network",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        -130
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3fdfa927-2342-5f8a-95c2-bc5a1e0b87d9",
+              "name": "team",
+              "value": "장비 지원 담당",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "0b918a6f-2ed5-5007-90f8-cc7911628ce7",
+      "name": "Team device",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        -20
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "251f69b0-7fa1-52d0-b73f-4a3f102fff35",
+              "name": "team",
+              "value": "소프트웨어 담당",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ac9cabd3-3a8a-5055-af0a-3ad481eba531",
+      "name": "Team software",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        90
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7602acd9-08cd-500a-acbd-bd4656159712",
+              "name": "team",
+              "value": "IT 문의 접수 창구",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "71c63724-4e06-5a26-bec9-ff4b97f9328c",
+      "name": "Team other",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        920,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "365b7747-c4de-5b2e-9dcc-3dc3f3d2d9ac",
+      "name": "Send route",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1160,
+        -40
+      ]
+    }
+  ],
+  "connections": {
+    "Request webhook": {
+      "main": [
+        [
+          {
+            "node": "Has text?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has text?": {
+      "main": [
+        [
+          {
+            "node": "Keyword classify",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keyword classify": {
+      "main": [
+        [
+          {
+            "node": "Route by category",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by category": {
+      "main": [
+        [
+          {
+            "node": "Team account",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Team network",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Team device",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Team software",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Team other",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Team account": {
+      "main": [
+        [
+          {
+            "node": "Send route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Team network": {
+      "main": [
+        [
+          {
+            "node": "Send route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Team device": {
+      "main": [
+        [
+          {
+            "node": "Send route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Team software": {
+      "main": [
+        [
+          {
+            "node": "Send route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Team other": {
+      "main": [
+        [
+          {
+            "node": "Send route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "id": "af8dc0f7ef905c"
+}

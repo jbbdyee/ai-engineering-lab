@@ -1,0 +1,170 @@
+{
+  "name": "65-01 Condition basics",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "26dc330d-6170-5f39-aeb4-d1bc63ed9d26",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Three sample requests. In a real workflow they would come from a form, mail or webhook.\nreturn [\n  { json: { id: 'T-1', text: 'VPN이 끊겨서 고객 미팅에 들어갈 수 없어요', priority: 'urgent' } },\n  { json: { id: 'T-2', text: '프린터 토너 교체를 요청합니다', priority: 'normal' } },\n  { json: { id: 'T-3', text: '계정이 잠겨서 결재를 올릴 수 없어요', priority: 'urgent' } },\n];"
+      },
+      "id": "636773ca-d229-564c-88cb-54b530628910",
+      "name": "Sample requests",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4db4fdb9-dbaf-51bb-aaf9-16a54ef93027",
+              "leftValue": "={{ $json.priority }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "urgent"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e54594bf-eb8b-5d83-96db-ef857683c127",
+      "name": "Is urgent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f7b6098-3185-56cc-9d8e-4bcfec1e7ba4",
+              "name": "route",
+              "value": "즉시 담당자 연결",
+              "type": "string"
+            },
+            {
+              "id": "c01612ed-a8a0-5a0a-83b9-93f6ad2eaf31",
+              "name": "sla_minutes",
+              "value": "30",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "1d7d3d65-295f-599e-909f-8d5708d8ff46",
+      "name": "Urgent route",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e7c65f93-009f-5a5a-8cad-71abcc7cc569",
+              "name": "route",
+              "value": "일반 접수",
+              "type": "string"
+            },
+            {
+              "id": "7148df87-83e5-54ca-9d67-619c60e6fe54",
+              "name": "sla_minutes",
+              "value": "480",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "9b40293c-c2f0-55a6-b1ba-232770d31ee9",
+      "name": "Normal route",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        100
+      ]
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Sample requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample requests": {
+      "main": [
+        [
+          {
+            "node": "Is urgent?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is urgent?": {
+      "main": [
+        [
+          {
+            "node": "Urgent route",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Normal route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "id": "aeb87743007e5e"
+}

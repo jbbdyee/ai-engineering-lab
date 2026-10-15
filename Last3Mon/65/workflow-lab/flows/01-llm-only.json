@@ -1,0 +1,14 @@
+{
+  "name": "01 LLM only",
+  "description": "입력 → LLM → 출력. 가장 단순한 AI 워크플로우",
+  "inputs": ["text"],
+  "nodes": [
+    {"id": "start", "type": "input"},
+    {"id": "summarize", "type": "llm",
+     "system": "You are a helpful assistant that writes concise Korean summaries.",
+     "prompt": "다음 글을 3줄 이내의 한국어로 요약해 주세요.\n\n{{input.text}}",
+     "mock": {"template": "(Mock 응답) 실제 LLM을 연결하면 아래 글이 3줄로 요약됩니다.\n원문: {{input.text}}"}},
+    {"id": "result", "type": "output", "value": "{{nodes.summarize.output}}"}
+  ],
+  "edges": [["start", "summarize"], ["summarize", "result"]]
+}

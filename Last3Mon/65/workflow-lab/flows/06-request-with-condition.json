@@ -1,0 +1,38 @@
+{
+  "name": "06 Request flow with condition",
+  "description": "Trigger(입력) → 분류·FAQ 검색 → Condition(FAQ 있음?) → Action(자동 답변 또는 담당자 전달)",
+  "inputs": ["user", "text"],
+  "nodes": [
+    {"id": "start", "type": "input"},
+    {"id": "history", "type": "memory_read", "key": "request:{{input.user}}"},
+    {"id": "classify", "type": "llm",
+     "system": "Classify the IT request into exactly one of: account, network, device, software, other. Reply with the label only.",
+     "prompt": "문의: {{input.text}}",
+     "mock": {"rules": [
+       {"if_contains": ["비밀번호", "계정", "로그인", "잠김", "잠겨"], "then": "account"},
+       {"if_contains": ["vpn", "인터넷", "와이파이", "접속"], "then": "network"},
+       {"if_contains": ["프린터", "모니터", "키보드"], "then": "device"},
+       {"if_contains": ["설치", "프로그램", "메일"], "then": "software"}
+     ], "default": "other"}},
+    {"id": "faq", "type": "tool", "tool": "search_faq", "args": {"query": "{{input.text}}", "top_k": 1}},
+    {"id": "log", "type": "memory_write", "key": "request:{{input.user}}",
+     "value": {"last_text": "{{input.text}}", "last_category": "{{nodes.classify.output}}"}},
+    {"id": "has_faq", "type": "condition", "check": {"left": "{{nodes.faq.output}}", "op": "not_empty"}},
+    {"id": "draft", "type": "llm",
+     "system": "Write a polite 2-sentence Korean reply using only the FAQ answer. End with the FAQ id in parentheses.",
+     "prompt": "문의: {{input.text}}\n이전 문의: {{nodes.history.output}}\nFAQ: {{nodes.faq.output}}",
+     "mock": {"template": "{{input.user}}님, {{nodes.faq.output.0.answer}} ({{nodes.faq.output.0.id}})"}},
+    {"id": "auto_reply", "type": "output",
+     "value": {"category": "{{nodes.classify.output}}", "faq_id": "{{nodes.faq.output.0.id}}", "route": "자동 답변", "reply": "{{nodes.draft.output}}"}},
+    {"id": "hand_off", "type": "output",
+     "value": {"category": "{{nodes.classify.output}}", "faq_id": "", "route": "담당자 확인", "reply": "관련 안내를 찾지 못해 담당자가 확인 후 답변드리겠습니다."}}
+  ],
+  "edges": [
+    ["start", "history"], ["start", "classify"], ["start", "faq"],
+    ["classify", "log"],
+    ["faq", "has_faq"], ["classify", "has_faq"],
+    ["has_faq", "draft", "true"], ["history", "draft"],
+    ["draft", "auto_reply"],
+    ["has_faq", "hand_off", "false"]
+  ]
+}

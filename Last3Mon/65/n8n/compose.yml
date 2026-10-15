@@ -1,0 +1,26 @@
+# Course stack for days 65-79: the official n8n one-line setup + Ollama (fallback LLM).
+#
+# 1) Install n8n once with the official script, into ~/day65-n8n (the folder name becomes the
+#    Docker project name, so the network stays day65-n8n_default for the day 67+ data APIs):
+#      cd ~ && curl -fsSL https://get.n8n.io | N8N_DIR=./day65-n8n sh -s -- --version 2.42.6
+# 2) From this folder, run everything together:
+#      docker compose up -d      (start / stop / ps / logs n8n / exec ollama ... as usual)
+#
+# This file includes ~/day65-n8n/compose.yml (n8n, task runners, sandbox, search) as written by the
+# script, and adds Ollama. n8n reaches Ollama at http://ollama:11434; WSL programs use localhost:11434.
+name: day65-n8n
+
+include:
+  - path: ${N8N_HOME:-../../../../day65-n8n}/compose.yml
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ${OLLAMA_DATA:-ollama-data}:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  ollama-data:

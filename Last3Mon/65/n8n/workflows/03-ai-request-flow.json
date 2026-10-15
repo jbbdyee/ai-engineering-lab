@@ -1,0 +1,438 @@
+{
+  "name": "65-03 AI request flow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-request",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "07b51032-62c2-549b-8cfb-e3f16a851ed7",
+      "name": "AI request webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "26aa9aad-522f-5f3d-8b58-ae0d7c18ce66"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cf988cf6-5aec-59ef-887c-93252d7d366b",
+              "name": "llm_url",
+              "value": "https://api.openai.com/v1",
+              "type": "string"
+            },
+            {
+              "id": "6d229077-7077-5e85-8ebb-8f6046227539",
+              "name": "model",
+              "value": "gpt-4.1-mini",
+              "type": "string"
+            },
+            {
+              "id": "8a827ce4-4716-5aad-ad39-9c105afcf895",
+              "name": "user",
+              "value": "={{ $json.body.user || 'anonymous' }}",
+              "type": "string"
+            },
+            {
+              "id": "462379ca-3e96-599d-9a1c-64bae0b1095a",
+              "name": "text",
+              "value": "={{ $json.body.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "6c57d7cf-acd9-5007-b34a-b741afa2c060",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f2c175d2-9545-570a-99a6-e7cdfb17162f",
+              "leftValue": "={{ $json.text }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d19bdfca-d55e-5760-a488-458abc7a5480",
+      "name": "Has text?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"error\": \"text is required\" } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "5adfc553-1a2c-55fd-a4bd-d6564197222a",
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Settings').first().json.llm_url }}/chat/completions",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $('Settings').first().json.model, temperature: 0, messages: [ { role: 'system', content: \"Classify the IT request into exactly one of: account, network, device, software, other. Reply with the label only.\" }, { role: 'user', content: $('Settings').first().json.text } ] }) }}",
+        "options": {
+          "timeout": 180000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "id": "d084b606-aad9-5341-98cd-490070f907ac",
+      "name": "LLM classify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        -40
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1) Clean up the LLM label  2) Search the FAQ list\nconst allowed = ['account', 'network', 'device', 'software', 'other'];\nconst raw = String($input.first().json.choices?.[0]?.message?.content ?? '').trim().toLowerCase();\nconst category = allowed.find(a => raw.includes(a)) ?? 'other';\n\nconst faqs = [\n  {\n    \"id\": \"FAQ-001\",\n    \"title\": \"비밀번호 재설정\",\n    \"keywords\": [\n      \"비밀번호\",\n      \"패스워드\",\n      \"password\",\n      \"재설정\",\n      \"초기화\"\n    ],\n    \"answer\": \"사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정합니다.\"\n  },\n  {\n    \"id\": \"FAQ-002\",\n    \"title\": \"계정 잠김 해제\",\n    \"keywords\": [\n      \"계정\",\n      \"잠김\",\n      \"잠금\",\n      \"로그인\",\n      \"실패\"\n    ],\n    \"answer\": \"로그인 5회 실패 시 30분 동안 잠깁니다. 30분 후 다시 시도하거나 헬프데스크에 잠금 해제를 요청합니다.\"\n  },\n  {\n    \"id\": \"FAQ-003\",\n    \"title\": \"VPN 접속 오류\",\n    \"keywords\": [\n      \"vpn\",\n      \"원격\",\n      \"재택\",\n      \"접속\",\n      \"연결\"\n    ],\n    \"answer\": \"VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속합니다.\"\n  },\n  {\n    \"id\": \"FAQ-004\",\n    \"title\": \"프린터 출력 안 됨\",\n    \"keywords\": [\n      \"프린터\",\n      \"출력\",\n      \"인쇄\",\n      \"용지\"\n    ],\n    \"answer\": \"프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력합니다.\"\n  },\n  {\n    \"id\": \"FAQ-005\",\n    \"title\": \"메일함 용량 초과\",\n    \"keywords\": [\n      \"메일\",\n      \"용량\",\n      \"메일함\",\n      \"첨부\"\n    ],\n    \"answer\": \"오래된 메일과 큰 첨부 파일을 보관함으로 옮기거나 삭제해 용량을 확보합니다.\"\n  },\n  {\n    \"id\": \"FAQ-006\",\n    \"title\": \"소프트웨어 설치 요청\",\n    \"keywords\": [\n      \"설치\",\n      \"소프트웨어\",\n      \"프로그램\",\n      \"라이선스\"\n    ],\n    \"answer\": \"IT 포털의 '소프트웨어 신청' 메뉴에서 승인 요청을 올리면 승인 후 원격으로 설치됩니다.\"\n  }\n];\nconst settings = $('Settings').first().json;\nconst words = String(settings.text).toLowerCase().split(/\\s+/).filter(w => w.length > 1);\nconst scored = faqs\n  .map(f => ({ ...f, score: words.filter(w => f.keywords.some(k => w.includes(k) || k.includes(w))).length }))\n  .filter(f => f.score > 0)\n  .sort((a, b) => b.score - a.score);\nconst faq = scored[0] ?? null;\n\nreturn [{ json: { user: settings.user, text: settings.text, raw_label: raw, category, found: faq !== null, faq } }];"
+      },
+      "id": "aa4be834-45fb-563b-95f5-c6a0dbeb2903",
+      "name": "Normalize and search FAQ",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        920,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6a4b578f-d9da-5899-933d-7e05d901e3eb",
+              "leftValue": "={{ $json.found }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "21f335b6-8a0a-5331-b8df-43d3c9f9aafc",
+      "name": "FAQ found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        -40
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Settings').first().json.llm_url }}/chat/completions",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $('Settings').first().json.model, temperature: 0, messages: [ { role: 'system', content: \"Write a polite 2-sentence Korean reply using only the FAQ answer. End with the FAQ id in parentheses.\" }, { role: 'user', content: '문의: ' + $('Normalize and search FAQ').first().json.text + '\\nFAQ: ' + JSON.stringify($('Normalize and search FAQ').first().json.faq) } ] }) }}",
+        "options": {
+          "timeout": 180000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "id": "a1e86429-1ee7-585c-bdaa-f1aa0d10f49b",
+      "name": "LLM draft reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1400,
+        -140
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1e3762b6-7dae-5e2f-9538-8a5b0f5dcae0",
+              "name": "category",
+              "value": "={{ $('Normalize and search FAQ').first().json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "230f5390-e5c9-5e6a-90ec-03e6965652f7",
+              "name": "faq_id",
+              "value": "={{ $('Normalize and search FAQ').first().json.faq.id }}",
+              "type": "string"
+            },
+            {
+              "id": "1f78eb57-6478-5590-94f9-bacb9b2c89b9",
+              "name": "route",
+              "value": "자동 답변",
+              "type": "string"
+            },
+            {
+              "id": "756cec4c-d91f-516a-9d9f-ae74098227e9",
+              "name": "reply",
+              "value": "={{ $json.choices[0].message.content.trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "da512682-1045-5a8e-83d1-52975eb08e97",
+      "name": "Auto reply",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1640,
+        -140
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf4ced71-6e32-5ed2-ad7d-4124d462e3d2",
+              "name": "category",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "79bffc37-152f-5b3e-9018-e30121faed11",
+              "name": "faq_id",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "86fde04e-b2a1-5782-97c1-caba13a9ed10",
+              "name": "route",
+              "value": "담당자 확인",
+              "type": "string"
+            },
+            {
+              "id": "d760805f-73f1-5d0a-a7cf-8eb67d03e978",
+              "name": "reply",
+              "value": "관련 안내를 찾지 못해 담당자가 확인 후 답변드리겠습니다.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "604eb70d-bff2-5270-b1a4-f94a3a6c681d",
+      "name": "Hand off to staff",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1400,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "2de33965-f060-5f8b-bd91-2a7c72a1e618",
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1880,
+        -40
+      ]
+    }
+  ],
+  "connections": {
+    "AI request webhook": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Has text?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has text?": {
+      "main": [
+        [
+          {
+            "node": "LLM classify",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM classify": {
+      "main": [
+        [
+          {
+            "node": "Normalize and search FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize and search FAQ": {
+      "main": [
+        [
+          {
+            "node": "FAQ found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ found?": {
+      "main": [
+        [
+          {
+            "node": "LLM draft reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hand off to staff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM draft reply": {
+      "main": [
+        [
+          {
+            "node": "Auto reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto reply": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hand off to staff": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "id": "493c961026875d"
+}

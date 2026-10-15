@@ -1,0 +1,9 @@
+{
+  "n8n": {"base_url": "http://localhost:5678", "timeout": 120},
+  "workflows": {
+    "request": {
+      "n8n": {"webhook": "ai-request"},
+      "miniflow": {"flow": "flows/06-request-with-condition.json"}
+    }
+  }
+}

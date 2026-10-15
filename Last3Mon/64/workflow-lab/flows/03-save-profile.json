@@ -1,0 +1,12 @@
+{
+  "name": "03 Save profile to memory",
+  "description": "사용자 선호를 Memory에 저장 (다음 실행에서 다시 사용)",
+  "inputs": ["user", "preference"],
+  "nodes": [
+    {"id": "start", "type": "input"},
+    {"id": "remember", "type": "memory_write", "key": "user:{{input.user}}",
+     "value": {"preference": "{{input.preference}}"}},
+    {"id": "result", "type": "output", "value": {"saved_for": "{{input.user}}", "memory": "{{nodes.remember.output}}"}}
+  ],
+  "edges": [["start", "remember"], ["remember", "result"]]
+}

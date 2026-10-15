@@ -1,0 +1,46 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+~*.*
+
+# Secrets (keep examples)
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+
+# Python (uv)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Node / frontend
+node_modules/
+.next/
+.vite/
+npm-debug.log*
+yarn-error.log*
+
+# Archives (student submissions, raw downloads)
+*.zip
+
+# graphify: 
+graphify-out/
+
+# Logs
+*.log
+logs/
