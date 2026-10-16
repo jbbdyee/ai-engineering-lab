@@ -1,0 +1,229 @@
+{
+  "name": "66 Practice 2 · loop and merge",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "name": "Start",
+      "position": [
+        0,
+        0
+      ],
+      "id": "188d4e06-7014-58e1-8053-cfebb3d2b1ac"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8ee7c660-4702-575c-a2b7-cd64a157d621",
+              "name": "actions",
+              "value": "={{ [ { task: '신규 고객 문의 응답 템플릿 정리', owner: '이준호', due: '금요일' }, { task: '서버 점검 일정 공지', owner: '김민지', due: '오늘' }, { task: '회의실 예약 규칙 개선', owner: '미정', due: '미정' } ] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "name": "Sample actions",
+      "position": [
+        220,
+        -100
+      ],
+      "id": "f85d4eae-f60b-5f2e-a6f3-592638343b0c"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "actions",
+        "options": {}
+      },
+      "id": "5fa4a092-6961-574a-89fa-c2e05a5113f3",
+      "name": "One item per action",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        440,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "99cb6b63-de3c-560f-8170-b33332fb5cb9",
+              "name": "task",
+              "value": "={{ $json.task }}",
+              "type": "string"
+            },
+            {
+              "id": "ee9068cb-7666-5a5b-8937-d9c748333d6a",
+              "name": "owner",
+              "value": "={{ $json.owner }}",
+              "type": "string"
+            },
+            {
+              "id": "067da7cb-3f07-5f20-b45d-6f5fe45ca441",
+              "name": "due",
+              "value": "={{ $json.due }}",
+              "type": "string"
+            },
+            {
+              "id": "1efe8c52-179a-5a38-8648-f78d96bb8e88",
+              "name": "priority",
+              "value": "={{ ['오늘', '내일', '긴급'].some(w => $json.due.includes(w)) ? '높음' : '보통' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "3605a441-d86c-5f4a-98f5-2edfae18a003",
+      "name": "Normalize action",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "actions",
+        "options": {}
+      },
+      "id": "44e52bee-7b5a-547d-9c1c-3579d5499c85",
+      "name": "Collect actions",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "78c8fca5-5936-5934-b362-52f09a6df40f",
+              "name": "summary",
+              "value": "주간 회의에서 할 일 3건을 정했습니다. 서버 점검 공지는 오늘 안에 합니다.",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "name": "Sample summary",
+      "position": [
+        220,
+        120
+      ],
+      "id": "d551b1bf-b437-5eb6-bde7-9391f51d468a"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "41b96eeb-592f-5a28-a9a3-dc7e9b077939",
+      "name": "Join results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Sample actions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sample summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample actions": {
+      "main": [
+        [
+          {
+            "node": "One item per action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per action": {
+      "main": [
+        [
+          {
+            "node": "Normalize action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize action": {
+      "main": [
+        [
+          {
+            "node": "Collect actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect actions": {
+      "main": [
+        [
+          {
+            "node": "Join results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample summary": {
+      "main": [
+        [
+          {
+            "node": "Join results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "id": "a6c07c353c6612"
+}

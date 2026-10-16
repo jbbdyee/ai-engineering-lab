@@ -1,0 +1,30 @@
+{
+  "name": "05 Tech support ticket",
+  "description": "업무 자동화 시나리오: 문의 접수 → 분류 → FAQ 검색 → 답변 초안 → 이력 저장",
+  "inputs": ["user", "ticket"],
+  "nodes": [
+    {"id": "start", "type": "input"},
+    {"id": "history", "type": "memory_read", "key": "ticket:{{input.user}}"},
+    {"id": "classify", "type": "llm",
+     "system": "Classify the ticket into one of: account, network, device, software, other. Reply with the label only.",
+     "prompt": "문의: {{input.ticket}}",
+     "mock": {"rules": [
+       {"if_contains": ["비밀번호", "계정", "로그인", "잠김"], "then": "account"},
+       {"if_contains": ["vpn", "인터넷", "와이파이", "접속"], "then": "network"},
+       {"if_contains": ["프린터", "모니터", "키보드"], "then": "device"},
+       {"if_contains": ["설치", "프로그램", "메일"], "then": "software"}
+     ], "default": "other"}},
+    {"id": "faq", "type": "tool", "tool": "search_faq", "args": {"query": "{{input.ticket}}", "top_k": 2}},
+    {"id": "draft", "type": "llm",
+     "system": "Write a polite Korean reply using only the FAQ results. Mention the FAQ id.",
+     "prompt": "문의: {{input.ticket}}\n분류: {{nodes.classify.output}}\n이전 문의: {{nodes.history.output}}\nFAQ 검색 결과: {{nodes.faq.output}}",
+     "mock": {"template": "안녕하세요 {{input.user}}님. 문의하신 내용은 [{{nodes.faq.output.0.title}}]에 해당합니다. {{nodes.faq.output.0.answer}} (참고: {{nodes.faq.output.0.id}})"}},
+    {"id": "log", "type": "memory_write", "key": "ticket:{{input.user}}",
+     "value": {"last_ticket": "{{input.ticket}}", "last_category": "{{nodes.classify.output}}"}},
+    {"id": "result", "type": "output",
+     "value": {"category": "{{nodes.classify.output}}", "faq_id": "{{nodes.faq.output.0.id}}", "reply": "{{nodes.draft.output}}"}}
+  ],
+  "edges": [["start", "history"], ["start", "classify"], ["start", "faq"],
+            ["history", "draft"], ["classify", "draft"], ["faq", "draft"],
+            ["draft", "log"], ["log", "result"]]
+}

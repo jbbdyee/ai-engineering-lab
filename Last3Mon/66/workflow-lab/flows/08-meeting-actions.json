@@ -1,0 +1,168 @@
+{
+  "name": "08 Meeting notes to action items",
+  "description": "회의록 → (병렬) 할 일 추출·요약 → 할 일이 있으면 정리, 없으면 '할 일 없음'",
+  "inputs": [
+    "title",
+    "notes"
+  ],
+  "nodes": [
+    {
+      "id": "start",
+      "type": "input"
+    },
+    {
+      "id": "has_notes",
+      "type": "condition",
+      "check": {
+        "left": "{{input.notes}}",
+        "op": "not_empty"
+      }
+    },
+    {
+      "id": "extract",
+      "type": "llm",
+      "system": "Extract action items from the meeting notes. Answer in JSON: {\"actions\": [{\"task\": str, \"owner\": str, \"due\": str}]}. Write task in Korean. Use \"미정\" when the owner or due date is not stated. Return {\"actions\": []} when there is no action item.",
+      "prompt": "회의록:\n{{input.notes}}",
+      "temperature": 0,
+      "json_schema": {
+        "type": "object",
+        "properties": {
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "task": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "due": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "task",
+                "owner",
+                "due"
+              ]
+            }
+          }
+        },
+        "required": [
+          "actions"
+        ]
+      },
+      "mock": {
+        "rules": [
+          {
+            "if_contains": [
+              "결정 사항은 없습니다"
+            ],
+            "then": "{\"actions\": []}"
+          }
+        ],
+        "default": "{\"actions\": [{\"task\": \"신규 고객 문의 응답 템플릿 정리\", \"owner\": \"이준호\", \"due\": \"금요일\"}, {\"task\": \"VPN 장애 보고서 작성\", \"owner\": \"박서연\", \"due\": \"다음 주 월요일\"}, {\"task\": \"서버 점검 일정 공지\", \"owner\": \"김민지\", \"due\": \"오늘\"}, {\"task\": \"회의실 예약 규칙 개선 담당자 지정\", \"owner\": \"\", \"due\": \"\"}]}"
+      }
+    },
+    {
+      "id": "parse",
+      "type": "tool",
+      "tool": "parse_actions",
+      "args": {
+        "text": "{{nodes.extract.output}}"
+      }
+    },
+    {
+      "id": "summarize",
+      "type": "llm",
+      "system": "You summarize meeting notes. Reply only with the summary in Korean, at most 2 sentences. No English, no comments.",
+      "prompt": "다음 회의록을 요약하세요.\n\n회의록:\n{{input.notes}}",
+      "mock": {
+        "template": "(Mock 요약) {{input.title}}의 주요 내용을 정리했습니다."
+      }
+    },
+    {
+      "id": "any_actions",
+      "type": "condition",
+      "check": {
+        "left": "{{nodes.parse.output.count}}",
+        "op": "gt",
+        "right": 0
+      }
+    },
+    {
+      "id": "report",
+      "type": "output",
+      "value": {
+        "title": "{{input.title}}",
+        "route": "할 일 정리",
+        "count": "{{nodes.parse.output.count}}",
+        "summary": "{{nodes.summarize.output}}",
+        "actions": "{{nodes.parse.output.actions}}"
+      }
+    },
+    {
+      "id": "no_actions",
+      "type": "output",
+      "value": {
+        "title": "{{input.title}}",
+        "route": "할 일 없음",
+        "count": 0,
+        "summary": "{{nodes.summarize.output}}",
+        "actions": []
+      }
+    },
+    {
+      "id": "reject",
+      "type": "output",
+      "value": {
+        "error": "notes is required"
+      }
+    }
+  ],
+  "edges": [
+    [
+      "start",
+      "has_notes"
+    ],
+    [
+      "has_notes",
+      "extract",
+      "true"
+    ],
+    [
+      "has_notes",
+      "summarize",
+      "true"
+    ],
+    [
+      "has_notes",
+      "reject",
+      "false"
+    ],
+    [
+      "extract",
+      "parse"
+    ],
+    [
+      "parse",
+      "any_actions"
+    ],
+    [
+      "summarize",
+      "any_actions"
+    ],
+    [
+      "any_actions",
+      "report",
+      "true"
+    ],
+    [
+      "any_actions",
+      "no_actions",
+      "false"
+    ]
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "name": "66 Meeting notes (my)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-meeting-actions",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c3c17991-1bf8-5a91-abf1-f1cfdf0f12be",
+      "name": "Meeting webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "f65c6c90-0042-57c2-832a-bce70f02d66b"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a65c3a2e-b4c8-5087-a475-c6a858d9b7d6",
+              "name": "llm_url",
+              "value": "https://api.openai.com/v1",
+              "type": "string"
+            },
+            {
+              "id": "e30dbc5a-e549-5565-9f8f-96e55670f69f",
+              "name": "model",
+              "value": "gpt-4.1-mini",
+              "type": "string"
+            },
+            {
+              "id": "4ef048c7-0ac0-5913-b743-12cda43aa2b2",
+              "name": "title",
+              "value": "={{ $json.body.title || '제목 없음' }}",
+              "type": "string"
+            },
+            {
+              "id": "b901c535-f38f-5a59-975a-05074ce8044c",
+              "name": "notes",
+              "value": "={{ $json.body.notes }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "9f1fe720-925b-5518-9038-88631e8fc018",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "41964561-0243-53d7-b1cd-0e64054d7460",
+              "leftValue": "={{ $json.notes }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ceaaa37c-8541-574a-9fae-1bc55fd90a2a",
+      "name": "Has notes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"error\": \"notes is required\" } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "35a8cb08-bc4c-502f-9176-e6414457c99e",
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Settings').first().json.llm_url }}/chat/completions",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: $('Settings').first().json.model,\n  temperature: 0,\n  response_format: { type: 'json_schema', json_schema: { name: 'reply', schema: {\n    type: 'object',\n    properties: {\n      actions: { type: 'array', items: { type: 'object',\n        properties: { task: { type: 'string' }, owner: { type: 'string' }, due: { type: 'string' } },\n        required: ['task', 'owner', 'due'] } },\n    },\n    required: ['actions'],\n  } } },\n  messages: [\n    { role: 'system', content: \"Extract action items from the meeting notes. Answer in JSON: {\\\"actions\\\": [{\\\"task\\\": str, \\\"owner\\\": str, \\\"due\\\": str}]}. Write task in Korean. Use \\\"미정\\\" when the owner or due date is not stated. Return {\\\"actions\\\": []} when there is no action item.\" },\n    { role: 'user', content: $('Settings').first().json.notes },\n  ],\n}) }}",
+        "options": {
+          "timeout": 180000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "id": "bab5c8f4-53c5-5623-b7c8-1f75f962e60b",
+      "name": "LLM extract actions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        -100
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the LLM answer (JSON text) into a clean list of action items.\nconst raw = String($input.first().json.choices?.[0]?.message?.content ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet data;\ntry {\n  data = JSON.parse(raw);\n} catch (error) {\n  return [{ json: { actions: [], count: 0, error: 'answer is not valid JSON' } }];\n}\nconst items = Array.isArray(data) ? data : (data.actions ?? []);\nconst actions = items\n  .filter(item => item && String(item.task ?? '').trim())\n  .map(item => ({\n    task: String(item.task).trim(),\n    owner: String(item.owner || '미정').trim() || '미정',\n    due: String(item.due || '미정').trim() || '미정',\n  }));\nreturn [{ json: { actions, count: actions.length } }];"
+      },
+      "id": "2d12968a-6877-53a7-a7e4-ec7c51d893b1",
+      "name": "Parse actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "155b7034-4293-50ca-a6f6-71db885a2e06",
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        -100
+      ]
+    }
+  ],
+  "connections": {
+    "Meeting webhook": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Has notes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has notes?": {
+      "main": [
+        [
+          {
+            "node": "LLM extract actions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM extract actions": {
+      "main": [
+        [
+          {
+            "node": "Parse actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse actions": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "id": "a6c07c353c6611"
+}

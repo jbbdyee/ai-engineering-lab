@@ -1,0 +1,83 @@
+{
+  "name": "66 Practice 1 · parse text",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "name": "Start",
+      "position": [
+        0,
+        0
+      ],
+      "id": "188d4e06-7014-58e1-8053-cfebb3d2b1ac"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d932ecca-eec2-5729-96c4-d0fe4e05ed98",
+              "name": "content",
+              "value": "{\"actions\": [{\"task\": \"신규 고객 문의 응답 템플릿 정리\", \"owner\": \"이준호\", \"due\": \"금요일\"}, {\"task\": \"회의실 예약 규칙 개선\", \"owner\": \"\", \"due\": \"\"}]}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "name": "Fake LLM answer",
+      "position": [
+        220,
+        0
+      ],
+      "id": "92fb2178-5944-5b66-8399-23529f0255f0"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the answer text (JSON written as text) into a clean list of action items.\nconst raw = String($input.first().json.content ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet data;\ntry {\n  data = JSON.parse(raw);\n} catch (error) {\n  return [{ json: { actions: [], count: 0, error: 'answer is not valid JSON' } }];\n}\nconst items = Array.isArray(data) ? data : (data.actions ?? []);\nconst actions = items\n  .filter(item => item && String(item.task ?? '').trim())\n  .map(item => ({\n    task: String(item.task).trim(),\n    owner: String(item.owner || '미정').trim() || '미정',\n    due: String(item.due || '미정').trim() || '미정',\n  }));\nreturn [{ json: { actions, count: actions.length } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "name": "Parse actions",
+      "position": [
+        440,
+        0
+      ],
+      "id": "b97d203a-dcbf-5d31-9265-106a5f6a83aa"
+    }
+  ],
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Fake LLM answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fake LLM answer": {
+      "main": [
+        [
+          {
+            "node": "Parse actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "id": "a6c07c353c6610"
+}

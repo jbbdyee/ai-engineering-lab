@@ -1,0 +1,6 @@
+{
+  "서울": {"condition": "맑음", "temp_c": 19, "rain_chance": 10, "air": "보통"},
+  "부산": {"condition": "흐림", "temp_c": 21, "rain_chance": 40, "air": "좋음"},
+  "제주": {"condition": "비", "temp_c": 20, "rain_chance": 80, "air": "좋음"},
+  "강릉": {"condition": "맑음", "temp_c": 17, "rain_chance": 0, "air": "좋음"}
+}

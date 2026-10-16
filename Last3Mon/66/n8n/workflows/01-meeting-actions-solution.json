@@ -1,0 +1,584 @@
+{
+  "name": "66-01 Meeting notes to action items",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "meeting-actions",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b0f12ecc-f34f-5b93-ab1a-b4f0e776cd07",
+      "name": "Meeting webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "fd884467-4d6e-5e1e-b81c-8d909d0348a5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a65c3a2e-b4c8-5087-a475-c6a858d9b7d6",
+              "name": "llm_url",
+              "value": "https://api.openai.com/v1",
+              "type": "string"
+            },
+            {
+              "id": "e30dbc5a-e549-5565-9f8f-96e55670f69f",
+              "name": "model",
+              "value": "gpt-4.1-mini",
+              "type": "string"
+            },
+            {
+              "id": "4ef048c7-0ac0-5913-b743-12cda43aa2b2",
+              "name": "title",
+              "value": "={{ $json.body.title || '제목 없음' }}",
+              "type": "string"
+            },
+            {
+              "id": "b901c535-f38f-5a59-975a-05074ce8044c",
+              "name": "notes",
+              "value": "={{ $json.body.notes }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "99de8b0b-c43f-58dc-ad3d-543621575770",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "41964561-0243-53d7-b1cd-0e64054d7460",
+              "leftValue": "={{ $json.notes }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "21232562-8565-5643-96a1-d643847e0ffb",
+      "name": "Has notes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"error\": \"notes is required\" } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "076e2cf3-ed8d-5b8a-bd2c-026784a818e1",
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Settings').first().json.llm_url }}/chat/completions",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $('Settings').first().json.model, temperature: 0, response_format: { type: 'json_schema', json_schema: { name: 'reply', schema: {\"type\": \"object\", \"properties\": {\"actions\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"task\": {\"type\": \"string\"}, \"owner\": {\"type\": \"string\"}, \"due\": {\"type\": \"string\"} }, \"required\": [\"task\", \"owner\", \"due\"]} } }, \"required\": [\"actions\"]} } }, messages: [ { role: 'system', content: \"Extract action items from the meeting notes. Answer in JSON: {\\\"actions\\\": [{\\\"task\\\": str, \\\"owner\\\": str, \\\"due\\\": str}]}. Write task in Korean. Use \\\"미정\\\" when the owner or due date is not stated. Return {\\\"actions\\\": []} when there is no action item.\" }, { role: 'user', content: $('Settings').first().json.notes } ] }) }}",
+        "options": {
+          "timeout": 180000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "id": "b704079a-e151-5b7f-814a-1e94e3ccd940",
+      "name": "LLM extract actions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        -120
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse the LLM answer (JSON text) into a clean list of action items.\nconst raw = String($input.first().json.choices?.[0]?.message?.content ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet data;\ntry {\n  data = JSON.parse(raw);\n} catch (error) {\n  return [{ json: { actions: [], count: 0, error: 'answer is not valid JSON' } }];\n}\nconst items = Array.isArray(data) ? data : (data.actions ?? []);\nconst actions = items\n  .filter(item => item && String(item.task ?? '').trim())\n  .map(item => ({\n    task: String(item.task).trim(),\n    owner: String(item.owner || '미정').trim() || '미정',\n    due: String(item.due || '미정').trim() || '미정',\n  }));\nreturn [{ json: { actions, count: actions.length } }];"
+      },
+      "id": "c78c7bb3-c72d-5ca2-ac9f-d541c024fa75",
+      "name": "Parse actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Settings').first().json.llm_url }}/chat/completions",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $('Settings').first().json.model, temperature: 0, messages: [ { role: 'system', content: \"You summarize meeting notes. Reply only with the summary in Korean, at most 2 sentences. No English, no comments.\" }, { role: 'user', content: '다음 회의록을 요약하세요.\\n\\n회의록:\\n' + $('Settings').first().json.notes } ] }) }}",
+        "options": {
+          "timeout": 180000
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi"
+      },
+      "id": "ddb065b8-063a-5741-a301-577f004c04d3",
+      "name": "LLM summarize",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        100
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1a7470e6-3557-5a05-b3c2-2b52762c1d54",
+              "name": "summary",
+              "value": "={{ $json.choices[0].message.content.trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "0e8b9b2f-e48c-591d-a712-a351cd715fd3",
+      "name": "Keep summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        900,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "506361cb-50b7-5d5d-9dcc-76121628d788",
+      "name": "Join results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cdd4276c-6039-5731-aadf-bafdf9fdf535",
+              "leftValue": "={{ $json.count }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "rightValue": 0
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "bf7c1717-f207-5071-a0a8-961a65bfdbe3",
+      "name": "Any actions?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1340,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "actions",
+        "options": {}
+      },
+      "id": "a9f538fb-61c0-5a8d-9051-9778db98a4d1",
+      "name": "One item per action",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1560,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "99cb6b63-de3c-560f-8170-b33332fb5cb9",
+              "name": "task",
+              "value": "={{ $json.task }}",
+              "type": "string"
+            },
+            {
+              "id": "ee9068cb-7666-5a5b-8937-d9c748333d6a",
+              "name": "owner",
+              "value": "={{ $json.owner }}",
+              "type": "string"
+            },
+            {
+              "id": "067da7cb-3f07-5f20-b45d-6f5fe45ca441",
+              "name": "due",
+              "value": "={{ $json.due }}",
+              "type": "string"
+            },
+            {
+              "id": "1efe8c52-179a-5a38-8648-f78d96bb8e88",
+              "name": "priority",
+              "value": "={{ ['오늘', '내일', '긴급'].some(w => $json.due.includes(w)) ? '높음' : '보통' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "000677ea-2fe7-5e70-9983-db85cafbde43",
+      "name": "Normalize action",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1780,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "actions",
+        "options": {}
+      },
+      "id": "1adf8b41-b947-52ea-939b-8c630e7b7c2b",
+      "name": "Collect actions",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the final result from the collected actions.\nconst settings = $('Settings').first().json;\nconst joined = $('Join results').first().json;\nconst actions = $input.first().json.actions;\nconst lines = actions.map((a, i) => `${i + 1}. [${a.priority}] ${a.task} - ${a.owner} (${a.due})`);\nreturn [{ json: {\n  title: settings.title,\n  route: '할 일 정리',\n  count: actions.length,\n  summary: joined.summary,\n  actions,\n  report_text: `${settings.title}\\n${joined.summary}\\n\\n${lines.join('\\n')}`,\n} }];"
+      },
+      "id": "5d19a847-10d1-565b-90ec-4476443e4a35",
+      "name": "Build report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2220,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4fbd9776-6e85-560c-a217-529108a8b787",
+              "name": "title",
+              "value": "={{ $('Settings').first().json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "709b7545-af8b-5be2-8b4a-add33d70849a",
+              "name": "route",
+              "value": "할 일 없음",
+              "type": "string"
+            },
+            {
+              "id": "6563e214-e619-5c86-a3a9-3b40608432ab",
+              "name": "count",
+              "value": "0",
+              "type": "number"
+            },
+            {
+              "id": "1b86f1f8-0486-5c45-853d-8ab5cf62c80c",
+              "name": "summary",
+              "value": "={{ $json.summary }}",
+              "type": "string"
+            },
+            {
+              "id": "406a4e0c-7283-5c3e-9762-52690b884289",
+              "name": "actions",
+              "value": "={{ [] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "19b6ad75-3169-59d3-bc1b-5196f43d8d59",
+      "name": "No actions",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1560,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "b773d7a3-74dc-59f1-8e61-0279ce658cdb",
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2440,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Meeting webhook": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Has notes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has notes?": {
+      "main": [
+        [
+          {
+            "node": "LLM extract actions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LLM summarize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM extract actions": {
+      "main": [
+        [
+          {
+            "node": "Parse actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse actions": {
+      "main": [
+        [
+          {
+            "node": "Join results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM summarize": {
+      "main": [
+        [
+          {
+            "node": "Keep summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep summary": {
+      "main": [
+        [
+          {
+            "node": "Join results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Join results": {
+      "main": [
+        [
+          {
+            "node": "Any actions?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any actions?": {
+      "main": [
+        [
+          {
+            "node": "One item per action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per action": {
+      "main": [
+        [
+          {
+            "node": "Normalize action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize action": {
+      "main": [
+        [
+          {
+            "node": "Collect actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect actions": {
+      "main": [
+        [
+          {
+            "node": "Build report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build report": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No actions": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "id": "a6c07c353caf55"
+}

@@ -15,7 +15,10 @@ anthropic = ["anthropic>=1.13"]
 miniflow = "miniflow.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=8.0"]
+dev = [
+    "anthropic>=1.13.0",
+    "pytest>=8.0",
+]
 
 [build-system]
 requires = ["hatchling"]

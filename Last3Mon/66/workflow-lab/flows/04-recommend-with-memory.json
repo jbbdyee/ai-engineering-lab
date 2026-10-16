@@ -1,0 +1,19 @@
+{
+  "name": "04 LLM + Tool + Memory",
+  "description": "Memory(선호) + Tool(날씨) → LLM 추천 → Memory(방문 기록) 갱신",
+  "inputs": ["user", "city"],
+  "nodes": [
+    {"id": "start", "type": "input"},
+    {"id": "recall", "type": "memory_read", "key": "user:{{input.user}}"},
+    {"id": "weather", "type": "tool", "tool": "get_weather", "args": {"city": "{{input.city}}"}},
+    {"id": "recommend", "type": "llm",
+     "system": "You are a travel assistant. Use the user's memory and the weather. Reply in Korean, 2 sentences.",
+     "prompt": "사용자 기억: {{nodes.recall.output}}\n날씨: {{nodes.weather.output}}\n오늘 {{input.city}}에서 할 일을 추천해 주세요.",
+     "mock": {"template": "{{input.user}}님은 '{{nodes.recall.output.preference}}'을(를) 좋아하시죠. {{input.city}}은(는) 오늘 {{nodes.weather.output.condition}}이니 그에 맞는 일정을 추천합니다."}},
+    {"id": "remember", "type": "memory_write", "key": "user:{{input.user}}",
+     "value": {"last_city": "{{input.city}}", "last_recommendation": "{{nodes.recommend.output}}"}},
+    {"id": "result", "type": "output", "value": "{{nodes.recommend.output}}"}
+  ],
+  "edges": [["start", "recall"], ["start", "weather"], ["recall", "recommend"], ["weather", "recommend"],
+            ["recommend", "remember"], ["remember", "result"]]
+}

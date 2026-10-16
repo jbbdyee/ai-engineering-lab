@@ -1,0 +1,29 @@
+{
+  "name": "07 Route by category",
+  "description": "LLM 분류 결과로 Switch 분기 → 담당 팀 배정 (정해진 값이 아니면 default)",
+  "inputs": ["text"],
+  "nodes": [
+    {"id": "start", "type": "input"},
+    {"id": "classify", "type": "llm",
+     "system": "Classify the IT request into exactly one of: account, network, device, software, other. Reply with the label only.",
+     "prompt": "문의: {{input.text}}",
+     "mock": {"rules": [
+       {"if_contains": ["비밀번호", "계정", "로그인", "잠김", "잠겨"], "then": "account"},
+       {"if_contains": ["vpn", "인터넷", "와이파이", "접속"], "then": "network"},
+       {"if_contains": ["프린터", "모니터", "키보드"], "then": "device"},
+       {"if_contains": ["설치", "프로그램", "메일"], "then": "software"}
+     ], "default": "other"}},
+    {"id": "route", "type": "switch", "value": "{{nodes.classify.output}}", "cases": ["account", "network", "device", "software"]},
+    {"id": "team_account", "type": "output", "value": {"category": "account", "team": "계정 관리 담당"}},
+    {"id": "team_network", "type": "output", "value": {"category": "network", "team": "네트워크 담당"}},
+    {"id": "team_device", "type": "output", "value": {"category": "device", "team": "장비 지원 담당"}},
+    {"id": "team_software", "type": "output", "value": {"category": "software", "team": "소프트웨어 담당"}},
+    {"id": "team_default", "type": "output", "value": {"category": "{{nodes.classify.output}}", "team": "IT 문의 접수 창구"}}
+  ],
+  "edges": [
+    ["start", "classify"], ["classify", "route"],
+    ["route", "team_account", "account"], ["route", "team_network", "network"],
+    ["route", "team_device", "device"], ["route", "team_software", "software"],
+    ["route", "team_default", "default"]
+  ]
+}
