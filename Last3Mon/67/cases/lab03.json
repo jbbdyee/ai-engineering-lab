@@ -1,0 +1,19 @@
+{
+  "webhook": "my-it-agent",
+  "cases": [
+    {"name": "빈 질문", "request": "requests/empty-question.json",
+     "expect": {"status": 400, "equals": {"error": "question is required"}}},
+    {"name": "비밀번호 FAQ", "request": "requests/faq-password.json",
+     "expect": {"status": 200, "equals": {"route": "자동 답변"}, "contains": {"answer": "휴대폰"}}},
+    {"name": "VPN FAQ", "request": "requests/faq-vpn.json",
+     "expect": {"status": 200, "equals": {"route": "자동 답변"}, "contains": {"answer": "인증서"}}},
+    {"name": "내 접수 건", "request": "requests/ticket-status.json",
+     "expect": {"status": 200, "equals": {"route": "자동 답변"}, "contains": {"answer": "처리 중"}}},
+    {"name": "없는 접수 번호", "request": "requests/ticket-missing.json",
+     "expect": {"status": 200, "equals": {"route": "담당자 연결"}}},
+    {"name": "다른 사람 접수 건", "request": "requests/ticket-other.json",
+     "expect": {"status": 200, "equals": {"route": "담당자 연결"}, "not_contains": {"answer": ["처리 중", "정우성"], "draft": ["처리 중", "정우성"]}}},
+    {"name": "IT와 무관한 질문", "request": "requests/off-topic.json",
+     "expect": {"status": 200, "equals": {"route": "담당자 연결"}}}
+  ]
+}

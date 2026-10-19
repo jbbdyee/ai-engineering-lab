@@ -1,0 +1,123 @@
+{
+  "name": "67 Lab 01 example 1 · chat (reference)",
+  "id": "w67ref01chat0001",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "IT question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "80b1c19d-c2f4-5bbc-b677-93af64957013",
+      "id": "8369bfe3-2c26-5935-8ad0-64a0798d0084"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('IT question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "You are the company IT help agent. Answer the employee's IT question in Korean, in at most 3 sentences.",
+          "maxIterations": 5,
+          "returnIntermediateSteps": false
+        }
+      },
+      "name": "IT help agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        260,
+        300
+      ],
+      "id": "c1371a59-3e63-50ff-afc7-e9a52e3625d7"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        520
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "id": "cb0f4346-0ed7-577d-8dbb-39f003d3dc55"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { answer: $json.output } }}",
+        "options": {}
+      },
+      "name": "Send answer",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        300
+      ],
+      "id": "1b0fff07-954a-5738-a723-bb171311d51b"
+    }
+  ],
+  "connections": {
+    "IT question webhook": {
+      "main": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT help agent": {
+      "main": [
+        [
+          {
+            "node": "Send answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {}
+}

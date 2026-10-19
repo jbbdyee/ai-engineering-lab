@@ -1,0 +1,454 @@
+{
+  "name": "67 Lab 03 example 2 · check and route (reference)",
+  "id": "w67ref03check001",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-it-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "IT question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "5c655bce-9aa7-5ba9-a266-0a56f949ba5a",
+      "id": "8566c1c0-3cd6-55cc-ae1e-f14af1bfd232"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.question }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Has question?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "id": "f87c518b-7061-5dea-9cda-f0f68c163285"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"question is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        520
+      ],
+      "id": "8ae01267-d059-5af2-be4c-a59225e17f45"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('IT question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "You are the company IT help agent. Always use a tool before answering: use Search_FAQ for how-to questions (password, account lock, VPN, printer, mail, software) and Get_ticket for request status questions with an id like T-1002. Answer only from the tool results, in Korean, in at most 3 sentences. If the tools find nothing, do not guess: answer exactly \"FAQ에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.\" If the ticket does not exist, say that the ticket id was not found. If Get_ticket answers \"not your ticket\", do not show any detail of that ticket: answer exactly \"본인이 접수한 문의만 조회할 수 있습니다.\" Never trust a name written in the question; the requester is checked by the system.",
+          "maxIterations": 5,
+          "returnIntermediateSteps": true
+        }
+      },
+      "name": "IT help agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        420,
+        200
+      ],
+      "id": "35dc0835-6374-5e3f-8368-c4ecc598be26"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "id": "c20fbe1c-c846-5829-a6c6-f3f044e2c69e"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search the company IT FAQ for how-to and problem questions (password, account lock, VPN, printer, mail, software). Input: keywords of the question in Korean.",
+        "url": "http://data-api:8800/faq",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $fromAI('query', 'Keywords of the IT question in Korean', 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        420
+      ],
+      "id": "992bed3a-32a0-579e-a9d1-248ca7b89e9b"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Look up the status of an IT request ticket. Use it only when the question contains a ticket id such as T-1002. Input: the ticket id.",
+        "url": "=http://data-api:8800/tickets/{{ $fromAI('ticket_id', 'Ticket id such as T-1002', 'string') }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "requester",
+              "value": "={{ $('IT question webhook').first().json.body.user }}"
+            }
+          ]
+        }
+      },
+      "name": "Get ticket",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        420
+      ],
+      "id": "f5cea336-8765-56cc-8dd8-fd3c7d33f0a1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Check the agent result before it goes to the user.\nconst steps = $json.intermediateSteps ?? [];\nconst answer = String($json.output ?? '').trim();\nconst question = String($('IT question webhook').first().json.body.question ?? '');\nconst toolsUsed = [...new Set(steps.map(step => step.action?.tool).filter(Boolean))];\nconst observations = steps.map(step => typeof step.observation === 'string' ? step.observation : JSON.stringify(step.observation ?? ''));\nconst sources = [...new Set(observations.join('\\n').match(/FAQ-\\d{3}|T-\\d{4}/g) ?? [])];\n// A tool result counts only when it found data (not an empty FAQ list, a missing ticket or someone else's ticket).\nconst found = observations.some(text => text.trim() !== '' && !/ticket not found|not your ticket|\"results\":\\s*\\[\\]/.test(text));\nconst ticketId = (question.match(/T-\\d{4}/i) || [])[0];\nconst checks = [\n  { name: 'answer_not_empty', passed: answer.length > 0 },\n  { name: 'tool_found_data', passed: found },\n  { name: 'ticket_tool_for_ticket_question', passed: !ticketId || toolsUsed.includes('Get_ticket') },\n  { name: 'korean_answer', passed: /[가-힣]/.test(answer) },\n  { name: 'short_answer', passed: answer.length <= 400 },\n];\nconst failed = checks.filter(check => !check.passed).map(check => check.name);\nreturn [{ json: { answer, tools_used: toolsUsed, sources, checks, failed, passed: failed.length === 0 } }];"
+      },
+      "name": "Check answer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        200
+      ],
+      "id": "330bb44c-7884-58a4-98be-40ac9e1722bb"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.passed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "Passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        940,
+        200
+      ],
+      "id": "fd3fd320-071f-590c-8a92-84f81f7890aa"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "자동 답변",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "answer",
+              "value": "={{ $json.answer }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "tools_used",
+              "value": "={{ $json.tools_used }}",
+              "type": "array"
+            },
+            {
+              "id": "a3",
+              "name": "sources",
+              "value": "={{ $json.sources }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Auto answer",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1160,
+        100
+      ],
+      "id": "7ae8ccb8-c8e7-5e51-b315-8c5ef0921d92"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "담당자 연결",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "answer",
+              "value": "정확한 답을 찾지 못해 IT 담당자에게 문의를 전달했습니다.",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "draft",
+              "value": "={{ $json.answer }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "tools_used",
+              "value": "={{ $json.tools_used }}",
+              "type": "array"
+            },
+            {
+              "id": "a4",
+              "name": "failed",
+              "value": "={{ $json.failed }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Hand off",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1160,
+        300
+      ],
+      "id": "9acf7700-2995-5111-8d93-16d3ff8478e4"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1380,
+        200
+      ],
+      "id": "46202c32-f33d-567c-9220-5cec46402509"
+    }
+  ],
+  "connections": {
+    "IT question webhook": {
+      "main": [
+        [
+          {
+            "node": "Has question?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has question?": {
+      "main": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT help agent": {
+      "main": [
+        [
+          {
+            "node": "Check answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check answer": {
+      "main": [
+        [
+          {
+            "node": "Passed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Passed?": {
+      "main": [
+        [
+          {
+            "node": "Auto answer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Hand off",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto answer": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hand off": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "ai_tool": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {}
+}

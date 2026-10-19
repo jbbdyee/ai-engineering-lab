@@ -1,0 +1,158 @@
+{
+  "name": "67 Lab 01 example 2 · FAQ tool (reference)",
+  "id": "w67ref01faq00001",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-it-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "IT question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "26fb2f09-7c93-5c9e-b058-f4b92e1b9213",
+      "id": "c6311b52-445d-54b8-bdb1-6b39bb1d82ae"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('IT question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "You are the company IT help agent. Use the Search_FAQ tool for every question and answer only from the tool result, in Korean, in at most 3 sentences.",
+          "maxIterations": 5,
+          "returnIntermediateSteps": true
+        }
+      },
+      "name": "IT help agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        260,
+        300
+      ],
+      "id": "3cda68a1-c4d8-5f1f-8d08-eb641adf5ffb"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        520
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "id": "69dd77c4-6fe1-5e0d-8e17-57c01b02e083"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search the company IT FAQ for how-to and problem questions (password, account lock, VPN, printer, mail, software). Input: keywords of the question in Korean.",
+        "url": "http://data-api:8800/faq",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $fromAI('query', 'Keywords of the IT question in Korean', 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        520
+      ],
+      "id": "94586cf4-ed51-59b2-9fa7-ea22366c859f"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { answer: $json.output, tools_used: [...new Set(($json.intermediateSteps ?? []).map(step => step.action?.tool).filter(Boolean))] } }}",
+        "options": {}
+      },
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        300
+      ],
+      "id": "8ed23e87-705a-510f-a1a3-c0c1ac267abf"
+    }
+  ],
+  "connections": {
+    "IT question webhook": {
+      "main": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT help agent": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {}
+}

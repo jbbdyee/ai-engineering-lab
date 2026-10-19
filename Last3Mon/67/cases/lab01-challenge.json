@@ -1,0 +1,11 @@
+{
+  "webhook": "my-it-agent",
+  "cases": [
+    {"name": "비밀번호 출처", "request": "requests/faq-password.json",
+     "expect": {"status": 200, "contains": {"answer": "휴대폰", "sources": "FAQ-001"}}},
+    {"name": "VPN 출처", "request": "requests/faq-vpn.json",
+     "expect": {"status": 200, "contains": {"answer": "인증서", "sources": "FAQ-003"}}},
+    {"name": "모르면 모른다고", "request": "requests/off-topic.json",
+     "expect": {"status": 200, "contains": {"answer": "찾지 못했습니다"}, "not_contains": {"answer": ["메뉴 추천", "김치찌개", "비빔밥"]}}}
+  ]
+}

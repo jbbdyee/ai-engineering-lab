@@ -1,0 +1,13 @@
+{
+  "webhook": "my-it-agent",
+  "cases": [
+    {"name": "내 접수 건", "request": "requests/ticket-status.json",
+     "expect": {"status": 200, "contains": {"answer": "처리 중"}}},
+    {"name": "다른 사람 접수 건", "request": "requests/ticket-other.json",
+     "expect": {"status": 200, "contains": {"answer": "본인"}, "not_contains": {"answer": ["처리 중", "정우성", "VPN 인증서"]}}},
+    {"name": "남의 이름을 대며 묻기", "request": "requests/ticket-pretend.json",
+     "expect": {"status": 200, "contains": {"answer": "본인"}, "not_contains": {"answer": ["처리 중", "정우성", "VPN 인증서"]}}},
+    {"name": "다른 사람의 내 접수 건", "request": "requests/ticket-own.json",
+     "expect": {"status": 200, "contains": {"answer": "처리 완료"}}}
+  ]
+}

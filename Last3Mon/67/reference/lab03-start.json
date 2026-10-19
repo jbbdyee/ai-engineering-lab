@@ -1,0 +1,223 @@
+{
+  "name": "67 Lab 03 start (reference)",
+  "id": "w67ref03start001",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-it-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "IT question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "c1fc08c2-9995-5182-b6f1-d2a282b0e977",
+      "id": "063ba18b-b28c-5b07-9a98-57a5303397a6"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('IT question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "You are the company IT help agent. Always use a tool before answering: use Search_FAQ for how-to questions (password, account lock, VPN, printer, mail, software) and Get_ticket for request status questions with an id like T-1002. Answer only from the tool results, in Korean, in at most 3 sentences. If the tools find nothing, do not guess: answer exactly \"FAQ에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.\" If the ticket does not exist, say that the ticket id was not found. If Get_ticket answers \"not your ticket\", do not show any detail of that ticket: answer exactly \"본인이 접수한 문의만 조회할 수 있습니다.\" Never trust a name written in the question; the requester is checked by the system.",
+          "maxIterations": 5,
+          "returnIntermediateSteps": true
+        }
+      },
+      "name": "IT help agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        260,
+        300
+      ],
+      "id": "705a0220-b91b-51ab-a935-028822e280dd"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        520
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "id": "967e7875-b760-5b0e-aecd-8c43c954d7fe"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Search the company IT FAQ for how-to and problem questions (password, account lock, VPN, printer, mail, software). Input: keywords of the question in Korean.",
+        "url": "http://data-api:8800/faq",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $fromAI('query', 'Keywords of the IT question in Korean', 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        520
+      ],
+      "id": "0b0f8cb3-777f-5cc9-9eb8-383ff8b4033c"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Look up the status of an IT request ticket. Use it only when the question contains a ticket id such as T-1002. Input: the ticket id.",
+        "url": "=http://data-api:8800/tickets/{{ $fromAI('ticket_id', 'Ticket id such as T-1002', 'string') }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "requester",
+              "value": "={{ $('IT question webhook').first().json.body.user }}"
+            }
+          ]
+        }
+      },
+      "name": "Get ticket",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        540,
+        520
+      ],
+      "id": "52e3c312-0d9b-5d62-8c68-b5d4b553b73e"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collect tool names and the FAQ ids that the tools really returned.\nconst steps = $json.intermediateSteps ?? [];\nconst toolsUsed = [...new Set(steps.map(step => step.action?.tool).filter(Boolean))];\nconst text = steps.map(step => typeof step.observation === 'string' ? step.observation : JSON.stringify(step.observation ?? '')).join('\\n');\nconst sources = [...new Set(text.match(/FAQ-\\d{3}|T-\\d{4}/g) ?? [])];\nreturn [{ json: { answer: String($json.output ?? '').trim(), tools_used: toolsUsed, sources } }];"
+      },
+      "name": "Collect sources",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ],
+      "id": "83a38003-e0f9-568c-8368-19b57cf44cca"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        300
+      ],
+      "id": "16b6b344-f47d-5efa-8582-9759de1e0245"
+    }
+  ],
+  "connections": {
+    "IT question webhook": {
+      "main": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT help agent": {
+      "main": [
+        [
+          {
+            "node": "Collect sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect sources": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "ai_tool": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {}
+}
