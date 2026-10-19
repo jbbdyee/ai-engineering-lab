@@ -1,0 +1,39 @@
+{
+  "webhook": "my-meeting",
+  "cases": [
+    {
+      "name": "주간 회의 · 제목",
+      "request": "requests/weekly.json",
+      "expect": {
+        "equals": {
+          "title": "10월 16일 주간 회의"
+        }
+      }
+    },
+    {
+      "name": "주간 회의 · 한 문장 요약",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "summary": [
+            "고객",
+            "VPN",
+            "서버",
+            "회의실"
+          ]
+        }
+      }
+    },
+    {
+      "name": "할 일 없는 회의도 요약",
+      "request": "requests/no-action.json",
+      "expect": {
+        "contains": {
+          "summary": [
+            "실적"
+          ]
+        }
+      }
+    }
+  ]
+}

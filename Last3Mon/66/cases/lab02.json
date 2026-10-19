@@ -1,0 +1,68 @@
+{
+  "webhook": "my-meeting",
+  "cases": [
+    {
+      "name": "주간 회의 · 할 일 4개",
+      "request": "requests/weekly.json",
+      "expect": {
+        "equals": {
+          "count": 4
+        }
+      }
+    },
+    {
+      "name": "주간 회의 · 첫 할 일",
+      "request": "requests/weekly.json",
+      "expect": {
+        "equals": {
+          "actions.0.owner": "이준호"
+        },
+        "contains": {
+          "actions.0.due": [
+            "금요일"
+          ]
+        }
+      }
+    },
+    {
+      "name": "담당자 없는 할 일은 미정",
+      "request": "requests/weekly.json",
+      "expect": {
+        "equals": {
+          "actions.3.owner": "미정"
+        }
+      }
+    },
+    {
+      "name": "할 일 없는 회의",
+      "request": "requests/no-action.json",
+      "expect": {
+        "equals": {
+          "count": 0,
+          "actions": []
+        }
+      }
+    },
+    {
+      "name": "요약도 함께",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "summary": [
+            "고객",
+            "VPN",
+            "서버",
+            "회의실"
+          ]
+        }
+      }
+    },
+    {
+      "name": "빈 회의록",
+      "request": "requests/empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

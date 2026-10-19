@@ -1,60 +1,82 @@
-# 66일차 실습 · 단일 업무 자동화 워크플로우 직접 만들기
+# 66일차 실습 · 바이브 코딩으로 만드는 단일 업무 자동화 워크플로우
 
 - 일자: 2026-10-16 (66일차)
 - 교과목: 노코드 멀티 에이전트 워크플로우 설계 및 운영
 - 단원: AI 워크플로우 설계 및 구현
 - 강의 자료: [Lecture/66](../../Lecture/66/README.md)
+- **오늘부터 n8n 노드를 손으로 끌어다 놓지 않습니다.** CLI 코딩 에이전트(Codex · Claude Code · Antigravity)에게 **내가 쓴 요청문**으로 워크플로우 JSON을 만들게 하고, 우리는 **실행 결과를 테스트로 확인**합니다. 64·65일차에 화면에서 배운 노드와 데이터 흐름이 요청문의 재료가 됩니다.
 
 ## 오늘 만드는 업무: 회의록 → 할 일 정리
 
 ```mermaid
 flowchart LR
-  W(["Meeting webhook"]) --> S["Settings"] --> H{"Has notes?"}
-  H -->|false| R0["Reject empty"]
-  H -->|true| L1{{"LLM extract actions"}} --> P["Parse actions"] --> J["Join results"]
-  H -->|true| L2{{"LLM summarize"}} --> K["Keep summary"] --> J
-  J --> A{"Any actions?"}
-  A -->|true| SO["One item per action"] --> N["Normalize action"] --> AG["Collect actions"] --> B["Build report"] --> R["Send result"]
-  A -->|false| NA["No actions"] --> R
+  W(["Meeting webhook<br/>title · notes"]) --> H{"Has notes?"}
+  H -->|false| R0["Reject empty (400)"]
+  H -->|true| S{{"Summarize"}} --> J["Join results"]
+  H -->|true| E{{"Extract actions<br/>(JSON)"}} --> J
+  J --> P["Parse actions"] --> A{"Any actions?"}
+  A -->|true| SO["One item per action"] --> M["Mark check<br/>미정이면 확인 필요"] --> C["Collect actions"] --> B["Build report"] --> R(["결과"])
+  A -->|false| N["No actions"] --> R
 ```
 
-## 실습 방식
+## 일하는 방식
 
-모든 Lab은 **쉬운 예제 2개 → 예제를 고치는 과제** 순서입니다. 예제는 안내를 그대로 따라 하면 되고, 과제에서 생각합니다.
+```mermaid
+flowchart LR
+  Q["요청문<br/>(내가 씀)"] --> G["CLI 에이전트<br/>my-work/meeting.json · check"]
+  G --> U["push<br/>(내가 실행)"] --> T["test<br/>(내가 실행)"]
+  T -->|✘ 보고서| G
+  T -->|✔ Passed| D["완료"]
+```
 
-| Lab | 시간 | 예제 1 | 예제 2 | 과제 |
-| --- | --- | --- | --- | --- |
-| [Lab 01](LAB-01-DESIGN-DATA-FLOW.md) 설계 | 2교시 22분 | 어제 만든 흐름의 항목 수 읽기 | 오늘 흐름의 빈칸 채우기 (1 → 4 → 1) | "확인 필요" 요청이 오면 어디를 고치나 |
-| [Lab 02](LAB-02-BUILD-PARSE-TRANSFORM.md) 파싱 | 3교시 끝 + 4교시 | LLM 없이 글자 → 목록 | 진짜 LLM이 붙은 1부 가져와 실행 | 참석자도 뽑기 (세 곳 고치기) |
-| [Lab 03](LAB-03-BUILD-LOOP-PARALLEL.md) 완성 | 5교시 끝 + 6교시 | 펼치고 모으기 (1 → 3 → 1) | 두 길을 Merge로 합치기 | **40분** · 내 워크플로우 완성 + 확인 필요 표시 |
+| 누가 | 무엇을 |
+| --- | --- |
+| 나 | 결과 먼저 정하기, 요청문 쓰기, push·test 실행, 결과 판단 |
+| CLI 에이전트 | [AGENTS.md](AGENTS.md) 규칙대로 워크플로우 JSON 작성, `check`로 형식 오류 고치기, 실패 원인 찾기 |
+| `tools/flow.py` | 형식 검사(check), n8n에 가져오기·게시(push), 요청 보내기(call), 테스트(test) |
+
+## 실습 문서 읽는 법
+
+- 실습 문서(`LAB-0x-Q-*.md`, `VIBE-Q-TURL.md`)에는 **복사해 붙일 요청문이 없습니다.** 만들 것 · 조건 · 기대 결과만 있고, 요청문은 직접 씁니다.
+- 막히면 `▶` 를 하나씩 펼칩니다. 뒤로 갈수록 구체적이 되지만 정답 요청문은 나오지 않습니다.
+- 쓴 요청문은 `my-work/PROMPTS.md`에 모아 두고, 수업 끝에 옆 사람과 비교합니다.
 
 ## 구성
 
 ```text
 Last3Mon/66/
 ├── README.md
-├── LAB-01-DESIGN-DATA-FLOW.md      # 1단계 · 설계 (예제 2개 + 과제)
-├── LAB-02-BUILD-PARSE-TRANSFORM.md # 2단계 · 입력 → LLM → 파싱 (예제 2개 + 과제)
-├── LAB-03-BUILD-LOOP-PARALLEL.md   # 3단계 · 반복·병렬로 완성 (예제 2개 + 40분 과제), Python 호출
-├── templates/
-│   ├── LAB-01-WORKSHEET.md         # Lab 01 활동지
-│   └── DATA-FLOW-DESIGN-TEMPLATE.md # 내 업무 설계서 (복습 과제용)
-├── my-work/                        # 여러분의 결과물 (직접 만듭니다)
-├── n8n/
-│   ├── requests/                   # 테스트 요청 (weekly · no-action · empty)
-│   └── workflows/
-│       ├── lab02-example1-parse-practice.json      # Lab 02 예제 1 (막혔을 때 비교)
-│       ├── lab02-example2-meeting-part1.json       # Lab 02 예제 2 (가져와서 시작)
-│       ├── lab03-examples-loop-merge-practice.json # Lab 03 예제 1·2 (막혔을 때 비교)
-│       └── 01-meeting-actions-solution.json        # Lab 03 과제 구조 비교용 (확인 필요 표시 전까지)
-└── workflow-lab/                   # miniflow (65일차 + JSON 출력·parse_actions·08 회의록 flow)
+├── AGENTS.md                         # CLI 에이전트용 n8n 작업 규칙 (CLAUDE.md가 이 파일을 불러옴)
+├── LAB-01-Q-RESULT-FIRST.md          # 1단계 · 결과 먼저 → 첫 요청문(요약) → 빈 회의록 · 제목 없음
+├── LAB-02-Q-JSON-AND-PARSE.md        # 2단계 · 할 일을 JSON으로 → 빈칸 채우기 → 참석자
+├── LAB-03-Q-ITEMS-AND-PARALLEL.md    # 3단계 · 항목 하나씩 · 확인 필요 → 두 갈래 → 어려운 회의록
+├── VIBE-Q-TURL.md                    # 7교시 바이브 코딩 · turl (curl을 TUI로)
+├── *-A-*.md                          # 정답 해설 (수업이 끝난 뒤 공개)
+├── answers/                          # 과제 정답 워크플로우
+├── tools/flow.py                     # doctor · check · push · off · call · test
+├── cases/                            # lab01 · lab01-challenge · lab02 · lab02-challenge · lab03
+├── requests/                         # weekly · no-action · empty · no-title · vendor
+├── reference/                        # 막혔을 때 이어 가는 워크플로우 (예제 단계)
+├── templates/TEST-REPORT-TEMPLATE.md
+├── my-work/                          # 에이전트가 만든 워크플로우 (JSON은 git에 올라가지 않음)
+└── runs/                             # 테스트 보고서 (자동 생성)
 ```
 
 ## 준비
 
-- 65일차의 n8n(Credential `OpenAI (.env)`)과 `Last3Mon/.env`를 그대로 사용합니다: `cd ~/aio-01d4-stu/Last3Mon/65/n8n && docker compose start`
-- 실습 엔진 확인:
+[실습 준비](../../Lecture/66/00-DAY66-PREP.md)를 끝내 주세요 (CLI 코딩 에이전트 설치·로그인 포함). 요약:
 
 ```bash
-cd ~/aio-01d4-stu/Last3Mon/66/workflow-lab && uv sync && uv run pytest -q   # 43 passed, 1 skipped
+cd ~/aio-01d4-stu/Last3Mon/65/n8n && docker compose start         # 65일차 n8n (Ollama는 쓰지 않음 · 처음 한 번 PREP 1절대로 끄기)
+cd ~/aio-01d4-stu/Last3Mon/66 && uv run tools/flow.py doctor      # 마지막 줄 ready
 ```
+
+## `flow.py` 명령
+
+| 명령 | 하는 일 | 수업 준비 때 |
+| --- | --- | --- |
+| `uv run tools/flow.py doctor` | n8n · Credential · CLI 에이전트 확인 | |
+| `uv run tools/flow.py check my-work/meeting.json` | 노드 종류·버전·연결·Credential·API 키 노출 검사 | 1초 미만 |
+| `uv run tools/flow.py push my-work/meeting.json` | n8n에 가져오기 → 게시 → n8n 재시작 → 웹훅 준비 확인 | |
+| `uv run tools/flow.py call my-meeting requests/weekly.json` | 요청 한 번 보내고 응답 보기 | 요약만 1~3초, 할 일까지 2~4초 |
+| `uv run tools/flow.py test cases/lab02.json --repeat 3` | 테스트 실행, `Passed x/y`, 보고서를 `runs/`에 저장 | |

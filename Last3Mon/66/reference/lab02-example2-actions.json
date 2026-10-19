@@ -1,0 +1,268 @@
+{
+  "name": "66 Meeting actions (reference · Lab 02 example 2)",
+  "nodes": [
+    {
+      "name": "Meeting webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-meeting",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has notes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ String($json.body.notes ?? '').trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        560
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"notes are required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Summarize",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=회의 제목: {{ $('Meeting webhook').first().json.body.title || '회의' }}\n회의록:\n{{ $('Meeting webhook').first().json.body.notes }}",
+        "options": {
+          "systemMessage": "You summarize Korean meeting notes in one Korean sentence: what the meeting was about and what was decided. Use only the notes. Return only the sentence.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "Summary model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Extract actions",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=회의 제목: {{ $('Meeting webhook').first().json.body.title || '회의' }}\n회의록:\n{{ $('Meeting webhook').first().json.body.notes }}",
+        "options": {
+          "systemMessage": "You read Korean meeting notes and list every action item (a task someone must do). Return only JSON, no code fence: {\"actions\": [{\"owner\": \"person in charge or empty\", \"task\": \"the task in Korean\", \"due\": \"due date as written or empty\"}]} Keep the order of the notes. Use only what the notes say: never invent an owner or a date. If there is no action item, return {\"actions\": []}.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "Actions model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Parse actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// LLM output is text. Read it as JSON; if that fails, treat it as no actions. Then fill the blanks.\nconst raw = String($json.output ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet data = {};\ntry { data = JSON.parse(raw); } catch (error) { data = {}; }\nconst actions = (Array.isArray(data.actions) ? data.actions : [])\n  .map(item => ({ owner: String(item?.owner ?? '').trim() || '미정', task: String(item?.task ?? '').trim(), due: String(item?.due ?? '').trim() || '미정' }))\n  .filter(item => item.task);\n\nreturn [{ json: { title: (String($('Meeting webhook').first().json.body.title ?? '').trim() || '회의'), summary: $('Summarize').first().json.output.trim(), count: actions.length, actions } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1160,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Meeting webhook": {
+      "main": [
+        [
+          {
+            "node": "Has notes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has notes?": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Extract actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actions model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract actions",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract actions": {
+      "main": [
+        [
+          {
+            "node": "Parse actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse actions": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

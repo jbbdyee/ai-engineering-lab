@@ -1,0 +1,237 @@
+{
+  "name": "66-agy Meeting Notes",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "66-meeting-notes",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "180eaba8-d81d-4bfd-8456-e15fbe5ca508",
+      "name": "Meeting Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        560,
+        64
+      ],
+      "webhookId": "66-meeting-notes"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "agy-url",
+              "name": "llm_url",
+              "value": "https://api.openai.com/v1",
+              "type": "string"
+            },
+            {
+              "id": "agy-model",
+              "name": "model",
+              "value": "gpt-4.1-mini",
+              "type": "string"
+            },
+            {
+              "id": "agy-title",
+              "name": "title",
+              "value": "={{ $json.body ? (typeof $json.body.title === 'string' ? $json.body.title.trim() : '') : '샘플 회의' }}",
+              "type": "string"
+            },
+            {
+              "id": "agy-notes",
+              "name": "notes",
+              "value": "={{ $json.body ? (typeof $json.body.notes === 'string' ? $json.body.notes.trim() : '') : '참석: 담당자 A, 담당자 B. 담당자 A는 다음 회의 전까지 초안을 작성한다. 일정은 나중에 정한다.' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8bd61391-3db7-4ddc-993e-2a06e2bf7e10",
+      "name": "Settings",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "agy-notes-check",
+              "leftValue": "={{ $json.notes }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f9bafedd-6c15-42dd-847e-0286c9ccaa5c",
+      "name": "Has notes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1088,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $('Settings').first().json.llm_url + '/chat/completions' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: $('Settings').first().json.model, temperature: 0, response_format: { type: 'json_schema', json_schema: { name: 'meeting_notes_result', strict: true, schema: {\"type\":\"object\",\"properties\":{\"attendees\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}/*n8n*/ },\"summary\":{\"type\":\"string\"},\"actions\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"task\":{\"type\":\"string\"},\"owner\":{\"type\":\"string\"},\"due\":{\"type\":\"string\"}/*n8n*/ },\"required\":[\"task\",\"owner\",\"due\"],\"additionalProperties\":false}/*n8n*/ }/*n8n*/},\"required\":[\"attendees\",\"summary\",\"actions\"],\"additionalProperties\":false}/*n8n*/ }/*n8n*/ }, messages: [ { role: 'system', content: \"당신은 한국어 회의록에서 사실만 추출하는 도우미입니다. JSON 스키마에 맞춰 attendees, summary, actions를 반환하세요. attendees에는 참석자로 명시된 사람의 이름만 넣고 중복을 제거하세요. summary는 주요 논의와 결정 사항을 한국어 1~3문장으로 요약하세요. actions는 확정된 업무뿐만 아니라 담당자나 기한이 미정인 후속 조치 및 안건도 빠짐없이 각각 한 항목으로 추출하세요. task는 업무 내용을 간결하게 적으세요. owner 또는 due가 명시되지 않았거나 아직 정해지지 않은 경우 반드시 \\\"미정\\\"으로 적으세요. 상대적 기한은 기준 날짜가 입력에 없으면 임의의 절대 날짜로 변환하지 말고 원문 표현을 유지하세요. 참석자, 업무, 기한, 결정 사항을 추측하거나 만들어내지 마세요. 업무가 없으면 actions는 빈 배열로 반환하세요.\" }, { role: 'user', content: $('Settings').first().json.notes } ] }) }}",
+        "options": {
+          "timeout": 180000
+        }
+      },
+      "id": "c5d3c7d4-71a4-46bf-a8ac-8dadc2880a1d",
+      "name": "LLM extract attendees & actions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1328,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const content = $input.first().json.choices?.[0]?.message?.content;\n\nif (typeof content !== 'string' || !content.trim()) {\n  throw new Error('OpenAI response has no message content');\n}\n\nlet extracted;\n\ntry {\n  extracted = JSON.parse(content);\n} catch {\n  throw new Error('OpenAI response is not valid JSON');\n}\n\nif (\n  !extracted ||\n  !Array.isArray(extracted.attendees) ||\n  !Array.isArray(extracted.actions) ||\n  typeof extracted.summary !== 'string'\n) {\n  throw new Error('OpenAI response does not match the expected schema');\n}\n\nconst settings = $('Settings').first().json;\nconst clean = value => typeof value === 'string' ? value.trim() : '';\n\nconst attendees = extracted.attendees.map(clean).filter(Boolean);\n\nfunction getPriorityInfo(due) {\n  const d = (due || '').trim();\n\n  if (!d || d === '미정' || d.includes('미정')) {\n    return { priority: 4, priority_label: '4순위' };\n  }\n\n  if (d.includes('오늘') || d.includes('금일') || d.includes('당일')) {\n    return { priority: 1, priority_label: '1순위' };\n  }\n\n  if (\n    d.includes('다음 주') ||\n    d.includes('다음주') ||\n    d.includes('차주') ||\n    d.includes('내주')\n  ) {\n    return { priority: 3, priority_label: '3순위' };\n  }\n\n  if (\n    d.includes('이번 주') ||\n    d.includes('이번주') ||\n    d.includes('금주') ||\n    /(월|화|수|목|금|토|일)요일/.test(d) ||\n    /(월|화|수|목|금|토|일)까지/.test(d)\n  ) {\n    return { priority: 2, priority_label: '2순위' };\n  }\n\n  return { priority: 4, priority_label: '4순위' };\n}\n\nconst actions = extracted.actions\n  .map(item => {\n    const task = clean(item.task);\n    const owner = clean(item.owner) || '미정';\n    const due = clean(item.due) || '미정';\n    const info = getPriorityInfo(due);\n\n    return {\n      priority: info.priority,\n      priority_label: info.priority_label,\n      task,\n      owner,\n      due\n    };\n  })\n  .filter(item => item.task);\n\nactions.sort((a, b) => a.priority - b.priority);\n\nconst title = clean(settings.title) || '제목 없음';\nconst summary = clean(extracted.summary);\n\nconst lines = [\n  title,\n  '',\n  '참석자: ' + (attendees.join(', ') || '미정'),\n  '요약: ' + (summary || '요약 없음'),\n  '',\n  '액션 아이템'\n];\n\nif (actions.length === 0) {\n  lines.push('없음');\n} else {\n  actions.forEach(action => {\n    lines.push(\n      `${action.priority_label}: ${action.task} / ${action.owner} / ${action.due}`\n    );\n  });\n}\n\nreturn [{\n  json: {\n    title,\n    route: 'meeting_notes',\n    count: actions.length,\n    attendees,\n    summary,\n    actions,\n    report_text: lines.join('\\n')\n  }\n}];"
+      },
+      "id": "4a3ea0dc-19ff-4eb7-b019-27f64558ebb9",
+      "name": "Parse attendees & actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "0a769e8d-148a-461c-bf1d-98497e25e3e6",
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1840,
+        64
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: \"notes is required\" } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "3ed045f1-41ce-4d11-b2b9-af900d9da253",
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        304
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Meeting Webhook": {
+      "main": [
+        [
+          {
+            "node": "Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Settings": {
+      "main": [
+        [
+          {
+            "node": "Has notes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has notes?": {
+      "main": [
+        [
+          {
+            "node": "LLM extract attendees & actions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM extract attendees & actions": {
+      "main": [
+        [
+          {
+            "node": "Parse attendees & actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse attendees & actions": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "tags": []
+}

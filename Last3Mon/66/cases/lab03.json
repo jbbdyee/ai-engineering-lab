@@ -1,0 +1,63 @@
+{
+  "webhook": "my-meeting",
+  "cases": [
+    {
+      "name": "확인 필요 1개 (담당 미정)",
+      "request": "requests/weekly.json",
+      "expect": {
+        "equals": {
+          "count": 4,
+          "needs_check_count": 1,
+          "actions.3.needs_check": true,
+          "actions.0.needs_check": false
+        }
+      }
+    },
+    {
+      "name": "기한 없는 할 일도 확인 필요",
+      "request": "requests/vendor.json",
+      "expect": {
+        "equals": {
+          "actions.1.needs_check": true
+        },
+        "contains": {
+          "actions.1.due": [
+            "미정"
+          ]
+        }
+      }
+    },
+    {
+      "name": "할 일 없는 회의 · 끝까지 답",
+      "request": "requests/no-action.json",
+      "expect": {
+        "equals": {
+          "count": 0,
+          "needs_check_count": 0,
+          "actions": []
+        }
+      }
+    },
+    {
+      "name": "요약 함께",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "summary": [
+            "고객",
+            "VPN",
+            "서버",
+            "회의실"
+          ]
+        }
+      }
+    },
+    {
+      "name": "빈 회의록",
+      "request": "requests/empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

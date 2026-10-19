@@ -1,0 +1,48 @@
+{
+  "webhook": "my-meeting",
+  "cases": [
+    {
+      "name": "참석자 3명",
+      "request": "requests/weekly.json",
+      "expect": {
+        "equals": {
+          "attendees": [
+            "김민지",
+            "이준호",
+            "박서연"
+          ]
+        }
+      }
+    },
+    {
+      "name": "참석자 2명",
+      "request": "requests/vendor.json",
+      "expect": {
+        "equals": {
+          "attendees": [
+            "한지훈",
+            "최유진"
+          ]
+        }
+      }
+    },
+    {
+      "name": "참석자 줄이 없는 회의",
+      "request": "requests/no-action.json",
+      "expect": {
+        "equals": {
+          "attendees": []
+        }
+      }
+    },
+    {
+      "name": "할 일은 그대로",
+      "request": "requests/weekly.json",
+      "expect": {
+        "equals": {
+          "count": 4
+        }
+      }
+    }
+  ]
+}

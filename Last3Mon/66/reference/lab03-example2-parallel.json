@@ -1,0 +1,527 @@
+{
+  "name": "66 Meeting actions in parallel (reference · Lab 03 example 2)",
+  "nodes": [
+    {
+      "name": "Meeting webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-meeting",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has notes?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ String($json.body.notes ?? '').trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        560
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"notes are required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Summarize",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        420,
+        120
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=회의 제목: {{ $('Meeting webhook').first().json.body.title || '회의' }}\n회의록:\n{{ $('Meeting webhook').first().json.body.notes }}",
+        "options": {
+          "systemMessage": "You summarize Korean meeting notes in one Korean sentence: what the meeting was about and what was decided. Use only the notes. Return only the sentence.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "Summary model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        -80
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Extract actions",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        420,
+        420
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=회의 제목: {{ $('Meeting webhook').first().json.body.title || '회의' }}\n회의록:\n{{ $('Meeting webhook').first().json.body.notes }}",
+        "options": {
+          "systemMessage": "You read Korean meeting notes and list every action item (a task someone must do). Return only JSON, no code fence: {\"actions\": [{\"owner\": \"person in charge or empty\", \"task\": \"the task in Korean\", \"due\": \"due date as written or empty\"}]} Keep the order of the notes. Use only what the notes say: never invent an owner or a date. If there is no action item, return {\"actions\": []}.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "Actions model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        620
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Join results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        700,
+        300
+      ],
+      "parameters": {
+        "numberInputs": 2
+      }
+    },
+    {
+      "name": "Parse actions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Both LLM answers arrived. Parse the actions answer.\n// LLM output is text. Read it as JSON; if that fails, treat it as no actions. Then fill the blanks.\nconst raw = String($('Extract actions').first().json.output ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet data = {};\ntry { data = JSON.parse(raw); } catch (error) { data = {}; }\nconst actions = (Array.isArray(data.actions) ? data.actions : [])\n  .map(item => ({ owner: String(item?.owner ?? '').trim() || '미정', task: String(item?.task ?? '').trim(), due: String(item?.due ?? '').trim() || '미정' }))\n  .filter(item => item.task);\n\nreturn [{ json: { title: (String($('Meeting webhook').first().json.body.title ?? '').trim() || '회의'), summary: $('Summarize').first().json.output.trim(), count: actions.length, actions } }];"
+      }
+    },
+    {
+      "name": "Any actions?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1160,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.count > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "One item per action",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1380,
+        200
+      ],
+      "parameters": {
+        "fieldToSplitOut": "actions",
+        "options": {}
+      }
+    },
+    {
+      "name": "Mark check",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        200
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "owner",
+              "value": "={{ $json.owner }}",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "task",
+              "value": "={{ $json.task }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "due",
+              "value": "={{ $json.due }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "needs_check",
+              "value": "={{ $json.owner === '미정' || $json.due === '미정' }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Collect actions",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1820,
+        200
+      ],
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "actions",
+        "options": {}
+      }
+    },
+    {
+      "name": "Build report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2040,
+        200
+      ],
+      "parameters": {
+        "jsCode": "// One report: the summary, the checked actions and how many need a person to confirm.\nconst actions = $input.all().length && $input.first().json.actions ? $input.first().json.actions : [];\nconst parsed = $('Parse actions').first().json;\nreturn [{ json: { title: parsed.title, summary: parsed.summary, count: actions.length, actions,\n  needs_check_count: actions.filter(action => action.needs_check).length } }];"
+      }
+    },
+    {
+      "name": "No actions",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1600,
+        460
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "summary",
+              "value": "={{ $json.summary }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "count",
+              "value": 0,
+              "type": "number"
+            },
+            {
+              "id": "a3",
+              "name": "actions",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a4",
+              "name": "needs_check_count",
+              "value": 0,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2260,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Meeting webhook": {
+      "main": [
+        [
+          {
+            "node": "Has notes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has notes?": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract actions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actions model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extract actions",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Join results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract actions": {
+      "main": [
+        [
+          {
+            "node": "Join results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Join results": {
+      "main": [
+        [
+          {
+            "node": "Parse actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse actions": {
+      "main": [
+        [
+          {
+            "node": "Any actions?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any actions?": {
+      "main": [
+        [
+          {
+            "node": "One item per action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per action": {
+      "main": [
+        [
+          {
+            "node": "Mark check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark check": {
+      "main": [
+        [
+          {
+            "node": "Collect actions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect actions": {
+      "main": [
+        [
+          {
+            "node": "Build report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build report": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No actions": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
