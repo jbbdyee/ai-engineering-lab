@@ -1,0 +1,45 @@
+{
+  "webhook": "my-assistant",
+  "cases": [
+    {
+      "name": "회의록 Agent 꺼짐 · 복합 요청",
+      "request": "requests/composite.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "count": 3,
+          "results.0.route": "자동 답변",
+          "results.1.route": "담당자 연결"
+        },
+        "contains": {
+          "results.0.answer": [
+            "처리 중"
+          ],
+          "results.1.answer": [
+            "응답하지 않아"
+          ]
+        }
+      }
+    },
+    {
+      "name": "회의록 Agent 꺼짐 · 회의록만",
+      "request": "requests/meeting-only.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "results.0.route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "회의록 Agent 꺼짐 · IT는 그대로",
+      "request": "requests/it-only.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "results.0.route": "자동 답변"
+        }
+      }
+    }
+  ]
+}

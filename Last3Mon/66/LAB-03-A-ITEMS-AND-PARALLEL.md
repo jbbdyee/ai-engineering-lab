@@ -1,6 +1,6 @@
 # Lab 03 · 항목 하나씩 다루기, 두 갈래로 나누기, 어려운 회의록
 
-> **강사용 정답본** · 학생 저장소에 올리지 않습니다. 학생용 문제는 [LAB-03-Q-ITEMS-AND-PARALLEL.md](LAB-03-Q-ITEMS-AND-PARALLEL.md).
+> **정답본** · 수업이 끝난 뒤 공개합니다. 문제는 [LAB-03-Q-ITEMS-AND-PARALLEL.md](LAB-03-Q-ITEMS-AND-PARALLEL.md).
 > 요청문은 예시이며 CLI 에이전트로 보내 재지는 않았습니다. 결과 숫자는 정답 워크플로우를 2026-10-18에 1회씩 실행한 값입니다 (gpt-4.1-mini).
 
 ## 고치기 전 (Lab 02 과제 정답으로 잼)

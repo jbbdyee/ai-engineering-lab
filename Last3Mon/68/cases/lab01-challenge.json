@@ -1,0 +1,57 @@
+{
+  "webhook": "my-split",
+  "cases": [
+    {
+      "name": "복합 요청 · 담당 Agent",
+      "request": "requests/composite.json",
+      "expect": {
+        "equals": {
+          "count": 3,
+          "tasks.0.agent": "it-agent"
+        },
+        "contains": {
+          "tasks": [
+            "\"agent\": \"meeting-agent\""
+          ]
+        },
+        "not_contains": {
+          "tasks": [
+            "\"notes\""
+          ]
+        }
+      }
+    },
+    {
+      "name": "회의록 없는 회의 요청",
+      "request": "requests/meeting-no-notes.json",
+      "expect": {
+        "equals": {
+          "tasks.0.agent": "meeting-agent",
+          "tasks.0.missing": [
+            "notes"
+          ]
+        }
+      }
+    },
+    {
+      "name": "기타는 담당자 연결",
+      "request": "requests/other-only.json",
+      "expect": {
+        "equals": {
+          "tasks.0.agent": "담당자 연결",
+          "tasks.0.missing": []
+        }
+      }
+    },
+    {
+      "name": "IT · 입력 다 있음",
+      "request": "requests/it-only.json",
+      "expect": {
+        "equals": {
+          "tasks.0.agent": "it-agent",
+          "tasks.0.missing": []
+        }
+      }
+    }
+  ]
+}

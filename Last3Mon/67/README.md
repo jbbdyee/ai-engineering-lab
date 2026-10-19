@@ -55,7 +55,8 @@ Last3Mon/67/
 ├── LAB-02-Q-DATA-TOOLS.md          # 2단계 · 접수 현황 Tool → Tool이 받은 값 → 본인 접수 건만
 ├── LAB-03-Q-VERIFY-AND-FIX.md      # 3단계 · 테스트 읽기 → 검증·담당자 연결 → 어려운 테스트 쓰고 고치기
 ├── VIBE-Q-TMAN.md                  # 7교시 바이브 코딩 · tman (tldr + man TUI)
-├── *-A-*.md                        # 강사용 정답본 (요청문 · 실측 결과, 학생 저장소에는 없음)
+├── *-A-*.md                        # 정답본 (요청문 · 실측 결과, 수업이 끝난 뒤 공개)
+├── answers/                        # 과제 정답 워크플로우 · 케이스
 ├── tools/flow.py                 # doctor · check · push · call · test (uv run, 표준 라이브러리만)
 ├── cases/                        # 테스트 파일 (lab01 · lab01-challenge · lab02 · lab02-challenge · lab03)
 ├── requests/                     # 요청 9종 (question + user)

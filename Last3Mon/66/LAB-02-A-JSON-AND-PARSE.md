@@ -1,6 +1,6 @@
 # Lab 02 · LLM에게 JSON으로 받고, 코드로 읽기
 
-> **강사용 정답본** · 학생 저장소에 올리지 않습니다. 학생용 문제는 [LAB-02-Q-JSON-AND-PARSE.md](LAB-02-Q-JSON-AND-PARSE.md).
+> **정답본** · 수업이 끝난 뒤 공개합니다. 문제는 [LAB-02-Q-JSON-AND-PARSE.md](LAB-02-Q-JSON-AND-PARSE.md).
 > 요청문은 예시이며 CLI 에이전트로 보내 재지는 않았습니다. 결과 숫자는 정답 워크플로우를 2026-10-18에 1회씩 실행한 값입니다 (gpt-4.1-mini).
 
 ## 예제 1 + 2 · 요청문 예

@@ -1,0 +1,72 @@
+{
+  "webhook": "my-assistant",
+  "cases": [
+    {
+      "name": "회의록 없는 회의 요청",
+      "request": "requests/meeting-no-notes.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "count": 1,
+          "results.0.route": "입력 필요"
+        },
+        "contains": {
+          "reply": [
+            "회의록"
+          ]
+        }
+      }
+    },
+    {
+      "name": "IT 둘 · 둘 다 답",
+      "request": "requests/two-it.json",
+      "expect": {
+        "equals": {
+          "count": 2,
+          "results.0.route": "자동 답변",
+          "results.1.route": "자동 답변"
+        },
+        "contains": {
+          "results.0.answer": [
+            "비밀번호 찾기",
+            "휴대폰"
+          ],
+          "results.1.answer": [
+            "보관함",
+            "삭제"
+          ]
+        }
+      }
+    },
+    {
+      "name": "복합 요청 · 오류 없음",
+      "request": "requests/composite.json",
+      "expect": {
+        "equals": {
+          "count": 3
+        },
+        "not_contains": {
+          "results": [
+            "\"오류\""
+          ]
+        }
+      }
+    },
+    {
+      "name": "기타만",
+      "request": "requests/other-only.json",
+      "expect": {
+        "equals": {
+          "results.0.route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "빈 요청",
+      "request": "requests/empty-message.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

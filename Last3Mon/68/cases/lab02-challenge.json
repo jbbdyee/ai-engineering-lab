@@ -1,0 +1,73 @@
+{
+  "webhook": "my-supervisor",
+  "cases": [
+    {
+      "name": "복합 요청",
+      "request": "requests/composite.json",
+      "expect": {
+        "contains": {
+          "agents_used": [
+            "meeting-agent"
+          ],
+          "reply": [
+            "처리 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "IT 하나",
+      "request": "requests/it-only.json",
+      "expect": {
+        "equals": {
+          "agents_used": [
+            "it-agent"
+          ]
+        },
+        "contains": {
+          "reply": [
+            "인증서",
+            "VPN 클라이언트"
+          ]
+        }
+      }
+    },
+    {
+      "name": "회의록 정리",
+      "request": "requests/meeting-only.json",
+      "expect": {
+        "equals": {
+          "agents_used": [
+            "meeting-agent"
+          ]
+        },
+        "contains": {
+          "reply": [
+            "이준호"
+          ]
+        }
+      }
+    },
+    {
+      "name": "기타만 · Agent 안 부름",
+      "request": "requests/other-only.json",
+      "expect": {
+        "equals": {
+          "agents_used": []
+        },
+        "contains": {
+          "reply": [
+            "담당자"
+          ]
+        }
+      }
+    },
+    {
+      "name": "빈 요청",
+      "request": "requests/empty-message.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "webhook": "my-assistant",
+  "cases": [
+    {
+      "name": "복합 요청 · 3개 모두 답",
+      "request": "requests/composite.json",
+      "expect": {
+        "equals": {
+          "count": 3,
+          "results.0.route": "자동 답변",
+          "results.1.agent": "meeting-agent"
+        },
+        "contains": {
+          "results.0.answer": [
+            "처리 중"
+          ],
+          "results.1.answer": [
+            "이준호"
+          ],
+          "results.2.answer": [
+            "대기열",
+            "전원"
+          ]
+        }
+      }
+    },
+    {
+      "name": "IT 하나",
+      "request": "requests/it-only.json",
+      "expect": {
+        "equals": {
+          "count": 1,
+          "results.0.agent": "it-agent"
+        },
+        "contains": {
+          "reply": [
+            "인증서",
+            "VPN 클라이언트"
+          ]
+        }
+      }
+    },
+    {
+      "name": "회의록 정리",
+      "request": "requests/meeting-only.json",
+      "expect": {
+        "equals": {
+          "count": 1,
+          "results.0.agent": "meeting-agent"
+        },
+        "contains": {
+          "results.0.actions": [
+            "이준호"
+          ]
+        }
+      }
+    },
+    {
+      "name": "IT와 기타",
+      "request": "requests/it-and-other.json",
+      "expect": {
+        "equals": {
+          "count": 2,
+          "results.1.route": "담당자 연결"
+        },
+        "contains": {
+          "results.0.answer": [
+            "대기열",
+            "전원"
+          ]
+        }
+      }
+    },
+    {
+      "name": "기타만 · Agent 안 부름",
+      "request": "requests/other-only.json",
+      "expect": {
+        "equals": {
+          "count": 1,
+          "results.0.route": "담당자 연결",
+          "results.0.agent": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "빈 요청",
+      "request": "requests/empty-message.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}
