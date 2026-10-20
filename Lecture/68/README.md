@@ -37,3 +37,4 @@ flowchart LR
 | `02-STAGE2-MULTI-AGENT-DESIGN.md` | Agent 계약, 라우터 · 파이프라인 · Fork-Join · Supervisor, 라우터 구현, Supervisor와 비교 |
 | `03-STAGE3-VERIFY-AND-SCALE.md` | Multi-Agent 테스트, 빠진 입력, 장애 격리(`neverError`, 대체 답), 측정, 수직·수평 확장 |
 | `04-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tflow), 발표, 강사 정리, 추가 바이브 코딩, 팁 |
+| `CONCEPT-68.md` | 개념 정리: LLM · Tool · Agent · Agent 워크플로우 · 라우터 · Supervisor (누가 다음 갈 곳을 정하나) |
