@@ -1,0 +1,674 @@
+{
+  "name": "69 Notice team (reference · Lab 03 example 2)",
+  "nodes": [
+    {
+      "name": "Notice webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-notice",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has facts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.body.facts }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        520
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"facts are required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Write draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-writer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ request: $('Notice webhook').first().json.body.request, facts: $('Notice webhook').first().json.body.facts }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Review draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-reviewer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ facts: $('Notice webhook').first().json.body.facts, draft: $json.draft }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Reviewed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ typeof $json.passed === 'boolean' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Review unavailable",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1080,
+        560
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "담당자 확인",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "reason",
+              "value": "검토자가 응답하지 않아 게시하지 않습니다.",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "notice",
+              "value": "={{ $('Write draft').first().json.draft ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "codes",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a5",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.passed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Approved",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        160
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "게시 가능",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "rounds",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "a3",
+              "name": "notice",
+              "value": "={{ $('Write draft').first().json.draft }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "codes",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a5",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Revise draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-writer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ request: $('Notice webhook').first().json.body.request, facts: $('Notice webhook').first().json.body.facts, previous_draft: $('Write draft').first().json.draft, feedback: $('Review draft').first().json.issues.map(i => i.code + ': ' + i.detail).join('\\n') }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Review again",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-reviewer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ facts: $('Notice webhook').first().json.body.facts, draft: $json.draft }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Passed again?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1740,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.passed === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Approved after revision",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1960,
+        300
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "수정 후 게시 가능",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "rounds",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "a3",
+              "name": "notice",
+              "value": "={{ $('Revise draft').first().json.draft }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "codes",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a5",
+              "name": "first_codes",
+              "value": "={{ $('Review draft').first().json.codes }}",
+              "type": "array"
+            },
+            {
+              "id": "a6",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\", \"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Needs person",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1960,
+        520
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "담당자 확인",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "rounds",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "a3",
+              "name": "notice",
+              "value": "={{ $('Revise draft').first().json.draft ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "codes",
+              "value": "={{ $json.codes ?? [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a5",
+              "name": "first_codes",
+              "value": "={{ $('Review draft').first().json.codes }}",
+              "type": "array"
+            },
+            {
+              "id": "a6",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\", \"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2600,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Notice webhook": {
+      "main": [
+        [
+          {
+            "node": "Has facts?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has facts?": {
+      "main": [
+        [
+          {
+            "node": "Write draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write draft": {
+      "main": [
+        [
+          {
+            "node": "Review draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review draft": {
+      "main": [
+        [
+          {
+            "node": "Reviewed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reviewed?": {
+      "main": [
+        [
+          {
+            "node": "Passed?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Review unavailable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Passed?": {
+      "main": [
+        [
+          {
+            "node": "Approved",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Revise draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revise draft": {
+      "main": [
+        [
+          {
+            "node": "Review again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review again": {
+      "main": [
+        [
+          {
+            "node": "Passed again?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Passed again?": {
+      "main": [
+        [
+          {
+            "node": "Approved after revision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs person": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review unavailable": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved after revision": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

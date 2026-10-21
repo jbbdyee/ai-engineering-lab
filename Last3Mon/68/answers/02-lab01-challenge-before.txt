@@ -1,0 +1,77 @@
+POST http://localhost:5678/webhook/my-split · 4 case(s) × 1
+✘ 복합 요청 · 담당 Agent · 1.3s · tasks.0.agent = null (expected it-agent); tasks has none of ['"agent": "meeting-agent"']
+    → request  POST /webhook/my-split
+      {
+        "message": "T-1002 처리 상태 알려주고, 첨부한 회의록에서 할 일도 정리해줘. 그리고 프린터 출력이 안 돼요.",
+        "user": "박서연",
+        "title": "10월 16일 주간 회의",
+        "notes": "참석: 김민지, 이준호, 박서연. 1) 신규 고객 문의 응답 템플릿을 이준호가 금요일까지 정리한다. 2) 박서연은 다음 주 월요일까지 VPN 장애 보고서를 작성한다. 3) 서버 점검 일정은 김민지가 오늘 중 공지한다. 4) 회의실 예약 규칙 개선은 담당자를 다음 회의에서 정한다. 다음 회의는 10월 23일."
+      }
+    ← response HTTP 200
+      {
+        "count": 3,
+        "tasks": [
+          {
+            "type": "it",
+            "text": "T-1002 처리 상태 알려줘"
+          },
+          {
+            "type": "meeting",
+            "text": "첨부한 회의록에서 할 일 정리"
+          },
+          {
+            "type": "it",
+            "text": "프린터 출력이 안 돼요"
+          }
+        ]
+      }
+✘ 회의록 없는 회의 요청 · 1.6s · tasks.0.agent = null (expected meeting-agent); tasks.0.missing = null (expected ["notes"])
+    → request  POST /webhook/my-split
+      {
+        "message": "이번 회의록 할 일 정리 부탁해요",
+        "user": "김민지"
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "tasks": [
+          {
+            "type": "meeting",
+            "text": "이번 회의록 할 일 정리 부탁해요"
+          }
+        ]
+      }
+✘ 기타는 담당자 연결 · 1.1s · tasks.0.agent = null (expected 담당자 연결); tasks.0.missing = null (expected [])
+    → request  POST /webhook/my-split
+      {
+        "message": "다음 주 회식 장소 추천해 주세요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "tasks": [
+          {
+            "type": "other",
+            "text": "다음 주 회식 장소 추천해 주세요"
+          }
+        ]
+      }
+✘ IT · 입력 다 있음 · 1.1s · tasks.0.agent = null (expected it-agent); tasks.0.missing = null (expected [])
+    → request  POST /webhook/my-split
+      {
+        "message": "VPN이 계속 끊겨요. 어떻게 해야 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "tasks": [
+          {
+            "type": "it",
+            "text": "VPN이 계속 끊겨요. 어떻게 해야 하나요?"
+          }
+        ]
+      }
+Passed 0/4
+report: runs/lab01-challenge-20261020-230705.json

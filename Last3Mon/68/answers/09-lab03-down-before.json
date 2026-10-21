@@ -1,0 +1,81 @@
+{
+  "cases": "lab03-down.json",
+  "webhook": "my-assistant",
+  "passed": 1,
+  "total": 3,
+  "results": [
+    {
+      "case": "회의록 Agent 꺼짐 · 복합 요청",
+      "webhook": "my-assistant",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 500 (expected 200)",
+        "count = null (expected 3)",
+        "results.0.route = null (expected 자동 답변)",
+        "results.1.route = null (expected 담당자 연결)",
+        "results.0.answer has none of ['처리 중']",
+        "results.1.answer has none of ['응답하지 않아']"
+      ],
+      "seconds": 5.6,
+      "status": 500,
+      "request": {
+        "message": "T-1002 처리 상태 알려주고, 첨부한 회의록에서 할 일도 정리해줘. 그리고 프린터 출력이 안 돼요.",
+        "user": "박서연",
+        "title": "10월 16일 주간 회의",
+        "notes": "참석: 김민지, 이준호, 박서연. 1) 신규 고객 문의 응답 템플릿을 이준호가 금요일까지 정리한다. 2) 박서연은 다음 주 월요일까지 VPN 장애 보고서를 작성한다. 3) 서버 점검 일정은 김민지가 오늘 중 공지한다. 4) 회의실 예약 규칙 개선은 담당자를 다음 회의에서 정한다. 다음 회의는 10월 23일."
+      },
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "회의록 Agent 꺼짐 · 회의록만",
+      "webhook": "my-assistant",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 500 (expected 200)",
+        "results.0.route = null (expected 담당자 연결)"
+      ],
+      "seconds": 1.4,
+      "status": 500,
+      "request": {
+        "message": "이번 회의록 할 일 정리 부탁해요",
+        "user": "김민지",
+        "title": "10월 16일 주간 회의",
+        "notes": "참석: 김민지, 이준호, 박서연. 1) 신규 고객 문의 응답 템플릿을 이준호가 금요일까지 정리한다. 2) 박서연은 다음 주 월요일까지 VPN 장애 보고서를 작성한다. 3) 서버 점검 일정은 김민지가 오늘 중 공지한다. 4) 회의실 예약 규칙 개선은 담당자를 다음 회의에서 정한다. 다음 회의는 10월 23일."
+      },
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "회의록 Agent 꺼짐 · IT는 그대로",
+      "webhook": "my-assistant",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.0,
+      "status": 200,
+      "request": {
+        "message": "VPN이 계속 끊겨요. 어떻게 해야 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "count": 1,
+        "results": [
+          {
+            "index": 1,
+            "type": "it",
+            "text": "VPN이 계속 끊겨요. 어떻게 해야 하나요?",
+            "agent": "it-agent",
+            "route": "자동 답변",
+            "answer": "VPN이 계속 끊길 경우, VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다."
+          }
+        ],
+        "reply": "1. VPN이 계속 끊겨요. 어떻게 해야 하나요?\n   → [자동 답변] VPN이 계속 끊길 경우, VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다."
+      }
+    }
+  ]
+}

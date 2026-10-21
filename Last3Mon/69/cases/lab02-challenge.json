@@ -1,0 +1,68 @@
+{
+  "webhook": "my-notice",
+  "cases": [
+    {
+      "name": "메일 점검 · 제목과 메신저",
+      "request": "requests/notice-mail.json",
+      "expect": {
+        "equals": {
+          "published": true
+        },
+        "contains": {
+          "title": [
+            "점검"
+          ],
+          "chat": [
+            "10월 23일"
+          ]
+        },
+        "not_contains": {
+          "chat": [
+            "쿠폰"
+          ]
+        }
+      }
+    },
+    {
+      "name": "VPN · 메신저에 마감일",
+      "request": "requests/notice-vpn.json",
+      "expect": {
+        "contains": {
+          "chat": [
+            "10월 24일"
+          ],
+          "title": [
+            "VPN",
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "고쳐서 게시 · 메신저에도 연락처 없음",
+      "request": "requests/notice-phone.json",
+      "expect": {
+        "equals": {
+          "published": true
+        },
+        "not_contains": {
+          "chat": [
+            "010-1234-5678",
+            "minji.kim@example.com"
+          ],
+          "notice": [
+            "010-1234-5678",
+            "minji.kim@example.com"
+          ]
+        }
+      }
+    },
+    {
+      "name": "사실 없음",
+      "request": "requests/notice-empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

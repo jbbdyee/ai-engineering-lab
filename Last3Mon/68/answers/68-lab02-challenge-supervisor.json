@@ -1,0 +1,301 @@
+{
+  "name": "answer · 68 Lab 02 challenge (supervisor)",
+  "nodes": [
+    {
+      "name": "Assistant webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-supervisor",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        520
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"message is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Supervisor agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Assistant webhook').first().json.body.message }}",
+        "options": {
+          "systemMessage": "You are the company office assistant supervisor. You do not answer IT or meeting questions yourself. For each IT problem or IT ticket status question in the message, call Ask_IT_agent once with that one question in Korean. If the employee asks to organize meeting notes or action items, call Ask_meeting_agent once. For anything else (food, parties, personal advice), do not call a tool and answer exactly \"그 요청은 담당자에게 전달했습니다.\" Then answer in Korean, one short paragraph per task, using only the tool results. Keep names, dates and ticket status exactly as the tools wrote them.",
+          "maxIterations": 6,
+          "returnIntermediateSteps": true
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Ask IT agent",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        520
+      ],
+      "parameters": {
+        "toolDescription": "Ask the company IT agent one IT question (password, account, VPN, printer, mail, software, or the status of a ticket like T-1002). Input: one question in Korean.",
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/it-agent",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "question",
+              "value": "={{ $fromAI('question', 'One IT question in Korean', 'string') }}"
+            },
+            {
+              "name": "user",
+              "value": "={{ $('Assistant webhook').first().json.body.user }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Ask meeting agent",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        520
+      ],
+      "parameters": {
+        "toolDescription": "Ask the meeting agent to list the action items of the meeting notes attached to this request. Input: what the employee asked, in Korean.",
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/meeting-agent",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "request",
+              "value": "={{ $fromAI('request', 'What the employee asked about the meeting, in Korean', 'string') }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ $('Assistant webhook').first().json.body.title }}"
+            },
+            {
+              "name": "notes",
+              "value": "={{ $('Assistant webhook').first().json.body.notes }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Build reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        760,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Which agents did the supervisor call, and what did they answer?\nconst steps = $json.intermediateSteps ?? [];\nconst NAMES = { Ask_IT_agent: 'it-agent', Ask_meeting_agent: 'meeting-agent' };\nconst calls = steps.map(step => ({ agent: NAMES[step.action?.tool] ?? step.action?.tool, input: step.action?.toolInput ?? {} }));\nconst agentsUsed = [...new Set(calls.map(call => call.agent).filter(Boolean))];\nreturn [{ json: { reply: String($json.output ?? '').trim(), agents_used: agentsUsed, calls: calls.length } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        980,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Assistant webhook": {
+      "main": [
+        [
+          {
+            "node": "Has message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has message?": {
+      "main": [
+        [
+          {
+            "node": "Supervisor agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Supervisor agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask IT agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask meeting agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supervisor agent": {
+      "main": [
+        [
+          {
+            "node": "Build reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build reply": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

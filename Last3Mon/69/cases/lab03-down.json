@@ -1,0 +1,31 @@
+{
+  "webhook": "my-notice",
+  "cases": [
+    {
+      "name": "검토자 꺼짐 · 게시하지 않음",
+      "request": "requests/notice-mail.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "published": false,
+          "route": "담당자 확인"
+        },
+        "contains": {
+          "reason": [
+            "검토자"
+          ]
+        }
+      }
+    },
+    {
+      "name": "검토자 꺼짐 · 연락처 공지도",
+      "request": "requests/notice-phone.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "published": false
+        }
+      }
+    }
+  ]
+}

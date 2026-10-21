@@ -125,7 +125,7 @@ flowchart LR
 
 | 순서 | 할 일 | 확인 |
 | --- | --- | --- |
-| 예제 1 (20분) | 빠진 입력이면 Agent를 부르지 않고 `입력 필요` | `push my-work/assistant.json` → `test cases/lab03.json` |
+| 예제 1 (20분) | `requests/meeting-no-notes.json`(회의록 없음) 하나로 시작: 빠진 입력이면 Agent를 부르지 않고 `입력 필요` | `push my-work/assistant.json` → `call my-assistant requests/meeting-no-notes.json` · `call meeting-agent requests/meeting-no-notes.json` → `test cases/lab03.json` |
 | 예제 2 (20분) | 회의록 Agent를 끄고도 나머지 업무는 답하게 | `off agents/meeting-agent.json` → `test cases/lab03-down.json`, 고친 뒤 **다시 켜기** `push agents/meeting-agent.json` → `test cases/lab02.json`, `test cases/lab03.json` |
 | 과제 (40분, 6교시) | 어려운 요청 5개 이상 `cases/my-cases.json`, 통과시키기, 사람이 몰릴 때의 확장 계획을 숫자로 (`DESIGN.md` 5·6절) | `test cases/my-cases.json --repeat 3`, `test cases/lab03.json`, `test cases/lab02.json` |
 

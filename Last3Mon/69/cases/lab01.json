@@ -1,0 +1,62 @@
+{
+  "webhook": "my-writer",
+  "cases": [
+    {
+      "name": "메일 점검 · 날짜 그대로",
+      "request": "requests/notice-mail.json",
+      "expect": {
+        "contains": {
+          "draft": [
+            "10월 23일"
+          ]
+        },
+        "not_contains": {
+          "draft": [
+            "쿠폰",
+            "보상"
+          ]
+        }
+      }
+    },
+    {
+      "name": "메일 점검 · 시간 그대로",
+      "request": "requests/notice-mail.json",
+      "expect": {
+        "contains": {
+          "draft": [
+            "22:00"
+          ]
+        }
+      }
+    },
+    {
+      "name": "VPN · 마감일",
+      "request": "requests/notice-vpn.json",
+      "expect": {
+        "contains": {
+          "draft": [
+            "10월 24일"
+          ]
+        }
+      }
+    },
+    {
+      "name": "VPN · 제목 줄",
+      "request": "requests/notice-vpn.json",
+      "expect": {
+        "contains": {
+          "draft": [
+            "["
+          ]
+        }
+      }
+    },
+    {
+      "name": "사실 없음",
+      "request": "requests/notice-empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "webhook": "my-reviewer",
+  "cases": [
+    {
+      "name": "좋은 초안",
+      "request": "requests/review-good.json",
+      "expect": {
+        "equals": {
+          "passed": true,
+          "codes": []
+        }
+      }
+    },
+    {
+      "name": "시간 빠짐",
+      "request": "requests/review-missing-time.json",
+      "expect": {
+        "equals": {
+          "passed": false,
+          "codes": [
+            "missing_fact"
+          ]
+        }
+      }
+    },
+    {
+      "name": "전화번호",
+      "request": "requests/review-personal-info.json",
+      "expect": {
+        "equals": {
+          "passed": false,
+          "codes": [
+            "personal_info"
+          ]
+        }
+      }
+    },
+    {
+      "name": "사실에 없는 약속",
+      "request": "requests/review-added-promise.json",
+      "expect": {
+        "equals": {
+          "passed": false,
+          "codes": [
+            "unsupported_claim"
+          ]
+        }
+      }
+    },
+    {
+      "name": "너무 김",
+      "request": "requests/review-too-long.json",
+      "expect": {
+        "equals": {
+          "passed": false
+        },
+        "contains": {
+          "codes": [
+            "too_long"
+          ]
+        }
+      }
+    },
+    {
+      "name": "초안 없음",
+      "request": "requests/review-empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

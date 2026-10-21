@@ -1,0 +1,149 @@
+POST http://localhost:5678/webhook/my-split · 7 case(s) × 1
+✔ 복합 요청 · 업무 3개 · 1.5s
+    → request  POST /webhook/my-split
+      {
+        "message": "T-1002 처리 상태 알려주고, 첨부한 회의록에서 할 일도 정리해줘. 그리고 프린터 출력이 안 돼요.",
+        "user": "박서연",
+        "title": "10월 16일 주간 회의",
+        "notes": "참석: 김민지, 이준호, 박서연. 1) 신규 고객 문의 응답 템플릿을 이준호가 금요일까지 정리한다. 2) 박서연은 다음 주 월요일까지 VPN 장애 보고서를 작성한다. 3) 서버 점검 일정은 김민지가 오늘 중 공지한다. 4) 회의실 예약 규칙 개선은 담당자를 다음 회의에서 정한다. 다음 회의는 10월 23일."
+      }
+    ← response HTTP 200
+      {
+        "count": 3,
+        "tasks": [
+          {
+            "type": "it",
+            "text": "T-1002 처리 상태 알려줘",
+            "agent": "it-agent",
+            "missing": []
+          },
+          {
+            "type": "meeting",
+            "text": "첨부한 회의록에서 할 일 정리",
+            "agent": "meeting-agent",
+            "missing": []
+          },
+          {
+            "type": "it",
+            "text": "프린터 출력이 안 돼요",
+            "agent": "it-agent",
+            "missing": []
+          }
+        ]
+      }
+✔ IT 하나 · 1.1s
+    → request  POST /webhook/my-split
+      {
+        "message": "VPN이 계속 끊겨요. 어떻게 해야 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "tasks": [
+          {
+            "type": "it",
+            "text": "VPN이 계속 끊겨요. 어떻게 해야 하나요?",
+            "agent": "it-agent",
+            "missing": []
+          }
+        ]
+      }
+✔ IT 둘 · 1.5s
+    → request  POST /webhook/my-split
+      {
+        "message": "비밀번호를 잊어버렸어요. 그리고 메일함 용량이 꽉 찼다고 나와요.",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "count": 2,
+        "tasks": [
+          {
+            "type": "it",
+            "text": "비밀번호를 잊어버렸어요.",
+            "agent": "it-agent",
+            "missing": []
+          },
+          {
+            "type": "it",
+            "text": "메일함 용량이 꽉 찼다고 나와요.",
+            "agent": "it-agent",
+            "missing": []
+          }
+        ]
+      }
+✔ 회의록 정리 · 1.0s
+    → request  POST /webhook/my-split
+      {
+        "message": "이번 회의록 할 일 정리 부탁해요",
+        "user": "김민지",
+        "title": "10월 16일 주간 회의",
+        "notes": "참석: 김민지, 이준호, 박서연. 1) 신규 고객 문의 응답 템플릿을 이준호가 금요일까지 정리한다. 2) 박서연은 다음 주 월요일까지 VPN 장애 보고서를 작성한다. 3) 서버 점검 일정은 김민지가 오늘 중 공지한다. 4) 회의실 예약 규칙 개선은 담당자를 다음 회의에서 정한다. 다음 회의는 10월 23일."
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "tasks": [
+          {
+            "type": "meeting",
+            "text": "이번 회의록 할 일 정리 부탁해요",
+            "agent": "meeting-agent",
+            "missing": []
+          }
+        ]
+      }
+✔ IT와 기타 · 1.2s
+    → request  POST /webhook/my-split
+      {
+        "message": "프린터 출력이 안 돼요. 그리고 다음 주 회식 장소도 추천해 주세요.",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "count": 2,
+        "tasks": [
+          {
+            "type": "it",
+            "text": "프린터 출력이 안 돼요.",
+            "agent": "it-agent",
+            "missing": []
+          },
+          {
+            "type": "other",
+            "text": "다음 주 회식 장소도 추천해 주세요.",
+            "agent": "담당자 연결",
+            "missing": []
+          }
+        ]
+      }
+✔ 기타만 · 1.1s
+    → request  POST /webhook/my-split
+      {
+        "message": "다음 주 회식 장소 추천해 주세요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "tasks": [
+          {
+            "type": "other",
+            "text": "다음 주 회식 장소 추천해 주세요",
+            "agent": "담당자 연결",
+            "missing": []
+          }
+        ]
+      }
+✔ 빈 요청 · 0.0s
+    → request  POST /webhook/my-split
+      {
+        "message": "",
+        "user": "이준호"
+      }
+    ← response HTTP 400
+      {
+        "error": "message is required"
+      }
+Passed 7/7
+report: runs/lab01-20261020-230732.json

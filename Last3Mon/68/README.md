@@ -40,7 +40,7 @@ flowchart LR
 ## 실습 문서 읽는 법
 
 - 실습 문서(`LAB-0x-Q-*.md`, `VIBE-Q-TFLOW.md`)에는 **복사해 붙일 요청문이 없습니다.** 만들 것 · 조건 · 기대 결과만 있고, 요청문은 직접 씁니다.
-- 바이브 코딩은 **요청서(`VIBE-REQ-TFLOW.md`)부터** 읽고 요구(`SPEC.md`)를 직접 뽑은 뒤 `VIBE-Q-TFLOW.md`와 비교합니다. 정답본 `VIBE-A-TFLOW.md`는 수업이 끝나면 올라옵니다.
+- 바이브 코딩은 **요청서(`VIBE-REQ-TFLOW.md`)부터** 읽고 요구(`SPEC.md`)를 직접 뽑은 뒤 `VIBE-Q-TFLOW.md`와 비교합니다. 정답본 `VIBE-A-TFLOW.md`도 올라와 있습니다 (수업 뒤 공개).
 - 막히면 `▶` 를 하나씩 펼칩니다. 뒤로 갈수록 구체적이 되지만 정답 요청문은 나오지 않습니다.
 - 쓴 요청문은 `my-work/PROMPTS.md`에 모아 두고, 수업 끝에 옆 사람과 비교합니다.
 
@@ -55,7 +55,8 @@ Last3Mon/68/
 ├── LAB-03-Q-VERIFY-AND-ISOLATE.md   # 3단계 · 입력 부족 → Agent 장애 격리 → 어려운 테스트 · 확장 계획
 ├── VIBE-REQ-TFLOW.md                # 7교시 바이브 코딩 · 요청서 (가장 먼저, 여기서 SPEC.md를 뽑음)
 ├── VIBE-Q-TFLOW.md                  # 7교시 바이브 코딩 · tflow 요구 · 단계 (SPEC과 비교)
-├── *-A-*.md                         # 정답본 (VIBE-A는 수업이 끝난 뒤 올라옴, LAB-A는 아직 없음)
+├── *-A-*.md                         # 정답본 (수업 뒤 공개)
+├── answers/                         # 과제 정답 워크플로우 · 케이스
 ├── agents/                          # 이미 만든 Agent: it-agent (67일차), meeting-agent (66일차)
 ├── tools/flow.py                    # doctor · check · push · off · call · test
 ├── cases/                           # lab01 · lab01-challenge · lab02 · lab02-challenge · lab03 · lab03-down

@@ -1,0 +1,52 @@
+{
+  "webhook": "my-notice",
+  "cases": [
+    {
+      "name": "한 번에 통과 · 기록",
+      "request": "requests/notice-mail.json",
+      "expect": {
+        "equals": {
+          "rounds": 1,
+          "steps": [
+            "writer",
+            "reviewer"
+          ]
+        }
+      }
+    },
+    {
+      "name": "고쳐서 통과 · 기록",
+      "request": "requests/notice-phone.json",
+      "expect": {
+        "equals": {
+          "rounds": 2,
+          "route": "수정 후 게시 가능",
+          "steps": [
+            "writer",
+            "reviewer",
+            "writer",
+            "reviewer"
+          ]
+        },
+        "contains": {
+          "first_codes": [
+            "personal_info"
+          ]
+        },
+        "not_contains": {
+          "notice": [
+            "010-1234-5678",
+            "minji.kim@example.com"
+          ]
+        }
+      }
+    },
+    {
+      "name": "사실 없음",
+      "request": "requests/notice-empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}
