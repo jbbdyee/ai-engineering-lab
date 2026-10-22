@@ -1,0 +1,94 @@
+POST http://localhost:5678/webhook/my-rule-check-v2 · 5 case(s) × 1
+✔ v2 · 길이는 경고 · 0.1s
+    → request  POST /webhook/my-rule-check-v2
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.",
+        "max_length": 80,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": true,
+        "blocking": [],
+        "warnings": [
+          "too_long"
+        ],
+        "issues": [
+          {
+            "code": "too_long",
+            "detail": "82자 (80자 이하)"
+          }
+        ],
+        "version": 2
+      }
+✔ v2 · 전화번호는 막음 · 0.1s
+    → request  POST /webhook/my-rule-check-v2
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.\n문의: 010-1234-5678",
+        "max_length": 600,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": false,
+        "blocking": [
+          "personal_info"
+        ],
+        "warnings": [],
+        "issues": [
+          {
+            "code": "personal_info",
+            "detail": "010-1234-5678"
+          }
+        ],
+        "version": 2
+      }
+✔ 키트(v2) · 점검 · 1.3s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "maintenance",
+        "request": "메일 서버 점검 공지",
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨."
+      }
+    ← response HTTP 200
+      {
+        "kind": "maintenance",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[점검 안내] 메일 서버 점검 안내\n\n10월 23일(목) 22:00~24:00 메일 서버 점검이 진행됩니다.  \n점검 중에는 메일을 보내고 받을 수 없습니다.  \n점검이 끝나면 메일 프로그램을 다시 열어 주시기 바랍니다.  \n이용에 불편을 드려 죄송합니다.",
+        "blocking": [],
+        "warnings": [],
+        "codes": []
+      }
+✔ 키트(v2) · 보안 · 1.8s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "security",
+        "request": "피싱 주의 공지",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      }
+    ← response HTTP 200
+      {
+        "kind": "security",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[보안 안내] IT팀 사칭 피싱 메일 주의\n\n10월 28일(화)부터 IT팀을 사칭한 피싱 메일이 증가하고 있습니다.  \n링크를 절대 누르지 마시고 메일을 삭제해 주세요.  \n의심스러운 메일은 IT 포털 '신고' 메뉴에서 신고 바랍니다.  \nIT팀은 절대 비밀번호를 묻지 않습니다.  \n보안팀에 즉시 신고해 주시기 바랍니다.",
+        "blocking": [],
+        "warnings": [],
+        "codes": []
+      }
+✔ SMS는 v1 그대로 · 1.3s
+    → request  POST /webhook/my-sms
+      {
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      }
+    ← response HTTP 200
+      {
+        "sms": "10월 28일부터 IT팀 사칭 피싱 메일 증가, 링크 클릭 금지 및 보안팀 신고 바랍니다.",
+        "published": true,
+        "codes": []
+      }
+Passed 5/5
+report: runs/lab03-v2-20261021-182605.json

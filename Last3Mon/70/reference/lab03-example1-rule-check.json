@@ -1,0 +1,70 @@
+{
+  "id": "modRuleCheck01",
+  "name": "70 Module · Rule check v1.1 (reference · Lab 03 example 1)",
+  "nodes": [
+    {
+      "name": "When called by another workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "workflowInputs",
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "facts",
+              "type": "string"
+            },
+            {
+              "name": "draft",
+              "type": "string"
+            },
+            {
+              "name": "max_length",
+              "type": "number"
+            },
+            {
+              "name": "required_phrases",
+              "type": "array"
+            },
+            {
+              "name": "allowed_domains",
+              "type": "array"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Rule checks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Rule checks. Same answer every time, so code, not the LLM.\nconst facts = String($json.facts ?? '');\nconst draft = String($json.draft ?? '');\nconst maxLength = Number($json.max_length ?? 600);\nconst required = Array.isArray($json.required_phrases) ? $json.required_phrases : [];\nconst squeeze = text => text.replace(/\\s+/g, '');\nconst tokens = [...new Set(facts.match(/\\d{1,2}월\\s?\\d{1,2}일|\\d{1,2}:\\d{2}/g) ?? [])];\nconst issues = [];\nconst missing = tokens.filter(token => !squeeze(draft).includes(squeeze(token)));\nif (missing.length) issues.push({ code: 'missing_fact', detail: missing.join(', ') });\nconst personal = draft.match(/01[016789]-?\\d{3,4}-?\\d{4}|[\\w.+-]+@[\\w-]+\\.[\\w.]+/g) ?? [];\nif (personal.length) issues.push({ code: 'personal_info', detail: personal.join(', ') });\nif (draft.length > maxLength) issues.push({ code: 'too_long', detail: `${draft.length}자 (${maxLength}자 이하)` });\nconst absent = required.filter(phrase => !squeeze(draft).includes(squeeze(String(phrase))));\nif (absent.length) issues.push({ code: 'missing_phrase', detail: absent.join(' / ') });\nconst allowed = Array.isArray($json.allowed_domains) && $json.allowed_domains.length ? $json.allowed_domains : ['intra.example.com'];\nconst links = draft.match(/https?:\\/\\/[^\\s)]+/g) ?? [];\n// Host name by text (the Code sandbox has no URL class).\nconst host = url => url.replace(/^https?:\\/\\//, '').split(/[\\/?#:]/)[0].toLowerCase();\nconst outside = links.filter(url => !allowed.includes(host(url)));\nif (outside.length) issues.push({ code: 'external_link', detail: outside.join(', ') });\nreturn [{ json: { passed: issues.length === 0, codes: issues.map(issue => issue.code), issues } }];"
+      }
+    }
+  ],
+  "connections": {
+    "When called by another workflow": {
+      "main": [
+        [
+          {
+            "node": "Rule checks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

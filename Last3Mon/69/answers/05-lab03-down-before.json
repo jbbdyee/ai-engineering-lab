@@ -1,0 +1,50 @@
+{
+  "cases": "lab03-down.json",
+  "webhook": "my-notice",
+  "passed": 0,
+  "total": 2,
+  "results": [
+    {
+      "case": "검토자 꺼짐 · 게시하지 않음",
+      "webhook": "my-notice",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 500 (expected 200)",
+        "published = null (expected false)",
+        "route = null (expected 담당자 확인)",
+        "reason has none of ['검토자']"
+      ],
+      "seconds": 3.1,
+      "status": 500,
+      "request": {
+        "request": "메일 서버 점검 공지를 써 주세요",
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "author": "김민지"
+      },
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "검토자 꺼짐 · 연락처 공지도",
+      "webhook": "my-notice",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 500 (expected 200)",
+        "published = null (expected false)"
+      ],
+      "seconds": 2.0,
+      "status": 500,
+      "request": {
+        "request": "프린터 드라이버 업데이트 공지를 써 주세요. 문의처 연락처도 꼭 넣어 주세요.",
+        "facts": "10월 30일(목) 18:00~19:00 사내 프린터 드라이버 일괄 업데이트. 업데이트 중에는 출력이 안 됨. 문의는 IT팀 김민지(010-1234-5678, minji.kim@example.com).",
+        "author": "김민지"
+      },
+      "response": {
+        "message": "Error in workflow"
+      }
+    }
+  ]
+}

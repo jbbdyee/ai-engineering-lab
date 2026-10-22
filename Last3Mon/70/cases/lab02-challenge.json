@@ -1,0 +1,53 @@
+{
+  "webhook": "my-sms",
+  "cases": [
+    {
+      "name": "보안 SMS",
+      "request": "requests/sms-security.json",
+      "expect": {
+        "equals": {
+          "published": true,
+          "codes": []
+        },
+        "contains": {
+          "sms": [
+            "10월 28일"
+          ]
+        }
+      }
+    },
+    {
+      "name": "점검 SMS · 시간",
+      "request": "requests/sms-maintenance.json",
+      "expect": {
+        "equals": {
+          "published": true,
+          "codes": []
+        },
+        "contains": {
+          "sms": [
+            "22:00"
+          ]
+        }
+      }
+    },
+    {
+      "name": "연락처가 든 사실",
+      "request": "requests/sms-phone.json",
+      "expect": {
+        "not_contains": {
+          "sms": [
+            "010-1234-5678"
+          ]
+        }
+      }
+    },
+    {
+      "name": "사실 없음",
+      "request": "requests/sms-empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

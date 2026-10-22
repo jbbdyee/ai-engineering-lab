@@ -1,0 +1,118 @@
+POST http://localhost:5678/webhook/my-notice-kit · 7 case(s) × 1
+✔ 종류에 대문자·공백 · 3.1s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": " Security ",
+        "request": "피싱 주의",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      }
+    ← response HTTP 200
+      {
+        "kind": "security",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[보안 안내] IT팀 사칭 피싱 메일 주의\n\n10월 28일(화)부터 IT팀을 사칭한 피싱 메일이 증가하고 있습니다.  \n링크를 절대 누르지 마시고 메일을 삭제해 주세요.  \n의심스러운 메일은 IT 포털 '신고' 메뉴에서 신고 바랍니다.  \nIT팀은 절대 비밀번호를 묻지 않습니다.  \n보안팀에 즉시 신고해 주시기 바랍니다.",
+        "blocking": [],
+        "warnings": [],
+        "codes": []
+      }
+✔ 한국어 종류 이름 · 1.6s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "보안",
+        "request": "피싱 주의",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      }
+    ← response HTTP 200
+      {
+        "kind": "security",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[보안 안내] IT팀 사칭 피싱 메일 주의\n\n10월 28일(화)부터 IT팀을 사칭한 피싱 메일이 증가하고 있습니다.  \n링크를 절대 누르지 말고 메일을 삭제해 주세요.  \n의심스러운 메일은 IT 포털 '신고' 메뉴에서 신고 바랍니다.  \nIT팀은 절대 비밀번호를 묻지 않습니다.  \n보안팀에 즉시 신고해 주시기 바랍니다.",
+        "blocking": [],
+        "warnings": [],
+        "codes": []
+      }
+✔ 공백만 보낸 사실 · 0.0s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "maintenance",
+        "facts": "   "
+      }
+    ← response HTTP 400
+      {
+        "error": "kind and facts are required"
+      }
+✔ 없는 종류는 목록을 알려 줌 · 0.1s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "party",
+        "facts": "12월 20일 송년회"
+      }
+    ← response HTTP 400
+      {
+        "error": "unknown kind",
+        "kinds": [
+          "maintenance",
+          "security",
+          "training",
+          "survey"
+        ]
+      }
+✔ 바깥 링크를 넣어 달라는 요청 · 1.4s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "security",
+        "request": "신고 링크 http://bit.ly/report 도 꼭 넣어 주세요",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고. 신고 링크: http://bit.ly/report"
+      }
+    ← response HTTP 200
+      {
+        "kind": "security",
+        "route": "담당자 확인",
+        "published": false,
+        "notice": "[보안 안내] IT팀 사칭 피싱 메일 주의\n\n10월 28일(화)부터 IT팀을 사칭한 피싱 메일이 증가하고 있습니다.  \n링크를 누르지 말고 메일을 삭제해 주세요.  \n의심 메일은 IT 포털 '신고' 메뉴에서 신고 바랍니다.  \n신고 링크: http://bit.ly/report  \nIT팀은 절대 비밀번호를 묻지 않습니다.",
+        "blocking": [
+          "external_link"
+        ],
+        "warnings": [],
+        "codes": [
+          "external_link"
+        ]
+      }
+✔ 사내 링크는 게시 · 1.6s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "security",
+        "request": "신고 링크도 넣어 주세요",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고. 신고 링크: https://intra.example.com/report"
+      }
+    ← response HTTP 200
+      {
+        "kind": "security",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[보안 안내] IT팀 사칭 피싱 메일 주의 안내\n\n10월 28일(화)부터 IT팀을 사칭한 피싱 메일이 증가하고 있습니다.  \n링크를 절대 누르지 말고 메일을 삭제해 주시기 바랍니다.  \nIT팀은 절대 비밀번호를 묻지 않습니다.  \n의심스러운 메일은 IT 포털 '신고' 메뉴에서 신고해 주세요.  \n신고 링크: https://intra.example.com/report",
+        "blocking": [],
+        "warnings": [],
+        "codes": []
+      }
+✔ 짧게만 써 달라고 해도 꼭 넣을 문장 · 1.5s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "security",
+        "request": "한 줄로 아주 짧게",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      }
+    ← response HTTP 200
+      {
+        "kind": "security",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[보안 안내] IT팀은 절대 비밀번호를 묻지 않습니다.  \n10월 28일(화)부터 IT팀 사칭 피싱 메일 증가  \n링크 클릭 금지, 메일 삭제 후 보안팀 신고  \n의심 메일은 IT 포털 '신고' 메뉴 이용 바랍니다.",
+        "blocking": [],
+        "warnings": [],
+        "codes": []
+      }
+Passed 7/7
+report: runs/70-lab03-challenge-cases-20261021-182550.json

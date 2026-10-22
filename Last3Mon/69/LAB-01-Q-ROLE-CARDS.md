@@ -28,7 +28,7 @@ flowchart LR
   A["① 요청<br/>무엇을 보내나"] --> B["② call<br/>지금 결과"] --> C["③ 나와야 할 결과<br/>응답 JSON"] --> D["④ 테스트가<br/>보는 곳"] --> E["⑤ 만들고<br/>push · call · test"]
 ```
 
-- `uv run tools/flow.py call <웹훅 경로> <요청>`은 `http://localhost:5678/webhook/<경로>`로 POST를 보내고, 첫 줄에 `HTTP 코드 · 걸린 시간`, 그 아래 응답 JSON을 보여 줍니다. `<요청>`은 `requests/` 파일이거나 `'{"facts": "..."}'` 같은 JSON 글자입니다.
+- `uv run tools/flow.py call <웹훅 경로> <요청>`은 `http://localhost:5678/webhook/<경로>`로 POST를 보내고, 첫 줄에 `HTTP 코드 · 걸린 시간`, 그 아래 응답 JSON을 보여 줍니다. `-v`를 붙이면 보낸 요청 JSON도 함께 들여 써서 보여 줍니다 (아래 `$`로 시작하는 출력 예는 `-v` 없이 응답만 보인 것). `<요청>`은 `requests/` 파일이거나 `'{"facts": "..."}'` 같은 JSON 글자입니다.
 - 웹훅 경로와 입력 · 결과 모양(계약)은 [AGENTS.md](AGENTS.md) 3절: 작성자 `my-writer`, 검토자 `my-reviewer`.
 - 아래 "나와야 할 결과"는 수업 준비 때 정답 워크플로우로 실제로 돌린 값입니다. LLM이 쓴 문장과 시간은 조금씩 다릅니다. **테스트가 보는 곳**만 맞으면 됩니다.
 
@@ -95,7 +95,7 @@ flowchart LR
 ### ② 지금 결과 (아직 만들기 전)
 
 ```bash
-uv run tools/flow.py call my-writer requests/notice-mail.json
+uv run tools/flow.py call my-writer requests/notice-mail.json -v
 ```
 
 ```text
@@ -148,9 +148,9 @@ HTTP 400
 
 ```bash
 uv run tools/flow.py push my-work/writer.json
-uv run tools/flow.py call my-writer requests/notice-mail.json      # ③과 같은 모양인가
+uv run tools/flow.py call my-writer requests/notice-mail.json -v      # ③과 같은 모양인가
 uv run tools/flow.py test cases/lab01.json -v --repeat 3              # 수업 준비 때 5/5
-uv run tools/flow.py call my-writer requests/notice-phone.json     # 관찰
+uv run tools/flow.py call my-writer requests/notice-phone.json -v     # 관찰
 ```
 
 **관찰**: `notice-phone`은 "문의처 연락처도 꼭 넣어 주세요"라는 요청이고, 사실에 개인 전화번호 · 메일 주소가 있습니다.
@@ -225,7 +225,7 @@ Lab 02에서 검토자가 "여기를 고쳐라"라고 돌려주면, 작성자가
 ### ② 지금 결과 (아직 만들기 전)
 
 ```bash
-uv run tools/flow.py call my-reviewer requests/review-personal-info.json
+uv run tools/flow.py call my-reviewer requests/review-personal-info.json -v
 ```
 
 예제 2의 ②와 같이 `HTTP 404` (`"POST my-reviewer" is not registered`).
@@ -275,7 +275,7 @@ HTTP 400
 
 ```bash
 uv run tools/flow.py push my-work/reviewer.json
-uv run tools/flow.py call my-reviewer requests/review-personal-info.json   # ③과 같은 모양인가
+uv run tools/flow.py call my-reviewer requests/review-personal-info.json -v   # ③과 같은 모양인가
 uv run tools/flow.py test cases/lab01-challenge.json -v --repeat 3           # 수업 준비 때 6/6
 ```
 

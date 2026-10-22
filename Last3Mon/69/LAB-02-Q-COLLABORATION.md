@@ -21,7 +21,7 @@ flowchart LR
   A["① 요청<br/>무엇을 보내나"] --> B["② call<br/>지금 결과"] --> C["③ 나와야 할 결과<br/>응답 JSON"] --> D["④ 테스트가<br/>보는 곳"] --> E["⑤ 만들고<br/>push · call · test"]
 ```
 
-- 명령은 모두 `~/aio-01d4-stu/Last3Mon/69`에서, `uv run tools/flow.py call <웹훅 경로> <요청>` (첫 줄 `HTTP 코드 · 걸린 시간`, 그 아래 응답 JSON).
+- 명령은 모두 `~/aio-01d4-stu/Last3Mon/69`에서, `uv run tools/flow.py call <웹훅 경로> <요청>` (첫 줄 `HTTP 코드 · 걸린 시간`, 그 아래 응답 JSON. `-v`를 붙이면 보낸 요청 JSON도 함께. `$`로 시작하는 출력 예는 `-v` 없이 응답만).
 - 웹훅 경로 ([AGENTS.md](AGENTS.md) 3절): 작성자 `my-writer`, 검토자 `my-reviewer`, 공지 팀 `my-notice`.
 - 아래 "나와야 할 결과"는 수업 준비 때 정답 워크플로우로 실제로 돌린 값입니다. LLM이 쓴 문장과 시간은 조금씩 다릅니다.
 
@@ -45,8 +45,8 @@ flowchart LR
 
 ```bash
 uv run tools/flow.py push my-work/writer.json my-work/reviewer.json
-uv run tools/flow.py call my-writer requests/notice-phone.json
-uv run tools/flow.py call my-reviewer requests/review-personal-info.json
+uv run tools/flow.py call my-writer requests/notice-phone.json -v
+uv run tools/flow.py call my-reviewer requests/review-personal-info.json -v
 ```
 
 ```text
@@ -65,7 +65,7 @@ HTTP 200 · 0.7s
 `call` 뒤에 JSON을 직접 씁니다. 위 검토 결과의 `issues`를 `feedback` 글자로, 처음 초안을 `previous_draft`로 넣습니다.
 
 ```bash
-uv run tools/flow.py call my-writer '{"request": "프린터 드라이버 업데이트 공지를 써 주세요. 문의처 연락처도 꼭 넣어 주세요.", "facts": "10월 30일(목) 18:00~19:00 사내 프린터 드라이버 일괄 업데이트. 업데이트 중에는 출력이 안 됨. 문의는 IT팀 김민지(010-1234-5678, minji.kim@example.com).", "previous_draft": "[프린터 드라이버 업데이트 안내]\n10월 30일(목) 18:00~19:00에 사내 프린터 드라이버를 일괄 업데이트합니다.\n업데이트 중에는 출력이 안 됩니다.\n문의: IT팀 김민지(010-1234-5678)", "feedback": "personal_info: 010-1234-5678"}'
+uv run tools/flow.py call my-writer '{"request": "프린터 드라이버 업데이트 공지를 써 주세요. 문의처 연락처도 꼭 넣어 주세요.", "facts": "10월 30일(목) 18:00~19:00 사내 프린터 드라이버 일괄 업데이트. 업데이트 중에는 출력이 안 됨. 문의는 IT팀 김민지(010-1234-5678, minji.kim@example.com).", "previous_draft": "[프린터 드라이버 업데이트 안내]\n10월 30일(목) 18:00~19:00에 사내 프린터 드라이버를 일괄 업데이트합니다.\n업데이트 중에는 출력이 안 됩니다.\n문의: IT팀 김민지(010-1234-5678)", "feedback": "personal_info: 010-1234-5678"}' -v
 ```
 
 나와야 할 모양 (수업 준비 때 공지 팀 안에서 고쳐 쓴 결과의 마지막 줄):
@@ -102,7 +102,7 @@ Lab 01과 같은 공지 요청 넷: `requests/notice-mail.json`, `notice-vpn.jso
 ### ② 지금 결과 (아직 만들기 전)
 
 ```bash
-uv run tools/flow.py call my-notice requests/notice-phone.json
+uv run tools/flow.py call my-notice requests/notice-phone.json -v
 ```
 
 `HTTP 404` (`"POST my-notice" is not registered`).
@@ -152,7 +152,7 @@ HTTP 400
 
 ```bash
 uv run tools/flow.py push my-work/notice.json
-uv run tools/flow.py call my-notice requests/notice-phone.json   # ③과 같은 모양인가
+uv run tools/flow.py call my-notice requests/notice-phone.json -v   # ③과 같은 모양인가
 uv run tools/flow.py test cases/lab02.json -v                       # 수업 준비 때 4/4 (처음엔 검토자 거짓 경보로 3/4)
 ```
 
@@ -245,7 +245,7 @@ HTTP 200 · 5.8s
 
 ```bash
 uv run tools/flow.py push my-work/notice.json
-uv run tools/flow.py call my-notice requests/notice-mail.json            # ③과 같은 모양인가
+uv run tools/flow.py call my-notice requests/notice-mail.json -v            # ③과 같은 모양인가
 uv run tools/flow.py test cases/lab02-challenge.json -v --repeat 3          # 수업 준비 때 4/4
 uv run tools/flow.py test cases/lab02.json -v                               # 4/4 그대로
 ```

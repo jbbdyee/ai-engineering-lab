@@ -1,0 +1,54 @@
+{
+  "webhook": "my-notice-kit",
+  "cases": [
+    {
+      "name": "새 종류 · 설문",
+      "request": "requests/kit-survey.json",
+      "expect": {
+        "equals": {
+          "kind": "survey",
+          "published": true,
+          "codes": []
+        },
+        "contains": {
+          "notice": [
+            "[설문 안내]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "설문 · 익명 문장",
+      "request": "requests/kit-survey.json",
+      "expect": {
+        "contains": {
+          "notice": [
+            "익명"
+          ]
+        }
+      }
+    },
+    {
+      "name": "없는 종류",
+      "request": "requests/kit-unknown.json",
+      "expect": {
+        "status": 400,
+        "contains": {
+          "kinds": [
+            "maintenance"
+          ]
+        }
+      }
+    },
+    {
+      "name": "원래 종류도 그대로",
+      "request": "requests/kit-security.json",
+      "expect": {
+        "equals": {
+          "published": true,
+          "codes": []
+        }
+      }
+    }
+  ]
+}

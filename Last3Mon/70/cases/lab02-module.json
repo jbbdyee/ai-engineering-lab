@@ -1,0 +1,59 @@
+{
+  "webhook": "my-rule-check",
+  "cases": [
+    {
+      "name": "좋은 초안",
+      "request": "requests/module-good.json",
+      "expect": {
+        "equals": {
+          "passed": true,
+          "codes": []
+        }
+      }
+    },
+    {
+      "name": "시간 빠짐",
+      "request": "requests/module-missing-time.json",
+      "expect": {
+        "equals": {
+          "codes": [
+            "missing_fact"
+          ]
+        }
+      }
+    },
+    {
+      "name": "전화번호",
+      "request": "requests/module-personal-info.json",
+      "expect": {
+        "equals": {
+          "codes": [
+            "personal_info"
+          ]
+        }
+      }
+    },
+    {
+      "name": "꼭 넣을 문장 빠짐",
+      "request": "requests/module-missing-phrase.json",
+      "expect": {
+        "equals": {
+          "codes": [
+            "missing_phrase"
+          ]
+        }
+      }
+    },
+    {
+      "name": "짧은 한도",
+      "request": "requests/module-too-long.json",
+      "expect": {
+        "equals": {
+          "codes": [
+            "too_long"
+          ]
+        }
+      }
+    }
+  ]
+}

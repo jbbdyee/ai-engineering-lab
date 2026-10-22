@@ -1,0 +1,99 @@
+{
+  "cases": "lab01-challenge.json",
+  "webhook": "my-notice-kit",
+  "passed": 1,
+  "total": 4,
+  "results": [
+    {
+      "case": "새 종류 · 설문",
+      "webhook": "my-notice-kit",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "notice has none of ['[설문 안내]']"
+      ],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "kind": "survey",
+        "request": "IT 만족도 설문 공지",
+        "facts": "11월 7일(금)까지 사내 IT 만족도 설문 진행. 약 5분 소요. 결과는 IT 서비스 개선에 사용."
+      },
+      "response": {
+        "kind": "survey",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[IT 공지] 사내 IT 만족도 설문 안내\n\n11월 7일(금)까지 사내 IT 만족도 설문을 진행합니다.  \n설문 참여 시간은 약 5분 정도 소요됩니다.  \n설문 결과는 IT 서비스 개선에 활용될 예정입니다.  \n많은 참여 부탁드립니다.",
+        "codes": []
+      }
+    },
+    {
+      "case": "설문 · 익명 문장",
+      "webhook": "my-notice-kit",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "notice has none of ['익명']"
+      ],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "kind": "survey",
+        "request": "IT 만족도 설문 공지",
+        "facts": "11월 7일(금)까지 사내 IT 만족도 설문 진행. 약 5분 소요. 결과는 IT 서비스 개선에 사용."
+      },
+      "response": {
+        "kind": "survey",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[IT 공지] 사내 IT 만족도 설문 안내\n\n11월 7일(금)까지 사내 IT 만족도 설문을 진행합니다.  \n설문 참여 시간은 약 5분 정도 소요됩니다.  \n설문 결과는 IT 서비스 개선에 활용될 예정입니다.  \n많은 참여 부탁드립니다.",
+        "codes": []
+      }
+    },
+    {
+      "case": "없는 종류",
+      "webhook": "my-notice-kit",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 200 (expected 400)",
+        "kinds has none of ['maintenance']"
+      ],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "kind": "party",
+        "request": "송년회 공지",
+        "facts": "12월 20일(금) 18:00 송년회."
+      },
+      "response": {
+        "kind": "party",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[공지] 12월 20일(금) 18:00 송년회 안내\n\n- 송년회가 12월 20일(금) 18:00에 진행됩니다.\n- 참석하시는 분들은 시간 엄수 부탁드립니다.\n- 즐거운 시간 되시기 바랍니다.",
+        "codes": []
+      }
+    },
+    {
+      "case": "원래 종류도 그대로",
+      "webhook": "my-notice-kit",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.0,
+      "status": 200,
+      "request": {
+        "kind": "security",
+        "request": "피싱 주의 공지",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      },
+      "response": {
+        "kind": "security",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[보안 안내] 피싱 주의 공지  \n10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있습니다.  \n링크를 누르지 말고 메일을 삭제해 주세요.  \n의심 메일은 IT 포털 '신고' 메뉴에서 신고 바랍니다.  \nIT팀은 절대 비밀번호를 묻지 않습니다.  \n보안팀에 즉시 신고해 주시기 바랍니다.",
+        "codes": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "cases": "lab01.json",
+  "webhook": "my-writer",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "case": "메일 점검 · 날짜 그대로",
+      "webhook": "my-writer",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.6,
+      "status": 200,
+      "request": {
+        "request": "메일 서버 점검 공지를 써 주세요",
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "author": "김민지"
+      },
+      "response": {
+        "draft": "[메일 서버 점검 안내]\n\n- 10월 23일(목) 22:00~24:00 메일 서버 점검이 진행됩니다.\n- 점검 시간 동안 메일 송수신이 불가능합니다.\n- 점검 종료 후 메일 프로그램을 다시 실행해 주시기 바랍니다."
+      }
+    },
+    {
+      "case": "메일 점검 · 시간 그대로",
+      "webhook": "my-writer",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.0,
+      "status": 200,
+      "request": {
+        "request": "메일 서버 점검 공지를 써 주세요",
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "author": "김민지"
+      },
+      "response": {
+        "draft": "[메일 서버 점검 안내]\n\n- 10월 23일(목) 22:00~24:00 메일 서버 점검이 진행됩니다.\n- 점검 시간 동안 메일 송수신이 불가능합니다.\n- 점검 종료 후 메일 프로그램을 다시 실행해 주시기 바랍니다."
+      }
+    },
+    {
+      "case": "VPN · 마감일",
+      "webhook": "my-writer",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "request": "VPN 인증서 교체 공지를 써 주세요",
+        "facts": "10월 27일(월)부터 새 VPN 인증서를 사용함. 10월 24일(금)까지 IT 포털 '인증서 받기' 메뉴에서 새 인증서를 내려받아 설치. 설치하지 않으면 10월 27일부터 VPN에 접속할 수 없음.",
+        "author": "정우성"
+      },
+      "response": {
+        "draft": "[VPN 인증서 교체 안내]\n\n- 10월 27일(월)부터 새 VPN 인증서 사용 시작\n- 10월 24일(금)까지 IT 포털 '인증서 받기' 메뉴에서 새 인증서 다운로드 및 설치\n- 인증서 미설치 시 10월 27일부터 VPN 접속 불가"
+      }
+    },
+    {
+      "case": "VPN · 제목 줄",
+      "webhook": "my-writer",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.4,
+      "status": 200,
+      "request": {
+        "request": "VPN 인증서 교체 공지를 써 주세요",
+        "facts": "10월 27일(월)부터 새 VPN 인증서를 사용함. 10월 24일(금)까지 IT 포털 '인증서 받기' 메뉴에서 새 인증서를 내려받아 설치. 설치하지 않으면 10월 27일부터 VPN에 접속할 수 없음.",
+        "author": "정우성"
+      },
+      "response": {
+        "draft": "[VPN 인증서 교체 안내]\n\n- 10월 27일(월)부터 새 VPN 인증서 사용 시작\n- 10월 24일(금)까지 IT 포털 '인증서 받기' 메뉴에서 새 인증서 다운로드 및 설치\n- 인증서 미설치 시 10월 27일부터 VPN 접속 불가"
+      }
+    },
+    {
+      "case": "사실 없음",
+      "webhook": "my-writer",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "request": "공지 써 주세요",
+        "facts": "",
+        "author": "김민지"
+      },
+      "response": {
+        "error": "facts are required"
+      }
+    }
+  ]
+}

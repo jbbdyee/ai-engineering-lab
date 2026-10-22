@@ -1,0 +1,283 @@
+{
+  "name": "70 Notice kit (reference · Lab 01 example 2)",
+  "nodes": [
+    {
+      "name": "Kit webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-notice-kit",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has kind and facts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.body.facts }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.kind }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        560
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"kind and facts are required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Kind settings",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// The only per-kind part of the template: one row per notice kind.\nconst KINDS = {\n  \"maintenance\": {\n    \"label\": \"점검\",\n    \"prefix\": \"[점검 안내]\",\n    \"max_length\": 600,\n    \"required_phrases\": [],\n    \"extra\": \"Say clearly what cannot be used during the work and what to do after it.\"\n  },\n  \"security\": {\n    \"label\": \"보안\",\n    \"prefix\": \"[보안 안내]\",\n    \"max_length\": 500,\n    \"required_phrases\": [\n      \"IT팀은 절대 비밀번호를 묻지 않습니다.\"\n    ],\n    \"extra\": \"Tell readers what to do and what never to do. Never ask for passwords.\"\n  },\n  \"training\": {\n    \"label\": \"교육\",\n    \"prefix\": \"[교육 안내]\",\n    \"max_length\": 800,\n    \"required_phrases\": [\n      \"신청은 IT 포털에서 할 수 있습니다.\"\n    ],\n    \"extra\": \"Say who should attend, when and where, and how to apply.\"\n  }\n};\nconst body = $('Kit webhook').first().json.body;\nconst kind = String(body.kind ?? '');\nreturn [{ json: { known: true, kind, ...KINDS[kind] } }];"
+      }
+    },
+    {
+      "name": "Writer agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        840,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=제목 머리말(prefix): {{ $('Kind settings').first().json.prefix }}\n꼭 넣을 문장: {{ ($('Kind settings').first().json.required_phrases ?? []).join(' / ') || '없음' }}\n이 종류의 주의: {{ $('Kind settings').first().json.extra }}\n요청: {{ $('Kit webhook').first().json.body.request || '공지' }}\n사실:\n{{ $('Kit webhook').first().json.body.facts }}",
+        "options": {
+          "systemMessage": "You write one company IT notice in Korean from the facts only. The first line is the title and it starts with the given prefix. Then 3 to 6 short lines. Copy every date and time exactly as written in the facts. Do not add promises, compensation, dates, people or contacts that are not in the facts. If required sentences are given, include each of them exactly as written. Return only the notice text.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Build draft",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1060,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// The writer's text, without code fences.\nreturn [{ json: { draft: String($json.output ?? '').trim().replace(/^```\\w*\\s*|```$/g, '').trim() } }];"
+      }
+    },
+    {
+      "name": "Rule checks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Rule checks. Same answer every time, so code, not the LLM.\nconst facts = String({ facts: $('Kit webhook').first().json.body.facts, draft: $json.draft, max_length: $('Kind settings').first().json.max_length, required_phrases: $('Kind settings').first().json.required_phrases }.facts ?? '');\nconst draft = String({ facts: $('Kit webhook').first().json.body.facts, draft: $json.draft, max_length: $('Kind settings').first().json.max_length, required_phrases: $('Kind settings').first().json.required_phrases }.draft ?? '');\nconst maxLength = Number({ facts: $('Kit webhook').first().json.body.facts, draft: $json.draft, max_length: $('Kind settings').first().json.max_length, required_phrases: $('Kind settings').first().json.required_phrases }.max_length ?? 600);\nconst required = Array.isArray({ facts: $('Kit webhook').first().json.body.facts, draft: $json.draft, max_length: $('Kind settings').first().json.max_length, required_phrases: $('Kind settings').first().json.required_phrases }.required_phrases) ? { facts: $('Kit webhook').first().json.body.facts, draft: $json.draft, max_length: $('Kind settings').first().json.max_length, required_phrases: $('Kind settings').first().json.required_phrases }.required_phrases : [];\nconst squeeze = text => text.replace(/\\s+/g, '');\nconst tokens = [...new Set(facts.match(/\\d{1,2}월\\s?\\d{1,2}일|\\d{1,2}:\\d{2}/g) ?? [])];\nconst issues = [];\nconst missing = tokens.filter(token => !squeeze(draft).includes(squeeze(token)));\nif (missing.length) issues.push({ code: 'missing_fact', detail: missing.join(', ') });\nconst personal = draft.match(/01[016789]-?\\d{3,4}-?\\d{4}|[\\w.+-]+@[\\w-]+\\.[\\w.]+/g) ?? [];\nif (personal.length) issues.push({ code: 'personal_info', detail: personal.join(', ') });\nif (draft.length > maxLength) issues.push({ code: 'too_long', detail: `${draft.length}자 (${maxLength}자 이하)` });\nconst absent = required.filter(phrase => !squeeze(draft).includes(squeeze(String(phrase))));\nif (absent.length) issues.push({ code: 'missing_phrase', detail: absent.join(' / ') });\n\nreturn [{ json: { passed: issues.length === 0, codes: issues.map(issue => issue.code), issues } }];"
+      }
+    },
+    {
+      "name": "Build result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// The kit's contract: { kind, route, published, notice, codes }.\nconst review = $json;\nconst draft = $('Build draft').first().json.draft;\nreturn [{ json: { kind: $('Kind settings').first().json.kind, route: review.passed ? '게시 가능' : '담당자 확인',\n  published: review.passed === true, notice: draft, codes: review.codes ?? [] } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1720,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Kit webhook": {
+      "main": [
+        [
+          {
+            "node": "Has kind and facts?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has kind and facts?": {
+      "main": [
+        [
+          {
+            "node": "Kind settings",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Kind settings": {
+      "main": [
+        [
+          {
+            "node": "Writer agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Writer agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Writer agent": {
+      "main": [
+        [
+          {
+            "node": "Build draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build draft": {
+      "main": [
+        [
+          {
+            "node": "Rule checks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rule checks": {
+      "main": [
+        [
+          {
+            "node": "Build result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build result": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

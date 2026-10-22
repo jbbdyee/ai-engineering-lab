@@ -1,0 +1,50 @@
+$ uv run tools/flow.py call sample-maintenance requests/kit-maintenance.json -v
+HTTP 200 · 3.4s
+    → request  POST /webhook/sample-maintenance
+      {
+        "kind": "maintenance",
+        "request": "메일 서버 점검 공지",
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨."
+      }
+    ← response HTTP 200
+      {
+        "kind": "maintenance",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[점검 안내]  \n10월 23일(목) 22:00~24:00 메일 서버 점검이 진행됩니다.  \n점검 중에는 메일을 보내고 받을 수 없습니다.  \n점검 종료 후 메일 프로그램을 다시 열어 주시기 바랍니다.",
+        "codes": []
+      }
+
+$ uv run tools/flow.py call sample-security requests/kit-security.json -v
+HTTP 200 · 2.2s
+    → request  POST /webhook/sample-security
+      {
+        "kind": "security",
+        "request": "피싱 주의 공지",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      }
+    ← response HTTP 200
+      {
+        "kind": "security",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[보안 안내] IT팀 사칭 피싱 메일 주의  \n10월 28일(화)부터 IT팀을 사칭한 피싱 메일이 증가하고 있습니다.  \n의심스러운 메일 내 링크를 절대 클릭하지 마십시오.  \n메일을 받은 경우 즉시 삭제 후 보안팀에 신고해 주시기 바랍니다.  \n의심 메일은 IT 포털 '신고' 메뉴에서 신고해 주세요.  \nIT팀은 절대 비밀번호를 묻지 않습니다.",
+        "codes": []
+      }
+
+$ uv run tools/flow.py call sample-training requests/kit-training.json -v
+HTTP 200 · 1.4s
+    → request  POST /webhook/sample-training
+      {
+        "kind": "training",
+        "request": "n8n 기초 교육 공지",
+        "facts": "11월 5일(수) 14:00~16:00 본관 3층 교육장에서 n8n 기초 교육. 대상은 신규 입사자와 희망자. 정원 20명."
+      }
+    ← response HTTP 200
+      {
+        "kind": "training",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[교육 안내] n8n 기초 교육 안내\n\n- 일시: 11월 5일(수) 14:00~16:00  \n- 장소: 본관 3층 교육장  \n- 대상: 신규 입사자와 희망자  \n- 정원: 20명  \n- 신청은 IT 포털에서 할 수 있습니다.",
+        "codes": []
+      }

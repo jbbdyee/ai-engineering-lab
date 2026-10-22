@@ -1,0 +1,143 @@
+{
+  "name": "70 Test · Rule check module v2",
+  "nodes": [
+    {
+      "name": "Test webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-rule-check-v2",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Rule check module",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "modRuleCheck02"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "facts": "={{ $json.body.facts }}",
+            "draft": "={{ $json.body.draft }}",
+            "max_length": "={{ $json.body.max_length ?? 600 }}",
+            "required_phrases": "={{ $json.body.required_phrases ?? [] }}",
+            "allowed_domains": "={{ $json.body.allowed_domains ?? [] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "facts",
+              "displayName": "facts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "draft",
+              "displayName": "draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "max_length",
+              "displayName": "max_length",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "required_phrases",
+              "displayName": "required_phrases",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            },
+            {
+              "id": "allowed_domains",
+              "displayName": "allowed_domains",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Test webhook": {
+      "main": [
+        [
+          {
+            "node": "Rule check module",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rule check module": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

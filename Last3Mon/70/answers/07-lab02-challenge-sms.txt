@@ -1,0 +1,45 @@
+POST http://localhost:5678/webhook/my-sms · 4 case(s) × 1
+✔ 보안 SMS · 2.4s
+    → request  POST /webhook/my-sms
+      {
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      }
+    ← response HTTP 200
+      {
+        "sms": "10월 28일부터 IT팀 사칭 피싱 메일 증가, 링크 클릭 금지 후 보안팀 신고 바랍니다.",
+        "published": true,
+        "codes": []
+      }
+✔ 점검 SMS · 시간 · 1.5s
+    → request  POST /webhook/my-sms
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨."
+      }
+    ← response HTTP 200
+      {
+        "sms": "10월 23일(목) 22:00~24:00 메일 서버 점검, 점검 중 메일 송수신 불가입니다.",
+        "published": true,
+        "codes": []
+      }
+✔ 연락처가 든 사실 · 1.0s
+    → request  POST /webhook/my-sms
+      {
+        "facts": "10월 30일(목) 18:00~19:00 프린터 드라이버 업데이트로 출력 불가. 문의 김민지 010-1234-5678."
+      }
+    ← response HTTP 200
+      {
+        "sms": "10월 30일(목) 18:00~19:00 프린터 드라이버 업데이트로 출력 불가합니다.",
+        "published": true,
+        "codes": []
+      }
+✔ 사실 없음 · 0.1s
+    → request  POST /webhook/my-sms
+      {
+        "facts": ""
+      }
+    ← response HTTP 400
+      {
+        "error": "facts are required"
+      }
+Passed 4/4
+report: runs/lab02-challenge-20261021-182411.json

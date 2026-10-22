@@ -1,0 +1,76 @@
+POST http://localhost:5678/webhook/my-rule-check · 4 case(s) × 1
+✔ 바깥 링크 · 1.0s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.\n자세한 내용: http://bit.ly/mail-check",
+        "max_length": 600,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": false,
+        "codes": [
+          "external_link"
+        ],
+        "issues": [
+          {
+            "code": "external_link",
+            "detail": "http://bit.ly/mail-check"
+          }
+        ]
+      }
+✔ 사내 링크는 통과 · 0.1s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.\n자세한 내용: https://intra.example.com/notice/23",
+        "max_length": 600,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": true,
+        "codes": [],
+        "issues": []
+      }
+✔ 허용 도메인을 직접 줌 · 0.1s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.\n자세한 내용: http://bit.ly/mail-check",
+        "max_length": 600,
+        "required_phrases": [],
+        "allowed_domains": [
+          "bit.ly"
+        ]
+      }
+    ← response HTTP 200
+      {
+        "passed": true,
+        "codes": [],
+        "issues": []
+      }
+✔ 예전 호출(allowed_domains 없음)도 그대로 · 0.2s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.\n문의: 010-1234-5678",
+        "max_length": 600,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": false,
+        "codes": [
+          "personal_info"
+        ],
+        "issues": [
+          {
+            "code": "personal_info",
+            "detail": "010-1234-5678"
+          }
+        ]
+      }
+Passed 4/4
+report: runs/lab03-20261021-182435.json

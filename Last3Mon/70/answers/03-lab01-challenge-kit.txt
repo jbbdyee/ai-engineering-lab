@@ -1,0 +1,65 @@
+POST http://localhost:5678/webhook/my-notice-kit · 4 case(s) × 1
+✔ 새 종류 · 설문 · 3.0s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "survey",
+        "request": "IT 만족도 설문 공지",
+        "facts": "11월 7일(금)까지 사내 IT 만족도 설문 진행. 약 5분 소요. 결과는 IT 서비스 개선에 사용."
+      }
+    ← response HTTP 200
+      {
+        "kind": "survey",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[설문 안내] 사내 IT 만족도 설문 공지\n\n사내 IT 서비스 개선을 위한 만족도 조사를 실시합니다.  \n설문 응답은 약 5분 정도 소요됩니다.  \n응답은 익명으로 처리됩니다.  \n설문 마감일은 11월 7일(금)까지입니다.  \n많은 참여 부탁드립니다.",
+        "codes": []
+      }
+✔ 설문 · 익명 문장 · 2.1s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "survey",
+        "request": "IT 만족도 설문 공지",
+        "facts": "11월 7일(금)까지 사내 IT 만족도 설문 진행. 약 5분 소요. 결과는 IT 서비스 개선에 사용."
+      }
+    ← response HTTP 200
+      {
+        "kind": "survey",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[설문 안내] 사내 IT 만족도 설문 공지\n\n사내 IT 서비스 개선을 위한 만족도 조사를 실시합니다.  \n설문 응답은 약 5분 정도 소요됩니다.  \n응답은 익명으로 처리됩니다.  \n설문 마감일은 11월 7일(금)까지입니다.  \n많은 참여 부탁드립니다.",
+        "codes": []
+      }
+✔ 없는 종류 · 0.3s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "party",
+        "request": "송년회 공지",
+        "facts": "12월 20일(금) 18:00 송년회."
+      }
+    ← response HTTP 400
+      {
+        "error": "unknown kind",
+        "kinds": [
+          "maintenance",
+          "security",
+          "training",
+          "survey"
+        ]
+      }
+✔ 원래 종류도 그대로 · 1.7s
+    → request  POST /webhook/my-notice-kit
+      {
+        "kind": "security",
+        "request": "피싱 주의 공지",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      }
+    ← response HTTP 200
+      {
+        "kind": "security",
+        "route": "게시 가능",
+        "published": true,
+        "notice": "[보안 안내] IT팀 사칭 피싱 메일 주의\n\n10월 28일(화)부터 IT팀을 사칭한 피싱 메일이 증가하고 있습니다.  \n링크를 절대 누르지 마시고 메일을 삭제해 주세요.  \n의심스러운 메일은 IT 포털 '신고' 메뉴에서 신고 바랍니다.  \nIT팀은 절대 비밀번호를 묻지 않습니다.  \n보안팀에 즉시 신고해 주시기 바랍니다.",
+        "codes": []
+      }
+Passed 4/4
+report: runs/lab01-challenge-20261021-182312.json

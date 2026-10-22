@@ -1,0 +1,103 @@
+POST http://localhost:5678/webhook/my-rule-check · 5 case(s) × 1
+✔ 좋은 초안 · 0.1s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.",
+        "max_length": 600,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": true,
+        "codes": [],
+        "issues": []
+      }
+✔ 시간 빠짐 · 0.1s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 밤에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.",
+        "max_length": 600,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": false,
+        "codes": [
+          "missing_fact"
+        ],
+        "issues": [
+          {
+            "code": "missing_fact",
+            "detail": "22:00, 24:00"
+          }
+        ]
+      }
+✔ 전화번호 · 0.1s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.\n문의: 010-1234-5678",
+        "max_length": 600,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": false,
+        "codes": [
+          "personal_info"
+        ],
+        "issues": [
+          {
+            "code": "personal_info",
+            "detail": "010-1234-5678"
+          }
+        ]
+      }
+✔ 꼭 넣을 문장 빠짐 · 0.1s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.",
+        "max_length": 600,
+        "required_phrases": [
+          "IT팀은 절대 비밀번호를 묻지 않습니다."
+        ]
+      }
+    ← response HTTP 200
+      {
+        "passed": false,
+        "codes": [
+          "missing_phrase"
+        ],
+        "issues": [
+          {
+            "code": "missing_phrase",
+            "detail": "IT팀은 절대 비밀번호를 묻지 않습니다."
+          }
+        ]
+      }
+✔ 짧은 한도 · 0.1s
+    → request  POST /webhook/my-rule-check
+      {
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "draft": "[점검 안내] 메일 서버 점검\n10월 23일(목) 22:00~24:00에 메일 서버 점검이 있습니다.\n점검 중에는 메일을 보내고 받을 수 없습니다.",
+        "max_length": 80,
+        "required_phrases": []
+      }
+    ← response HTTP 200
+      {
+        "passed": false,
+        "codes": [
+          "too_long"
+        ],
+        "issues": [
+          {
+            "code": "too_long",
+            "detail": "82자 (80자 이하)"
+          }
+        ]
+      }
+Passed 5/5
+report: runs/lab02-module-20261021-182435.json

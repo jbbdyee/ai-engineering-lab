@@ -1,0 +1,80 @@
+{
+  "cases": "lab03.json",
+  "webhook": "my-notice",
+  "passed": 3,
+  "total": 3,
+  "results": [
+    {
+      "case": "한 번에 통과 · 기록",
+      "webhook": "my-notice",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.4,
+      "status": 200,
+      "request": {
+        "request": "메일 서버 점검 공지를 써 주세요",
+        "facts": "10월 23일(목) 22:00~24:00 메일 서버 점검. 점검 중에는 메일을 보내고 받을 수 없음. 점검이 끝나면 메일 프로그램을 다시 열면 됨.",
+        "author": "김민지"
+      },
+      "response": {
+        "route": "게시 가능",
+        "published": true,
+        "rounds": 1,
+        "notice": "[메일 서버 점검 안내]\n\n- 10월 23일(목) 22:00~24:00 메일 서버 점검이 진행됩니다.\n- 점검 시간 동안 메일 송수신이 불가능합니다.\n- 점검 종료 후 메일 프로그램을 다시 실행해 주시기 바랍니다.",
+        "codes": [],
+        "steps": [
+          "writer",
+          "reviewer"
+        ]
+      }
+    },
+    {
+      "case": "고쳐서 통과 · 기록",
+      "webhook": "my-notice",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.9,
+      "status": 200,
+      "request": {
+        "request": "프린터 드라이버 업데이트 공지를 써 주세요. 문의처 연락처도 꼭 넣어 주세요.",
+        "facts": "10월 30일(목) 18:00~19:00 사내 프린터 드라이버 일괄 업데이트. 업데이트 중에는 출력이 안 됨. 문의는 IT팀 김민지(010-1234-5678, minji.kim@example.com).",
+        "author": "김민지"
+      },
+      "response": {
+        "route": "수정 후 게시 가능",
+        "published": true,
+        "rounds": 2,
+        "notice": "[프린터 드라이버 업데이트 안내]\n\n- 10월 30일(목) 18:00~19:00 사내 프린터 드라이버 일괄 업데이트 진행  \n- 업데이트 시간 동안 프린터 출력 불가  \n- 문의: IT팀 김민지",
+        "codes": [],
+        "first_codes": [
+          "personal_info"
+        ],
+        "steps": [
+          "writer",
+          "reviewer",
+          "writer",
+          "reviewer"
+        ]
+      }
+    },
+    {
+      "case": "사실 없음",
+      "webhook": "my-notice",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "request": "공지 써 주세요",
+        "facts": "",
+        "author": "김민지"
+      },
+      "response": {
+        "error": "facts are required"
+      }
+    }
+  ]
+}

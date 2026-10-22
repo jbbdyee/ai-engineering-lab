@@ -1,0 +1,69 @@
+{
+  "webhook": "my-rule-check-v2",
+  "cases": [
+    {
+      "name": "v2 · 길이는 경고",
+      "request": "requests/module-too-long.json",
+      "expect": {
+        "equals": {
+          "passed": true,
+          "blocking": [],
+          "warnings": [
+            "too_long"
+          ]
+        }
+      }
+    },
+    {
+      "name": "v2 · 전화번호는 막음",
+      "request": "requests/module-personal-info.json",
+      "expect": {
+        "equals": {
+          "passed": false,
+          "blocking": [
+            "personal_info"
+          ],
+          "warnings": []
+        }
+      }
+    },
+    {
+      "name": "키트(v2) · 점검",
+      "webhook": "my-notice-kit",
+      "request": "requests/kit-maintenance.json",
+      "expect": {
+        "equals": {
+          "published": true,
+          "blocking": []
+        }
+      }
+    },
+    {
+      "name": "키트(v2) · 보안",
+      "webhook": "my-notice-kit",
+      "request": "requests/kit-security.json",
+      "expect": {
+        "equals": {
+          "published": true,
+          "blocking": []
+        },
+        "contains": {
+          "notice": [
+            "비밀번호를 묻지 않습니다"
+          ]
+        }
+      }
+    },
+    {
+      "name": "SMS는 v1 그대로",
+      "webhook": "my-sms",
+      "request": "requests/sms-security.json",
+      "expect": {
+        "equals": {
+          "published": true,
+          "codes": []
+        }
+      }
+    }
+  ]
+}

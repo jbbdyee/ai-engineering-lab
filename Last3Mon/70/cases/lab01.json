@@ -1,0 +1,66 @@
+{
+  "webhook": "my-notice-kit",
+  "cases": [
+    {
+      "name": "점검 · 머리말",
+      "request": "requests/kit-maintenance.json",
+      "expect": {
+        "equals": {
+          "kind": "maintenance",
+          "published": true,
+          "codes": []
+        },
+        "contains": {
+          "notice": [
+            "[점검 안내]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "보안 · 꼭 넣을 문장",
+      "request": "requests/kit-security.json",
+      "expect": {
+        "equals": {
+          "kind": "security",
+          "published": true,
+          "codes": []
+        },
+        "contains": {
+          "notice": [
+            "IT팀은 절대 비밀번호를 묻지 않습니다"
+          ]
+        }
+      }
+    },
+    {
+      "name": "교육 · 꼭 넣을 문장",
+      "request": "requests/kit-training.json",
+      "expect": {
+        "equals": {
+          "published": true,
+          "codes": []
+        },
+        "contains": {
+          "notice": [
+            "[교육 안내]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "종류 없음",
+      "request": "requests/kit-no-kind.json",
+      "expect": {
+        "status": 400
+      }
+    },
+    {
+      "name": "사실 없음",
+      "request": "requests/kit-empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

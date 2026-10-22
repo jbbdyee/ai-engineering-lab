@@ -75,5 +75,5 @@ cd ~/aio-01d4-stu/Last3Mon/69 && uv run tools/flow.py doctor    # 마지막 줄 
 | --- | --- | --- |
 | `uv run tools/flow.py push my-work/writer.json my-work/reviewer.json` | 여러 파일을 가져오기 → 게시 → n8n 재시작 한 번 | |
 | `uv run tools/flow.py off my-reviewer` | 그 웹훅을 쓰는 워크플로우 게시 해제 (역할이 꺼진 상황). 다시 켜기는 `push` | |
-| `uv run tools/flow.py call my-notice requests/notice-phone.json` | 요청 한 번 보내고 응답 보기 | 공지 팀 2~6초 |
+| `uv run tools/flow.py call my-notice requests/notice-phone.json -v` | 요청 한 번 보내고 응답 보기 (`-v`: 보낸 요청 JSON도) | 공지 팀 2~6초 |
 | `uv run tools/flow.py test cases/lab02.json -v` | 테스트 실행, 보고서를 `runs/`에 저장. `-v`는 케이스마다 보낸 요청 JSON과 받은 응답 JSON을 화면에 보여 줌 | 케이스당 0~7초 (빈 요청 0초, 고쳐 쓰기 + 정리자 약 7초) |

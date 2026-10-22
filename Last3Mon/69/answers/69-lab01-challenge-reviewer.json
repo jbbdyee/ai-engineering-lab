@@ -1,0 +1,237 @@
+{
+  "name": "answer · 69 Lab 01 challenge (reviewer)",
+  "nodes": [
+    {
+      "name": "Review webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-reviewer",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has facts and draft?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.body.facts }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.draft }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        500
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"facts and draft are required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Rule checks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Rules that must give the same answer every time are checked in code, not by the LLM.\nconst body = $('Review webhook').first().json.body;\nconst facts = String(body.facts ?? '');\nconst draft = String(body.draft ?? '');\nconst squeeze = text => text.replace(/\\s+/g, '');\nconst tokens = [...new Set(facts.match(/\\d{1,2}월\\s?\\d{1,2}일|\\d{1,2}:\\d{2}/g) ?? [])];\nconst missing = tokens.filter(token => !squeeze(draft).includes(squeeze(token)));\nconst issues = [];\nif (missing.length) issues.push({ code: 'missing_fact', detail: missing.join(', ') });\nconst personal = draft.match(/01[016789]-?\\d{3,4}-?\\d{4}|[\\w.+-]+@[\\w-]+\\.[\\w.]+/g) ?? [];\nif (personal.length) issues.push({ code: 'personal_info', detail: personal.join(', ') });\nif (draft.length > 600) issues.push({ code: 'too_long', detail: `${draft.length}자 (600자 이하)` });\nreturn [{ json: { rule_issues: issues } }];"
+      }
+    },
+    {
+      "name": "Claim check agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        640,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=사실(facts):\n{{ $('Review webhook').first().json.body.facts }}\n\n공지 초안(draft):\n{{ $('Review webhook').first().json.body.draft }}",
+        "options": {
+          "systemMessage": "You check a Korean IT notice draft against its facts. List every statement in the draft that promises, schedules or states something that is not in the facts: compensation, gifts, new dates or times, extra services, people or contacts. Anything that appears in the facts, even reworded, shortened or partly left out, is supported (a contact person named in the facts is supported). Polite phrases (thanks, apologies, asking for understanding, '문의 바랍니다') are not claims. Return only JSON, no code fence: {\"unsupported\": [\"exact sentence from the draft\"]}",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        600,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Build review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// The reviewer's contract: { passed, codes, issues }.\nconst raw = String($json.output ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet unsupported = [];\ntry { unsupported = JSON.parse(raw).unsupported ?? []; } catch (error) { unsupported = []; }\n// Check the LLM's verdict too: a sentence whose words all appear in the facts is supported.\nconst facts = String($('Review webhook').first().json.body.facts ?? '');\nconst words = sentence => sentence.match(/[가-힣A-Za-z0-9]{2,}/g) ?? [];\nunsupported = unsupported.map(String).filter(Boolean)\n  .filter(sentence => words(sentence).some(word => !facts.includes(word)));\nconst issues = [...$('Rule checks').first().json.rule_issues];\nif (unsupported.length) issues.push({ code: 'unsupported_claim', detail: unsupported.join(' / ') });\nreturn [{ json: { passed: issues.length === 0, codes: issues.map(issue => issue.code), issues } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Review webhook": {
+      "main": [
+        [
+          {
+            "node": "Has facts and draft?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has facts and draft?": {
+      "main": [
+        [
+          {
+            "node": "Rule checks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rule checks": {
+      "main": [
+        [
+          {
+            "node": "Claim check agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Claim check agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim check agent": {
+      "main": [
+        [
+          {
+            "node": "Build review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build review": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
