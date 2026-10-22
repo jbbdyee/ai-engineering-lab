@@ -468,6 +468,15 @@ def cmd_test(args: argparse.Namespace) -> int:
             mark = OK if not problems else BAD
             suffix = f" #{run}" if args.repeat > 1 else ""
             print(f"{mark} {case.get('name', '?')}{suffix} · {seconds:.1f}s" + ("" if not problems else " · " + "; ".join(problems)))
+            if getattr(args, "verbose", False):
+                req_str = json.dumps(body, ensure_ascii=False, indent=2)
+                res_str = json.dumps(payload, ensure_ascii=False, indent=2) if not isinstance(payload, str) else payload
+                print("   Request:")
+                for line in req_str.splitlines():
+                    print(f"     {line}")
+                print("   Response:")
+                for line in res_str.splitlines():
+                    print(f"     {line}")
             results.append({"case": case.get("name"), "run": run, "passed": not problems, "problems": problems,
                             "seconds": round(seconds, 1), "status": status, "request": body, "response": payload})
     total = len(results)
@@ -539,6 +548,7 @@ def main() -> int:
     item.set_defaults(run=cmd_call)
     item = commands.add_parser("test", help="run a test case file")
     item.add_argument("cases")
+    item.add_argument("-v", "--verbose", action="store_true", help="show request and response JSON for each case")
     item.add_argument("--repeat", type=int, default=1, help="run every case N times")
     item.add_argument("--webhook", help="override the webhook path in the case file")
     item.set_defaults(run=cmd_test)

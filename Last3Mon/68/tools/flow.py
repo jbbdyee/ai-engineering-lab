@@ -9,7 +9,7 @@
   uv run tools/flow.py push  agents/*.json my-work/assistant.json   # import + publish (one n8n restart)
   uv run tools/flow.py off   agents/meeting-agent.json  # unpublish (simulate an agent that is down)
   uv run tools/flow.py call  my-assistant requests/composite.json
-  uv run tools/flow.py test  cases/lab02.json [--repeat 3]
+  uv run tools/flow.py test  cases/lab02.json -v [--repeat 3]
 
 Run it from the day folder (Last3Mon/68). n8n is the day 65 install (~/day65-n8n, Docker project
 day65-n8n), started from Last3Mon/65/n8n. Environment overrides:
@@ -484,6 +484,14 @@ def judge(expect: dict, status: int, payload: object) -> list[str]:
     return problems
 
 
+def show_json(label: str, value: object) -> None:
+    """Print one JSON value under a label, indented below the case line (test -v)."""
+    text = json.dumps(value, ensure_ascii=False, indent=2) if not isinstance(value, str) else value
+    print(f"    {label}")
+    for row in text.splitlines():
+        print(f"      {row}")
+
+
 def cmd_test(args: argparse.Namespace) -> int:
     path = resolve(args.cases)
     suite = load_json(path)
@@ -497,12 +505,18 @@ def cmd_test(args: argparse.Namespace) -> int:
         body = request_body(case.get("body") or case.get("request", "{}"))
         case_hook = (case.get("webhook") or hook).strip("/") if not args.webhook else hook
         for run in range(1, args.repeat + 1):
+            if args.verbose:
+                suffix = f" #{run}" if args.repeat > 1 else ""
+                print(f"request: {case.get('name', '?')}{suffix} · POST /webhook/{case_hook}")
+                show_json("→ request", body)
             status, payload, seconds = http("POST", f"{N8N_URL}/webhook/{case_hook}", body)
             problems = judge(case.get("expect", {}), status, payload)
             passed += not problems
             mark = OK if not problems else BAD
             suffix = f" #{run}" if args.repeat > 1 else ""
             print(f"{mark} {case.get('name', '?')}{suffix} · {seconds:.1f}s" + ("" if not problems else " · " + "; ".join(problems)))
+            if args.verbose:
+                show_json(f"← response HTTP {status}", payload)
             results.append({"case": case.get("name"), "webhook": case_hook, "run": run, "passed": not problems, "problems": problems,
                             "seconds": round(seconds, 1), "status": status, "request": body, "response": payload})
     total = len(results)
@@ -583,6 +597,7 @@ def main() -> int:
     item.add_argument("cases")
     item.add_argument("--repeat", type=int, default=1, help="run every case N times")
     item.add_argument("--webhook", help="override the webhook path in the case file")
+    item.add_argument("-v", "--verbose", action="store_true", help="show each request before sending and each response")
     item.set_defaults(run=cmd_test)
     args = parser.parse_args()
     return args.run(args)

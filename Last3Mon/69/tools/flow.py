@@ -9,6 +9,7 @@
   uv run tools/flow.py push  my-work/writer.json my-work/reviewer.json   # import + publish (one n8n restart)
   uv run tools/flow.py off   my-reviewer                # unpublish by file or webhook path (a role that is down)
   uv run tools/flow.py call  my-notice requests/notice-mail.json
+  uv run tools/flow.py call  my-notice requests/notice-mail.json -v  # show request and response JSON
   uv run tools/flow.py test  cases/lab02.json -v [--repeat 3]   # -v: show each request and response JSON
 
 Run it from the day folder (Last3Mon/69). n8n is the day 65 install (~/day65-n8n, Docker project
@@ -450,9 +451,15 @@ def request_body(spec: str | dict, base: Path = ROOT) -> object:
 
 def cmd_call(args: argparse.Namespace) -> int:
     body = request_body(args.request) if args.request else {}
-    status, payload, seconds = http("POST", f"{N8N_URL}/webhook/{args.path.strip('/')}", body)
+    hook = args.path.strip("/")
+    if args.verbose:
+        show_json(f"→ request  POST /webhook/{hook}", body)
+    status, payload, seconds = http("POST", f"{N8N_URL}/webhook/{hook}", body)
     print(f"HTTP {status} · {seconds:.1f}s")
-    print(json.dumps(payload, ensure_ascii=False, indent=2) if not isinstance(payload, str) else payload)
+    if args.verbose:
+        show_json(f"← response HTTP {status}", payload)
+    else:
+        print(json.dumps(payload, ensure_ascii=False, indent=2) if not isinstance(payload, str) else payload)
     return 0 if 200 <= status < 300 else 1
 
 
@@ -495,7 +502,7 @@ def judge(expect: dict, status: int, payload: object) -> list[str]:
 
 
 def show_json(label: str, value: object) -> None:
-    """Print one JSON value under a label, indented below the case line (test -v)."""
+    """Print one JSON value under a label, indented below the result line (call -v, test -v)."""
     text = json.dumps(value, ensure_ascii=False, indent=2) if not isinstance(value, str) else value
     print(f"    {label}")
     for row in text.splitlines():
@@ -603,6 +610,7 @@ def main() -> int:
     item = commands.add_parser("call", help="POST one request to a webhook path")
     item.add_argument("path", help="webhook path, e.g. my-notice")
     item.add_argument("request", nargs="?", help="request file or inline JSON")
+    item.add_argument("-v", "--verbose", action="store_true", help="print the request JSON before the response")
     item.set_defaults(run=cmd_call)
     item = commands.add_parser("test", help="run a test case file")
     item.add_argument("cases")
