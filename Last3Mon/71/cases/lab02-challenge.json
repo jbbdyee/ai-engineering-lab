@@ -1,0 +1,98 @@
+{
+  "webhook": "my-policy-qa",
+  "before": [
+    {
+      "webhook": "my-index",
+      "request": "requests/index-section.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "점수는 높은데 규정에 없음 (VPN 속도)",
+      "request": "requests/q-vpn-slow.json",
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "점수는 높은데 규정에 없음 (노트북 사양)",
+      "request": "requests/q-laptop-spec.json",
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "점수는 높은데 규정에 없음 (비밀번호 잊음)",
+      "request": "requests/q-forgot-password.json",
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "점수는 높은데 규정에 없음 (보안 교육)",
+      "request": "requests/q-security-training.json",
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "점수가 낮아 걸러짐 (연차)",
+      "request": "requests/q-not-in-policies.json",
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "틀린 전제 (30일)",
+      "request": "requests/q-wrong-premise.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "90일"
+          ]
+        },
+        "not_contains": {
+          "answer": [
+            "30일마다 바꾸면 됩니다"
+          ]
+        }
+      }
+    },
+    {
+      "name": "근거 있는 답은 그대로",
+      "request": "requests/q-password-cycle.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "failed": []
+        },
+        "contains": {
+          "answer": [
+            "90일"
+          ]
+        }
+      }
+    },
+    {
+      "name": "검사 기록",
+      "request": "requests/q-virus.json",
+      "expect": {
+        "contains": {
+          "checks": [
+            "grounded"
+          ]
+        }
+      }
+    }
+  ]
+}

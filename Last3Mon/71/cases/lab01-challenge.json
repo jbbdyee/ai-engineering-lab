@@ -1,0 +1,58 @@
+{
+  "webhook": "my-search",
+  "before": [
+    {
+      "webhook": "my-index",
+      "request": "requests/index-section.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "섹션 · 비밀번호 길이",
+      "request": "requests/q-password-length.json",
+      "expect": {
+        "contains": {
+          "hits.0.section": [
+            "비밀번호 만들기"
+          ]
+        }
+      }
+    },
+    {
+      "name": "섹션 · 변경 주기",
+      "request": "requests/q-password-cycle.json",
+      "expect": {
+        "contains": {
+          "hits.0.section": [
+            "변경 주기"
+          ]
+        }
+      }
+    },
+    {
+      "name": "top_k 5",
+      "body": {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요",
+        "top_k": 5
+      },
+      "expect": {
+        "equals": {
+          "hits.4.rank": 5
+        }
+      }
+    },
+    {
+      "name": "top_k 1",
+      "body": {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요",
+        "top_k": 1
+      },
+      "expect": {
+        "equals": {
+          "hits.1": null,
+          "hits.0.rank": 1
+        }
+      }
+    }
+  ]
+}

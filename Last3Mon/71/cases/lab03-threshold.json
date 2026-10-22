@@ -1,0 +1,108 @@
+{
+  "webhook": "my-policy-qa",
+  "description": "relevance threshold: policy questions answered, others handed off",
+  "before": [
+    {
+      "webhook": "my-index",
+      "request": "requests/index-section.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "규정 질문 · 암호를 얼마나 자주 바꿔야 해?",
+      "request": "requests/q-password-cycle.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "규정 질문 · 회사를 그만두면 노트북은 언제까지 돌려줘야 하나요?",
+      "request": "requests/q-return-laptop.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "규정 질문 · 첨부 파일이 너무 커서 메일이 안 보내져요",
+      "request": "requests/q-big-attachment.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "규정 질문 · 생성형 AI에 고객 자료를 넣어도 되나요?",
+      "request": "requests/q-ai-customer-data.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "규정 질문 · 컴퓨터가 바이러스에 걸린 것 같아요",
+      "request": "requests/q-virus.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "규정 밖 · 오늘 점심 메뉴 추천해줘",
+      "request": "requests/q-off-topic.json",
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "규정 밖 · 연차 휴가는 며칠이에요?",
+      "request": "requests/q-not-in-policies.json",
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "규정 밖 · 주말에 볼 영화 추천해 주세요",
+      "body": {
+        "question": "주말에 볼 영화 추천해 주세요"
+      },
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "규정 밖 · 회사 근처 맛집 알려 줘",
+      "body": {
+        "question": "회사 근처 맛집 알려 줘"
+      },
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "규정 밖 · 올해 연봉 인상률은요?",
+      "body": {
+        "question": "올해 연봉 인상률은요?"
+      },
+      "expect": {
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    }
+  ]
+}

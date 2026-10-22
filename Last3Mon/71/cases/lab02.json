@@ -1,0 +1,94 @@
+{
+  "webhook": "my-policy-qa",
+  "before": [
+    {
+      "webhook": "my-index",
+      "request": "requests/index-section.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "비밀번호 주기 · 답과 출처",
+      "request": "requests/q-password-cycle.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "90일"
+          ],
+          "cited": [
+            "password-policy"
+          ]
+        }
+      }
+    },
+    {
+      "name": "퇴사 노트북",
+      "request": "requests/q-return-laptop.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "5영업일"
+          ],
+          "cited": [
+            "device-issue-return"
+          ]
+        }
+      }
+    },
+    {
+      "name": "생성형 AI",
+      "request": "requests/q-ai-customer-data.json",
+      "expect": {
+        "contains": {
+          "cited": [
+            "software-usage"
+          ]
+        },
+        "not_contains": {
+          "answer": [
+            "넣어도 됩니다"
+          ]
+        }
+      }
+    },
+    {
+      "name": "출처는 제목으로",
+      "request": "requests/q-big-attachment.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "[메일·문서 보안 규정]",
+            "25MB"
+          ]
+        },
+        "not_contains": {
+          "answer": [
+            "[1]",
+            "[2]",
+            "[3]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "점심 메뉴 · 담당자 연결",
+      "request": "requests/q-off-topic.json",
+      "expect": {
+        "equals": {
+          "route": "담당자 연결",
+          "cited": []
+        }
+      }
+    },
+    {
+      "name": "질문 없음",
+      "request": "requests/q-empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

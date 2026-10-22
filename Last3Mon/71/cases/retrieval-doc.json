@@ -1,0 +1,276 @@
+{
+  "webhook": "my-search",
+  "description": "doc@1: the first chunk comes from the right document (24 questions)",
+  "before": [
+    {
+      "webhook": "my-index",
+      "request": "requests/index-section.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "비밀번호는 몇 자 이상이어야 하나요?",
+      "body": {
+        "question": "비밀번호는 몇 자 이상이어야 하나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "password-policy"
+        }
+      }
+    },
+    {
+      "name": "암호를 얼마나 자주 바꿔야 해?",
+      "body": {
+        "question": "암호를 얼마나 자주 바꿔야 해?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "password-policy"
+        }
+      }
+    },
+    {
+      "name": "로그인을 여러 번 틀리면 어떻게 돼요?",
+      "body": {
+        "question": "로그인을 여러 번 틀리면 어떻게 돼요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "password-policy"
+        }
+      }
+    },
+    {
+      "name": "카페 와이파이로 회사 시스템에 접속해도 되나요?",
+      "body": {
+        "question": "카페 와이파이로 회사 시스템에 접속해도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "remote-work-vpn"
+        }
+      }
+    },
+    {
+      "name": "VPN 인증서는 언제 다시 받아야 해요?",
+      "body": {
+        "question": "VPN 인증서는 언제 다시 받아야 해요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "remote-work-vpn"
+        }
+      }
+    },
+    {
+      "name": "회사를 그만두면 노트북은 언제까지 돌려줘야 하나요?",
+      "body": {
+        "question": "회사를 그만두면 노트북은 언제까지 돌려줘야 하나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "device-issue-return"
+        }
+      }
+    },
+    {
+      "name": "노트북을 잃어버렸어요. 어떻게 해야 하나요?",
+      "body": {
+        "question": "노트북을 잃어버렸어요. 어떻게 해야 하나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "device-issue-return"
+        }
+      }
+    },
+    {
+      "name": "개인 휴대폰으로 업무 메일 봐도 되나요?",
+      "body": {
+        "question": "개인 휴대폰으로 업무 메일 봐도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "device-issue-return"
+        }
+      }
+    },
+    {
+      "name": "새 프로그램 설치 승인은 며칠 걸려요?",
+      "body": {
+        "question": "새 프로그램 설치 승인은 며칠 걸려요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "software-usage"
+        }
+      }
+    },
+    {
+      "name": "생성형 AI에 고객 자료를 넣어도 되나요?",
+      "body": {
+        "question": "생성형 AI에 고객 자료를 넣어도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "software-usage"
+        }
+      }
+    },
+    {
+      "name": "첨부 파일이 너무 커서 메일이 안 보내져요",
+      "body": {
+        "question": "첨부 파일이 너무 커서 메일이 안 보내져요"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "email-and-documents"
+        }
+      }
+    },
+    {
+      "name": "고객 주민등록번호를 받아도 되나요?",
+      "body": {
+        "question": "고객 주민등록번호를 받아도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "privacy"
+        }
+      }
+    },
+    {
+      "name": "고객 정보가 밖으로 샌 것 같아요",
+      "body": {
+        "question": "고객 정보가 밖으로 샌 것 같아요"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "privacy"
+        }
+      }
+    },
+    {
+      "name": "회의실을 하루 종일 잡아도 되나요?",
+      "body": {
+        "question": "회의실을 하루 종일 잡아도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "meeting-room"
+        }
+      }
+    },
+    {
+      "name": "수상한 메일의 링크를 눌렀어요",
+      "body": {
+        "question": "수상한 메일의 링크를 눌렀어요"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "security-incident"
+        }
+      }
+    },
+    {
+      "name": "컴퓨터가 바이러스에 걸린 것 같아요",
+      "body": {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "security-incident"
+        }
+      }
+    },
+    {
+      "name": "OTP 앱 깔린 휴대폰을 새로 바꿨어요",
+      "body": {
+        "question": "OTP 앱 깔린 휴대폰을 새로 바꿨어요"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "password-policy"
+        }
+      }
+    },
+    {
+      "name": "출력한 고객 명단은 어떻게 버려요?",
+      "body": {
+        "question": "출력한 고객 명단은 어떻게 버려요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "privacy"
+        }
+      }
+    },
+    {
+      "name": "개인정보 파일을 거래처에 메일로 보내도 되나요?",
+      "body": {
+        "question": "개인정보 파일을 거래처에 메일로 보내도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "email-and-documents"
+        }
+      }
+    },
+    {
+      "name": "자리 비울 때 화면은 몇 분 뒤 잠기게 해요?",
+      "body": {
+        "question": "자리 비울 때 화면은 몇 분 뒤 잠기게 해요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "remote-work-vpn"
+        }
+      }
+    },
+    {
+      "name": "화상회의 장비는 언제까지 요청해야 하나요?",
+      "body": {
+        "question": "화상회의 장비는 언제까지 요청해야 하나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "meeting-room"
+        }
+      }
+    },
+    {
+      "name": "노트북 배터리가 금방 닳아요",
+      "body": {
+        "question": "노트북 배터리가 금방 닳아요"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "device-issue-return"
+        }
+      }
+    },
+    {
+      "name": "공짜 프로그램은 그냥 써도 되죠?",
+      "body": {
+        "question": "공짜 프로그램은 그냥 써도 되죠?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "software-usage"
+        }
+      }
+    },
+    {
+      "name": "감염된 것 같은데 컴퓨터를 꺼도 되나요?",
+      "body": {
+        "question": "감염된 것 같은데 컴퓨터를 꺼도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "security-incident"
+        }
+      }
+    }
+  ]
+}

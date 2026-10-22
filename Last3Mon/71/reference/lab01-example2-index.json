@@ -1,0 +1,271 @@
+{
+  "name": "71 Index policy docs (reference · Lab 01 example 2)",
+  "nodes": [
+    {
+      "name": "Index webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-index",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "List docs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "url": "http://data-api:8800/docs",
+        "options": {}
+      }
+    },
+    {
+      "name": "One item per doc",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        400,
+        300
+      ],
+      "parameters": {
+        "fieldToSplitOut": "docs",
+        "options": {}
+      }
+    },
+    {
+      "name": "Get doc",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        600,
+        300
+      ],
+      "parameters": {
+        "url": "=http://data-api:8800/docs/{{ $json.name }}",
+        "options": {}
+      }
+    },
+    {
+      "name": "Make chunks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Split each policy document into chunks. Body \"chunking\": \"section\" (one chunk per ## section, default) or a number of characters.\nconst body = $('Index webhook').first().json.body ?? {};\nconst CHUNKING = body.chunking ?? 'section';\nconst chunks = [];\nfor (const item of $input.all()) {\n  const { name, title, text } = item.json;\n  const content = text.split('\\n').slice(1).join('\\n').trim();\n  let pieces;\n  if (CHUNKING === 'section') {\n    pieces = content.split(/\\n(?=## )/).map(part => part.trim()).filter(Boolean);\n  } else {\n    const size = Number(CHUNKING), step = size - Math.floor(size / 5);\n    pieces = [];\n    for (let i = 0; i < content.length; i += step) pieces.push(content.slice(i, i + size));\n  }\n  pieces.forEach((piece, i) => {\n    const section = (piece.match(/^## (.+)$/m) ?? [])[1] ?? '';\n    chunks.push({ json: { source: name, title, chunk: i + 1,  text: `${title}\\n${piece}` } });\n  });\n}\nreturn chunks;"
+      }
+    },
+    {
+      "name": "Store chunks",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1020,
+        300
+      ],
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "my_policy_docs",
+          "cachedResultName": "my_policy_docs"
+        },
+        "clearStore": true
+      }
+    },
+    {
+      "name": "Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        520
+      ],
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Chunk loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        520
+      ],
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "textSplittingMode": "simple",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "source",
+                "value": "={{ $json.source }}"
+              },
+              {
+                "name": "title",
+                "value": "={{ $json.title }}"
+              },
+              {
+                "name": "chunk",
+                "value": "={{ $json.chunk }}"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "Count",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1260,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// One summary item after all chunks are stored.\nreturn [{ json: { indexed_chunks: $('Make chunks').all().length, chunking: ($('Index webhook').first().json.body ?? {}).chunking ?? 'section' } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1460,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Index webhook": {
+      "main": [
+        [
+          {
+            "node": "List docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List docs": {
+      "main": [
+        [
+          {
+            "node": "One item per doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per doc": {
+      "main": [
+        [
+          {
+            "node": "Get doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get doc": {
+      "main": [
+        [
+          {
+            "node": "Make chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make chunks": {
+      "main": [
+        [
+          {
+            "node": "Store chunks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store chunks": {
+      "main": [
+        [
+          {
+            "node": "Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Count": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Store chunks",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chunk loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Store chunks",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

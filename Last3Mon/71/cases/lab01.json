@@ -1,0 +1,69 @@
+{
+  "webhook": "my-search",
+  "before": [
+    {
+      "webhook": "my-index",
+      "request": "requests/index-section.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "색인 · 청크 수",
+      "webhook": "my-index",
+      "request": "requests/index-section.json",
+      "expect": {
+        "equals": {
+          "indexed_chunks": 25
+        }
+      }
+    },
+    {
+      "name": "비밀번호 길이 → 비밀번호 규정",
+      "request": "requests/q-password-length.json",
+      "expect": {
+        "equals": {
+          "hits.0.source": "password-policy"
+        },
+        "contains": {
+          "hits.0.text": [
+            "12자"
+          ]
+        }
+      }
+    },
+    {
+      "name": "퇴사 노트북 → 장비 규정",
+      "request": "requests/q-return-laptop.json",
+      "expect": {
+        "equals": {
+          "hits.0.source": "device-issue-return"
+        }
+      }
+    },
+    {
+      "name": "첨부 파일 → 메일 규정",
+      "request": "requests/q-big-attachment.json",
+      "expect": {
+        "equals": {
+          "hits.0.source": "email-and-documents"
+        }
+      }
+    },
+    {
+      "name": "결과 3개",
+      "request": "requests/q-virus.json",
+      "expect": {
+        "equals": {
+          "hits.2.rank": 3
+        }
+      }
+    },
+    {
+      "name": "질문 없음",
+      "request": "requests/q-empty.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}
