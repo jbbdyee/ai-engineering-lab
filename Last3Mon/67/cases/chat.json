@@ -1,0 +1,32 @@
+{
+  "webhook": "my-chat",
+  "cases": [
+    {
+      "name": "VPN 연결 질문",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 200,
+        "contains": {
+          "answer": ["VPN", "연결", "네트워크"]
+        }
+      }
+    },
+    {
+      "name": "비밀번호 질문",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "status": 200,
+        "contains": {
+          "answer": ["비밀번호", "계정", "인증"]
+        }
+      }
+    },
+    {
+      "name": "IT와 무관한 질문",
+      "request": "requests/off-topic.json",
+      "expect": {
+        "status": 200
+      }
+    }
+  ]
+}

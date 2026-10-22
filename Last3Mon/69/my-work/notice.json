@@ -1,0 +1,1010 @@
+{
+  "name": "69 Notice team (my · Lab 02 challenge)",
+  "nodes": [
+    {
+      "name": "Notice webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-notice",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has facts?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ String($json.body.facts ?? '').trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        520
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"facts are required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Write draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-writer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ request: $('Notice webhook').first().json.body.request, facts: $('Notice webhook').first().json.body.facts }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Review draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        640,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-reviewer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ facts: $('Notice webhook').first().json.body.facts, draft: $json.draft }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Reviewed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ typeof $json.passed === 'boolean' && Array.isArray($json.codes) && Array.isArray($json.issues) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.passed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Approved",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        160
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "게시 가능",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "rounds",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "a3",
+              "name": "notice",
+              "value": "={{ $('Write draft').first().json.draft }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "codes",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a5",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Revise draft",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1300,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-writer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ request: $('Notice webhook').first().json.body.request, facts: $('Notice webhook').first().json.body.facts, previous_draft: $('Write draft').first().json.draft, feedback: $('Review draft').first().json.issues.map(i => i.code + ': ' + i.detail).join('\\n') }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Review again",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        1520,
+        400
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-reviewer",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ facts: $('Notice webhook').first().json.body.facts, draft: $json.draft }) }}",
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Reviewed again?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1630,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ typeof $json.passed === 'boolean' && Array.isArray($json.codes) && Array.isArray($json.issues) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Passed again?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1740,
+        400
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.passed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Approved after revision",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1960,
+        300
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "수정 후 게시 가능",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "rounds",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "a3",
+              "name": "notice",
+              "value": "={{ $('Revise draft').first().json.draft }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "codes",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a5",
+              "name": "first_codes",
+              "value": "={{ $('Review draft').first().json.codes }}",
+              "type": "array"
+            },
+            {
+              "id": "a6",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\", \"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Needs person",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1960,
+        520
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "담당자 확인",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "rounds",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "a3",
+              "name": "notice",
+              "value": "={{ $('Revise draft').first().json.draft ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "codes",
+              "value": "={{ $json.codes ?? [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a5",
+              "name": "first_codes",
+              "value": "={{ $('Review draft').first().json.codes }}",
+              "type": "array"
+            },
+            {
+              "id": "a6",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\", \"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Review unavailable",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1080,
+        600
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "담당자 확인",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "reason",
+              "value": "검토자가 응답하지 않아 게시하지 않습니다.",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "rounds",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "a4",
+              "name": "notice",
+              "value": "={{ $('Write draft').first().json.draft ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "codes",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a6",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Review again unavailable",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1850,
+        680
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "담당자 확인",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "published",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "a2",
+              "name": "reason",
+              "value": "검토자가 응답하지 않아 게시하지 않습니다.",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "rounds",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "a4",
+              "name": "notice",
+              "value": "={{ $('Revise draft').first().json.draft ?? '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "codes",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a6",
+              "name": "first_codes",
+              "value": "={{ $('Review draft').first().json.codes }}",
+              "type": "array"
+            },
+            {
+              "id": "a7",
+              "name": "steps",
+              "value": "={{ [\"writer\", \"reviewer\", \"writer\", \"reviewer\"] }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2600,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    },
+    {
+      "name": "Final notice",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        180
+      ],
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json } }];"
+      }
+    },
+    {
+      "name": "Make title",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2420,
+        40
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=검토를 통과한 공지:\n{{ $('Final notice').first().json.notice }}",
+        "options": {
+          "systemMessage": "당신은 검토를 통과한 IT 공지의 메일 제목만 만드는 정리자입니다. 공지에 있는 사실만 사용하세요. 괄호를 쓰지 않는 제목 한 줄을 40자 이내로 출력하세요. 날짜와 시간의 뜻이나 표기를 바꾸지 마세요. 공지에 없는 약속, 보상, 쿠폰, 연락처, 사람, 일정을 더하지 마세요. 전화번호와 이메일 주소는 절대 넣지 마세요. 설명, 따옴표, JSON, 코드 블록을 붙이지 마세요.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "Title model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        250
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Make chat message",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2420,
+        430
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=검토를 통과한 공지:\n{{ $('Final notice').first().json.notice }}",
+        "options": {
+          "systemMessage": "당신은 검토를 통과한 IT 공지를 메신저용 짧은 글로 줄이는 정리자입니다. 공지에 있는 사실만 사용하세요. 최대 2줄, 줄바꿈을 포함해 120자 이내로 작성하세요. 공지의 날짜·요일·시간은 쓰는 경우 원문 그대로 옮기고, 중요한 마감일과 점검 시간은 빠뜨리지 마세요. 검토 과정에서 지운 전화번호나 이메일 주소를 되살리지 마세요. 공지에 없는 약속, 보상, 쿠폰, 연락처, 내선번호, 서비스나 일정을 만들어 넣지 마세요. 메신저 글만 출력하고 설명, 따옴표, JSON, 코드 블록은 붙이지 마세요.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "Chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2400,
+        640
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Join editors",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2720,
+        270
+      ],
+      "parameters": {
+        "numberInputs": 2
+      }
+    },
+    {
+      "name": "Combine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2940,
+        270
+      ],
+      "parameters": {
+        "jsCode": "const base = $('Final notice').first().json;\nconst notice = String(base.notice ?? '');\nconst plain = value => String(value ?? '').trim()\n  .replace(/^\\x60\\x60\\x60(?:[a-z]+)?\\s*|\\x60\\x60\\x60$/gi, '').trim()\n  .replace(/^[\"“”']|[\"“”']$/g, '').trim();\nconst removeContacts = value => value\n  .replace(/01[016789]-?\\d{3,4}-?\\d{4}/g, '')\n  .replace(/[\\w.+-]+@[\\w-]+\\.[\\w.]+/g, '')\n  .replace(/\\(\\s*\\)/g, '')\n  .replace(/[ \\t]{2,}/g, ' ').trim();\nlet title = removeContacts(plain($('Make title').first().json.output))\n  .split(/\\r?\\n/)[0].trim();\nif (!title) title = removeContacts(notice.split(/\\r?\\n/)[0].replace(/^\\[|\\]$/g, '')).trim();\ntitle = title.replace(/[()\\[\\]{}]/g, '').slice(0, 40).trim();\nlet chat = removeContacts(plain($('Make chat message').first().json.output));\nif (!chat) chat = removeContacts(notice.replace(/\\s+/g, ' '));\nconst tokens = [...new Set(notice.match(/\\d{1,2}월\\s*\\d{1,2}일(?:\\([가-힣]\\))?|\\d{1,2}:\\d{2}/g) ?? [])];\nconst missing = tokens.filter(token => !chat.replace(/\\s+/g, '').includes(token.replace(/\\s+/g, '')));\nif (missing.length) chat = missing.join(' ') + ' ' + chat;\nchat = chat.split(/\\r?\\n/).map(line => line.trim()).filter(Boolean).slice(0, 2).join('\\n');\nchat = chat.slice(0, 120).trim();\nreturn [{ json: { ...base, title, chat } }];"
+      }
+    }
+  ],
+  "connections": {
+    "Notice webhook": {
+      "main": [
+        [
+          {
+            "node": "Has facts?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has facts?": {
+      "main": [
+        [
+          {
+            "node": "Write draft",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write draft": {
+      "main": [
+        [
+          {
+            "node": "Review draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review draft": {
+      "main": [
+        [
+          {
+            "node": "Reviewed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Passed?": {
+      "main": [
+        [
+          {
+            "node": "Approved",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Revise draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revise draft": {
+      "main": [
+        [
+          {
+            "node": "Review again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review again": {
+      "main": [
+        [
+          {
+            "node": "Reviewed again?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Passed again?": {
+      "main": [
+        [
+          {
+            "node": "Approved after revision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Needs person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Needs person": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved": {
+      "main": [
+        [
+          {
+            "node": "Final notice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approved after revision": {
+      "main": [
+        [
+          {
+            "node": "Final notice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final notice": {
+      "main": [
+        [
+          {
+            "node": "Make title",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Make chat message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Title model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Make title",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Make chat message",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make title": {
+      "main": [
+        [
+          {
+            "node": "Join editors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make chat message": {
+      "main": [
+        [
+          {
+            "node": "Join editors",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Join editors": {
+      "main": [
+        [
+          {
+            "node": "Combine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reviewed?": {
+      "main": [
+        [
+          {
+            "node": "Passed?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Review unavailable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reviewed again?": {
+      "main": [
+        [
+          {
+            "node": "Passed again?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Review again unavailable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review unavailable": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review again unavailable": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

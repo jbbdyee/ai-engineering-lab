@@ -1,0 +1,297 @@
+{
+  "name": "68 Supervisor (my · Lab 02 challenge)",
+  "nodes": [
+    {
+      "name": "Assistant webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-supervisor",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ String($json.body?.message ?? '').trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        490,
+        510
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"message is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Supervisor",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        520,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Assistant webhook').first().json.body.message + (/회의록|회의/.test(String($('Assistant webhook').first().json.body.message ?? '')) ? ('\\n[회의록 업무] ' + (String($('Assistant webhook').first().json.body.notes ?? '').trim() ? '원문 첨부됨. 먼저 Ask meeting agent를 호출하세요. 원문은 도구에 자동 전달됩니다.' : '원문이 없습니다. 회의록 내용을 요청하세요.')) : '') }}",
+        "options": {
+          "systemMessage": "You are a Korean employee-request supervisor. Handle each independent action in the employee message. For every IT issue or ticket-status question, call Ask IT agent before answering, even when the question is short. Preserve ticket IDs. For a meeting request marked [회의록 업무] 원문 첨부됨, call Ask meeting agent FIRST, then handle any IT tasks. The meeting Tool receives the complete original notes directly from the webhook; you do not need to see or rewrite them. For a meeting request marked 원문이 없습니다, ask the employee for notes and do not invent them. If the message has no meeting request, do not discuss meeting notes or ask for attachments. For requests outside IT and meetings, do not call any Tool and say 담당자 연결 is needed. Use only Tool observations for IT and meeting facts. Include every requested action in original message order. Do not invent ticket status, IT advice, meeting actions, owners, or due dates. Write a concise Korean plain-text reply.",
+          "maxIterations": 10,
+          "returnIntermediateSteps": true
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        540,
+        560
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Ask IT agent",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        740,
+        560
+      ],
+      "parameters": {
+        "toolDescription": "Call the existing company IT agent for one IT problem or ticket-status request at a time. Use for T-1002, password, VPN, printer, mail, account, or software issues. Input question: the single Korean IT request, preserving ticket IDs. The requester is supplied directly from the webhook.",
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/it-agent",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "question",
+              "value": "={{ $fromAI('question', 'One IT question in Korean, including its ticket ID if present', 'string') }}"
+            },
+            {
+              "name": "user",
+              "value": "={{ $('Assistant webhook').first().json.body.user }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Ask meeting agent",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        990,
+        560
+      ],
+      "parameters": {
+        "toolDescription": "Call this Tool FIRST when the supervisor input includes [회의록 업무] 원문 첨부됨. It sends the original title and full notes directly from the webhook. You need not see or rewrite the notes. Do not call it for requests without a meeting task.",
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/meeting-agent",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "={{ $('Assistant webhook').first().json.body.title || '회의' }}"
+            },
+            {
+              "name": "notes",
+              "value": "={{ $('Assistant webhook').first().json.body.notes }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000,
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Build response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1010,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Use actual Tool calls, never names claimed in the model reply.\nconst steps = Array.isArray($json.intermediateSteps) ? $json.intermediateSteps : [];\nconst toolToAgent = { Ask_IT_agent: \"it-agent\", Ask_meeting_agent: \"meeting-agent\" };\nconst agents_used = [...new Set(steps.map(step => toolToAgent[step.action?.tool]).filter(Boolean))];\nconst reply = String($json.output ?? \"\").trim();\nreturn [{ json: { reply, agents_used } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1250,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Assistant webhook": {
+      "main": [
+        [
+          {
+            "node": "Has message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has message?": {
+      "main": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask IT agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask meeting agent": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supervisor": {
+      "main": [
+        [
+          {
+            "node": "Build response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build response": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

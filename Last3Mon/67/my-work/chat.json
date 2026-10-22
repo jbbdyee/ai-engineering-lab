@@ -1,0 +1,67 @@
+{
+  "name": "67 IT help chat (my)",
+  "nodes": [
+    {
+      "name": "IT question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-chat",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "IT help agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [260, 300],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('IT question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "당신은 사내 IT 지원 담당자입니다. 직원의 질문에 반드시 한국어 존댓말로, 짧고 친절하게 2~3문장 이내로 답하세요. 질문이 영어여도 답변은 한국어로 작성하세요. 제품명이나 기술 용어 외에는 영어 문장을 쓰지 마세요. IT와 무관한 질문에는 해당 질문은 IT 지원 범위가 아니라고 안내하고, IT 관련 질문을 보내 달라고 짧게 답하세요. 사내 자료를 조회하는 도구가 없으므로 확인하지 않은 사내 규정이나 절차를 사실처럼 단정하지 마세요.",
+          "maxIterations": 5
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [160, 520],
+      "parameters": {
+        "model": {"__rl": true, "mode": "id", "value": "gpt-4.1-mini"},
+        "options": {"temperature": 0}
+      },
+      "credentials": {
+        "openAiApi": {"id": "GaJ4QyyCg5nuz29v", "name": "OpenAI account"}
+      }
+    },
+    {
+      "name": "Send answer",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [560, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { answer: $json.output } }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "IT question webhook": {
+      "main": [[{"node": "IT help agent", "type": "main", "index": 0}]]
+    },
+    "IT help agent": {
+      "main": [[{"node": "Send answer", "type": "main", "index": 0}]]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [[{"node": "IT help agent", "type": "ai_languageModel", "index": 0}]]
+    }
+  },
+  "settings": {"executionOrder": "v1"}
+}

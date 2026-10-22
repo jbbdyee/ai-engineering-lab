@@ -1,0 +1,204 @@
+{
+  "name": "68 Split tasks (my · Lab 01 example 2)",
+  "nodes": [
+    {
+      "name": "Assistant webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-split",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ String($json.body?.message ?? '').trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        520
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"message is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Split tasks",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Assistant webhook').first().json.body.message }}",
+        "options": {
+          "systemMessage": "Split the employee's Korean message into tasks. One task is one action a person can handle at once. Split at connectors such as 그리고, 또, and ~고 when they join different actions; keep fragments together when they describe the same action. Preserve the order in the message. Use exactly these types: it = IT problems or IT request status, such as T-1002 status, a forgotten password, printer failure, or a full mailbox; meeting = summarizing meeting notes or extracting action items; other = requests neither IT nor meeting, such as recommending a dinner venue. Preserve identifiers such as T-1002 and all details needed to understand each task. Do not invent details from fields outside the message. Return only a JSON object with this shape, without markdown or explanation: {\"tasks\":[{\"type\":\"it\",\"text\":\"T-1002 처리 상태 알려줘\"}]}. Each task must have only a valid type and nonempty Korean text.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        520
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Parse tasks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Accept a JSON object, optionally wrapped in a code fence or surrounding prose.\nconst raw = String($json.output ?? '').trim();\nlet cleaned = raw.replace(/^```(?:json)?\\s*/i, '').replace(/\\s*```$/i, '').trim();\nconst start = cleaned.indexOf('{');\nconst end = cleaned.lastIndexOf('}');\nif (start >= 0 && end > start) cleaned = cleaned.slice(start, end + 1);\nlet tasks = [];\ntry {\n  const data = JSON.parse(cleaned);\n  if (data && !Array.isArray(data) && Array.isArray(data.tasks) && data.tasks.every(task => task && ['it', 'meeting', 'other'].includes(task.type) && typeof task.text === 'string' && task.text.trim())) {\n    tasks = data.tasks.map(task => ({ type: task.type, text: task.text.trim() }));\n  }\n} catch (error) {\n  // Malformed model output returns an empty task list.\n}\nconst body = $('Assistant webhook').first().json.body ?? {};\nconst hasValue = value => typeof value === 'string' && value.trim().length > 0;\nconst agents = { it: 'it-agent', meeting: 'meeting-agent', other: '담당자 연결' };\ntasks = tasks.map(task => {\n  const missing = [];\n  if (task.type === 'it' && !hasValue(body.user)) missing.push('user');\n  if (task.type === 'meeting' && !hasValue(body.notes)) missing.push('notes');\n  return { ...task, agent: agents[task.type], missing };\n});\nreturn [{ json: { count: tasks.length, tasks } }];"
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        900,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Assistant webhook": {
+      "main": [
+        [
+          {
+            "node": "Has message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has message?": {
+      "main": [
+        [
+          {
+            "node": "Split tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Split tasks",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split tasks": {
+      "main": [
+        [
+          {
+            "node": "Parse tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse tasks": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
