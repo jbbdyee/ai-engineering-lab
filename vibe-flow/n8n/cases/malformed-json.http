@@ -1,0 +1,9 @@
+# 수동 HTTP 검증: flow.py test는 유효한 JSON만 직렬화한다.
+# 미게시 상태에서는 n8n UI의 Listen for test event를 먼저 누르고 아래 Test URL로 보낸다.
+# 사용자 관찰 결과와 현재 계약: HTTP 422, n8n 자체 JSON 오류.
+# 응답 JSON의 필수 확인값: {"code":422,"message":"Failed to parse request body"}
+# n8n이 Webhook 실행 전에 거절하므로 Routine Scout의 status/error.field 구조는 없다.
+POST http://localhost:5678/webhook-test/routine-scout/analyze
+Content-Type: application/json
+
+{"events": [

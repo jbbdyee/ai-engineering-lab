@@ -1,0 +1,537 @@
+{
+  "webhook": "routine-scout/analyze",
+  "cases": [
+    {
+      "name": "동일 작업 3회",
+      "request": {
+        "events": [
+          {
+            "source": "codex",
+            "action": "copy",
+            "target": "chatgpt"
+          },
+          {
+            "source": "codex",
+            "action": "copy",
+            "target": "chatgpt"
+          },
+          {
+            "source": "codex",
+            "action": "copy",
+            "target": "chatgpt"
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "status": "recommend",
+          "recommendations": [
+            {
+              "source": "codex",
+              "action": "copy",
+              "target": "chatgpt",
+              "repeat_count": 3,
+              "suggestion": "codex에서 chatgpt로 copy하는 반복 작업의 자동화를 추천합니다."
+            }
+          ],
+          "patterns": [
+            {
+              "source": "codex",
+              "action": "copy",
+              "target": "chatgpt",
+              "repeat_count": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "동일 작업 2회",
+      "request": {
+        "events": [
+          {
+            "source": "codex",
+            "action": "copy",
+            "target": "chatgpt"
+          },
+          {
+            "source": "codex",
+            "action": "copy",
+            "target": "chatgpt"
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "status": "no_recommendation",
+          "recommendations": [],
+          "patterns": [
+            {
+              "source": "codex",
+              "action": "copy",
+              "target": "chatgpt",
+              "repeat_count": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "서로 다른 작업 혼합",
+      "request": {
+        "events": [
+          {
+            "source": "codex",
+            "action": "copy",
+            "target": "chatgpt"
+          },
+          {
+            "source": "browser",
+            "action": "download",
+            "target": "folder"
+          },
+          {
+            "source": "codex",
+            "action": "copy",
+            "target": "chatgpt"
+          },
+          {
+            "source": "alpha",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "codex",
+            "action": "copy",
+            "target": "chatgpt"
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "status": "recommend",
+          "recommendations": [
+            {
+              "source": "codex",
+              "action": "copy",
+              "target": "chatgpt",
+              "repeat_count": 3,
+              "suggestion": "codex에서 chatgpt로 copy하는 반복 작업의 자동화를 추천합니다."
+            }
+          ],
+          "patterns": [
+            {
+              "source": "codex",
+              "action": "copy",
+              "target": "chatgpt",
+              "repeat_count": 3
+            },
+            {
+              "source": "alpha",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 1
+            },
+            {
+              "source": "browser",
+              "action": "download",
+              "target": "folder",
+              "repeat_count": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "여러 추천과 동률 정렬",
+      "request": {
+        "events": [
+          {
+            "source": "beta",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "beta",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "beta",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "alpha",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "alpha",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "alpha",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "browser",
+            "action": "download",
+            "target": "folder"
+          },
+          {
+            "source": "browser",
+            "action": "download",
+            "target": "folder"
+          },
+          {
+            "source": "browser",
+            "action": "download",
+            "target": "folder"
+          },
+          {
+            "source": "browser",
+            "action": "download",
+            "target": "folder"
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "status": "recommend",
+          "recommendations": [
+            {
+              "source": "browser",
+              "action": "download",
+              "target": "folder",
+              "repeat_count": 4,
+              "suggestion": "browser에서 folder로 download하는 반복 작업의 자동화를 추천합니다."
+            },
+            {
+              "source": "alpha",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 3,
+              "suggestion": "alpha에서 tool로 open하는 반복 작업의 자동화를 추천합니다."
+            },
+            {
+              "source": "beta",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 3,
+              "suggestion": "beta에서 tool로 open하는 반복 작업의 자동화를 추천합니다."
+            }
+          ],
+          "patterns": [
+            {
+              "source": "browser",
+              "action": "download",
+              "target": "folder",
+              "repeat_count": 4
+            },
+            {
+              "source": "alpha",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 3
+            },
+            {
+              "source": "beta",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "빈 이벤트 배열",
+      "request": {
+        "events": []
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "status": "no_recommendation",
+          "recommendations": [],
+          "patterns": []
+        }
+      }
+    },
+    {
+      "name": "공백 제거",
+      "request": {
+        "events": [
+          {
+            "source": " codex ",
+            "action": "copy",
+            "target": "chatgpt"
+          },
+          {
+            "source": " codex ",
+            "action": "copy",
+            "target": "chatgpt"
+          },
+          {
+            "source": " codex ",
+            "action": "copy",
+            "target": "chatgpt"
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "status": "recommend",
+          "recommendations": [
+            {
+              "source": "codex",
+              "action": "copy",
+              "target": "chatgpt",
+              "repeat_count": 3,
+              "suggestion": "codex에서 chatgpt로 copy하는 반복 작업의 자동화를 추천합니다."
+            }
+          ],
+          "patterns": [
+            {
+              "source": "codex",
+              "action": "copy",
+              "target": "chatgpt",
+              "repeat_count": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "필수 필드 누락",
+      "request": {
+        "events": [
+          {
+            "source": "codex",
+            "action": "copy"
+          }
+        ]
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "status": "error",
+          "recommendations": [],
+          "patterns": [],
+          "error": {
+            "code": "INVALID_INPUT",
+            "field": "events[0].target",
+            "message": "필수 문자열 필드가 필요합니다."
+          }
+        }
+      }
+    },
+    {
+      "name": "공백 문자열",
+      "request": {
+        "events": [
+          {
+            "source": " ",
+            "action": "copy",
+            "target": "chatgpt"
+          }
+        ]
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "status": "error",
+          "recommendations": [],
+          "patterns": [],
+          "error": {
+            "code": "INVALID_INPUT",
+            "field": "events[0].source",
+            "message": "필수 문자열 필드가 필요합니다."
+          }
+        }
+      }
+    },
+    {
+      "name": "필드 자료형 오류",
+      "request": {
+        "events": [
+          {
+            "source": 3,
+            "action": "copy",
+            "target": "chatgpt"
+          }
+        ]
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "status": "error",
+          "recommendations": [],
+          "patterns": [],
+          "error": {
+            "code": "INVALID_INPUT",
+            "field": "events[0].source",
+            "message": "필수 문자열 필드가 필요합니다."
+          }
+        }
+      }
+    },
+    {
+      "name": "이벤트 자료형 오류",
+      "request": {
+        "events": [
+          3
+        ]
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "status": "error",
+          "recommendations": [],
+          "patterns": [],
+          "error": {
+            "code": "INVALID_INPUT",
+            "field": "events[0]",
+            "message": "이벤트 객체가 필요합니다."
+          }
+        }
+      }
+    },
+    {
+      "name": "이벤트 배열 자료형 오류",
+      "request": {
+        "events": "wrong"
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "status": "error",
+          "recommendations": [],
+          "patterns": [],
+          "error": {
+            "code": "INVALID_INPUT",
+            "field": "events",
+            "message": "이벤트 배열이 필요합니다."
+          }
+        }
+      }
+    },
+    {
+      "name": "events null 자료형 오류",
+      "request": {
+        "events": null
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "status": "error",
+          "recommendations": [],
+          "patterns": [],
+          "error": {
+            "code": "INVALID_INPUT",
+            "field": "events",
+            "message": "이벤트 배열이 필요합니다."
+          }
+        }
+      }
+    },
+    {
+      "name": "events 필드 누락",
+      "request": {},
+      "expect": {
+        "status": 400,
+        "equals": {
+          "status": "error",
+          "recommendations": [],
+          "patterns": [],
+          "error": {
+            "code": "INVALID_INPUT",
+            "field": "events",
+            "message": "이벤트 배열이 필요합니다."
+          }
+        }
+      }
+    },
+    {
+      "name": "반복 횟수 동률 정렬",
+      "request": {
+        "events": [
+          {
+            "source": "beta",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "alpha",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "beta",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "alpha",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "beta",
+            "action": "open",
+            "target": "tool"
+          },
+          {
+            "source": "alpha",
+            "action": "open",
+            "target": "tool"
+          }
+        ]
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "status": "recommend",
+          "recommendations": [
+            {
+              "source": "alpha",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 3,
+              "suggestion": "alpha에서 tool로 open하는 반복 작업의 자동화를 추천합니다."
+            },
+            {
+              "source": "beta",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 3,
+              "suggestion": "beta에서 tool로 open하는 반복 작업의 자동화를 추천합니다."
+            }
+          ],
+          "patterns": [
+            {
+              "source": "alpha",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 3
+            },
+            {
+              "source": "beta",
+              "action": "open",
+              "target": "tool",
+              "repeat_count": 3
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

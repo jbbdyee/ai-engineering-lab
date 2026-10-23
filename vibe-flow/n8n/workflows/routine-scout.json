@@ -1,0 +1,286 @@
+{
+  "name": "Routine Scout - Repeated Task Recommendations",
+  "nodes": [
+    {
+      "id": "routine-scout-webhook",
+      "name": "Routine Scout Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        200
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "routine-scout/analyze",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "validate-and-count",
+      "name": "Validate and Count",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        200
+      ],
+      "parameters": {
+        "jsCode": "const fail = (field, message) => [{ json: { valid: false, error: { code: 'INVALID_INPUT', field, message } } }];\nlet body = $input.first().json.body;\nif (typeof body === 'string') {\n  try { body = JSON.parse(body); } catch { return fail('body', '올바른 JSON 본문이 필요합니다.'); }\n}\nif (body === null || typeof body !== 'object' || Array.isArray(body)) return fail('body', 'JSON 객체 본문이 필요합니다.');\nif (!Array.isArray(body.events)) return fail('events', '이벤트 배열이 필요합니다.');\nconst counts = new Map();\nfor (let i = 0; i < body.events.length; i++) {\n  const event = body.events[i];\n  if (event === null || typeof event !== 'object' || Array.isArray(event)) return fail(`events[${i}]`, '이벤트 객체가 필요합니다.');\n  const values = {};\n  for (const field of ['source', 'action', 'target']) {\n    if (typeof event[field] !== 'string' || !event[field].trim()) return fail(`events[${i}].${field}`, '필수 문자열 필드가 필요합니다.');\n    values[field] = event[field].trim();\n  }\n  const key = JSON.stringify([values.source, values.action, values.target]);\n  if (!counts.has(key)) counts.set(key, { ...values, repeat_count: 0 });\n  counts.get(key).repeat_count++;\n}\nconst compare = (a, b) => b.repeat_count - a.repeat_count ||\n  (a.source < b.source ? -1 : a.source > b.source ? 1 : 0) ||\n  (a.action < b.action ? -1 : a.action > b.action ? 1 : 0) ||\n  (a.target < b.target ? -1 : a.target > b.target ? 1 : 0);\nconst patterns = [...counts.values()].sort(compare);\nconst recommendations = patterns.filter(p => p.repeat_count >= 3).map(p => ({\n  ...p, suggestion: `${p.source}에서 ${p.target}로 ${p.action}하는 반복 작업의 자동화를 추천합니다.`\n}));\nreturn [{ json: { valid: true, patterns, recommendations, recommendation_count: recommendations.length } }];"
+      }
+    },
+    {
+      "id": "valid-input?",
+      "name": "Valid Input?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.valid }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "any-recommendations?",
+      "name": "Any Recommendations?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.recommendation_count }}",
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              },
+              "rightValue": 0
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "build-recommendation",
+      "name": "Build Recommendation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        -40
+      ],
+      "parameters": {
+        "jsCode": "const {patterns,recommendations}=$input.first().json; return [{json:{httpStatus:200,response:{status:'recommend',recommendations,patterns}}}];"
+      }
+    },
+    {
+      "id": "build-no-recommendation",
+      "name": "Build No Recommendation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        160
+      ],
+      "parameters": {
+        "jsCode": "const {patterns}=$input.first().json; return [{json:{httpStatus:200,response:{status:'no_recommendation',recommendations:[],patterns}}}];"
+      }
+    },
+    {
+      "id": "build-input-error",
+      "name": "Build Input Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        360
+      ],
+      "parameters": {
+        "jsCode": "const {error}=$input.first().json; return [{json:{httpStatus:400,response:{status:'error',recommendations:[],patterns:[],error}}}];"
+      }
+    },
+    {
+      "id": "respond-recommendation",
+      "name": "Respond Recommendation",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        -40
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "respond-no-recommendation",
+      "name": "Respond No Recommendation",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        160
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    },
+    {
+      "id": "respond-input-error",
+      "name": "Respond Input Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        360
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Routine Scout Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate and Count",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate and Count": {
+      "main": [
+        [
+          {
+            "node": "Valid Input?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Input?": {
+      "main": [
+        [
+          {
+            "node": "Any Recommendations?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Input Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Recommendations?": {
+      "main": [
+        [
+          {
+            "node": "Build Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build No Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Recommendation": {
+      "main": [
+        [
+          {
+            "node": "Respond Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build No Recommendation": {
+      "main": [
+        [
+          {
+            "node": "Respond No Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Input Error": {
+      "main": [
+        [
+          {
+            "node": "Respond Input Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

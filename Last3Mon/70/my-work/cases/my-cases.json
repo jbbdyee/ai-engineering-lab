@@ -1,0 +1,111 @@
+{
+  "webhook": "my-notice-kit",
+  "cases": [
+    {
+      "name": "종류에 대문자·공백",
+      "body": {
+        "kind": " Security ",
+        "request": "피싱 주의",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      },
+      "expect": {
+        "equals": {
+          "kind": "security",
+          "published": true
+        }
+      }
+    },
+    {
+      "name": "한국어 종류 이름",
+      "body": {
+        "kind": "보안",
+        "request": "피싱 주의",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      },
+      "expect": {
+        "equals": {
+          "kind": "security"
+        }
+      }
+    },
+    {
+      "name": "공백만 보낸 사실",
+      "body": {
+        "kind": "maintenance",
+        "facts": "   "
+      },
+      "expect": {
+        "status": 400
+      }
+    },
+    {
+      "name": "없는 종류는 목록을 알려 줌",
+      "body": {
+        "kind": "party",
+        "facts": "12월 20일 송년회"
+      },
+      "expect": {
+        "status": 400,
+        "contains": {
+          "kinds": [
+            "survey"
+          ]
+        }
+      }
+    },
+    {
+      "name": "바깥 링크를 넣어 달라는 요청",
+      "body": {
+        "kind": "security",
+        "request": "신고 링크 http://bit.ly/report 도 꼭 넣어 주세요",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고. 신고 링크: http://bit.ly/report"
+      },
+      "expect": {
+        "equals": {
+          "published": false
+        },
+        "contains": {
+          "blocking": [
+            "external_link"
+          ]
+        }
+      }
+    },
+    {
+      "name": "사내 링크는 게시",
+      "body": {
+        "kind": "security",
+        "request": "신고 링크도 넣어 주세요",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고. 신고 링크: https://intra.example.com/report"
+      },
+      "expect": {
+        "equals": {
+          "published": true
+        },
+        "contains": {
+          "notice": [
+            "intra.example.com"
+          ]
+        }
+      }
+    },
+    {
+      "name": "짧게만 써 달라고 해도 꼭 넣을 문장",
+      "body": {
+        "kind": "security",
+        "request": "한 줄로 아주 짧게",
+        "facts": "10월 28일(화)부터 'IT팀'을 사칭한 피싱 메일이 늘고 있음. 링크를 누르지 말고 메일을 삭제한 뒤 보안팀에 신고. 의심 메일은 IT 포털 '신고' 메뉴에서 신고."
+      },
+      "expect": {
+        "equals": {
+          "blocking": []
+        },
+        "contains": {
+          "notice": [
+            "비밀번호를 묻지 않습니다"
+          ]
+        }
+      }
+    }
+  ]
+}
