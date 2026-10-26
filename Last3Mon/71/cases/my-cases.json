@@ -1,0 +1,42 @@
+{
+  "webhook": "my-search",
+  "description": "Lab 03: colloquial questions with answers in the policy documents",
+  "before": [
+    {
+      "webhook": "my-index",
+      "request": "requests/index-section.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "챗GPT에 고객 자료",
+      "body": { "question": "챗GPT에 고객 자료 올려도 돼요?" },
+      "expect": { "equals": { "hits.0.source": "software-usage" } }
+    },
+    {
+      "name": "폰으로 업무 메일",
+      "body": { "question": "내 폰으로 회사 메일 보려면 뭘 해야 해요?" },
+      "expect": { "equals": { "hits.0.source": "device-issue-return" } }
+    },
+    {
+      "name": "비번 길이",
+      "body": { "question": "비번 몇 자로 만들어야 해요?" },
+      "expect": { "equals": { "hits.0.source": "password-policy" } }
+    },
+    {
+      "name": "퇴직 후 랩탑 반납",
+      "body": { "question": "퇴직하면 회사 랩탑 언제까지 돌려줘요?" },
+      "expect": { "equals": { "hits.0.source": "device-issue-return" } }
+    },
+    {
+      "name": "사내망 원격 접속",
+      "body": { "question": "밖에서 사내망 접속할 때 가상사설망 켜야 해요?" },
+      "expect": { "equals": { "hits.0.source": "remote-work-vpn" } }
+    },
+    {
+      "name": "수상한 이메일 링크",
+      "body": { "question": "수상한 이메일 링크를 눌렀어요. 어떻게 하죠?" },
+      "expect": { "equals": { "hits.0.source": "security-incident" } }
+    }
+  ]
+}
