@@ -1,0 +1,398 @@
+{
+  "name": "answer · 71 Lab 02 challenge (check the answer)",
+  "nodes": [
+    {
+      "name": "Question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-policy-qa",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Has question?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.body.question }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        560
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"question is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      }
+    },
+    {
+      "name": "Search policies",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "mode": "load",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "my_policy_docs",
+          "cachedResultName": "my_policy_docs"
+        },
+        "prompt": "={{ $json.body.question }}",
+        "topK": 3,
+        "includeDocumentMetadata": true
+      },
+      "alwaysOutputData": true
+    },
+    {
+      "name": "Embeddings",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        380,
+        520
+      ],
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {}
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Build context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// Numbered excerpts for the LLM, and the retrieved sources.\nconst question = $('Question webhook').first().json.body.question;\nconst hits = $input.all().filter(item => item.json.document).map(item => ({\n  source: item.json.document.metadata?.source, title: item.json.document.metadata?.title,\n  score: Math.round((item.json.score ?? 0) * 1000) / 1000, text: item.json.document.pageContent ?? '' }));\nconst context = hits.map((hit, i) => `[${i + 1}] ${hit.text}`).join('\\n\\n');\nconst minScore = Number($('Question webhook').first().json.body.min_score ?? 0.33);\nconst topScore = hits.length ? Math.max(...hits.map(hit => hit.score)) : 0;\nreturn [{ json: { question, hits, context, top_score: topScore, min_score: minScore, relevant: topScore >= minScore } }];"
+      }
+    },
+    {
+      "name": "Relevant?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        860,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c0",
+              "leftValue": "={{ $json.relevant }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Answer from policies",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1080,
+        200
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $json.question }}\n\n규정 발췌:\n{{ $json.context }}",
+        "options": {
+          "systemMessage": "Answer the employee's question only from the numbered policy excerpts, in Korean, in at most 3 sentences. After each fact, write the number of the excerpt it came from in square brackets, such as [2]. If the excerpts do not contain the answer, answer exactly: 규정에서 답을 찾지 못했습니다.",
+          "maxIterations": 2
+        }
+      }
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        420
+      ],
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Build answer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        200
+      ],
+      "parameters": {
+        "jsCode": "// Turn excerpt numbers into document titles and keep which documents were cited.\nconst ctx = $('Build context').first().json;\nconst draft = String($json.output ?? '').trim();\nconst numbers = [...draft.matchAll(/\\[(\\d+)\\]/g)].map(m => Number(m[1])).filter(n => n >= 1 && n <= ctx.hits.length);\nconst cited = [...new Set(numbers.map(n => ctx.hits[n - 1].source))];\nconst answer = draft.replace(/\\[(\\d+)\\]/g, (all, n) => ctx.hits[n - 1] ? `[${ctx.hits[n - 1].title}]` : all);\nconst bigrams = s => { const t = s.replace(/\\s+/g, ''); const set = new Set(); for (let i = 0; i < t.length - 1; i++) set.add(t.slice(i, i + 2)); return set; };\nconst overlap = (a, b) => { const A = bigrams(a); if (!A.size) return 0; const B = bigrams(b); let n = 0; for (const x of A) if (B.has(x)) n++; return n / A.size; };\nconst plain = draft.replace(/\\[\\d+\\]/g, '');\nconst numbersInAnswer = plain.match(/\\d+/g) ?? [];\nconst checks = [\n  // The LLM says \"not found\" in many ways even when told the exact sentence.\n  { name: 'found_in_policies', passed: !/찾지 못했|포함되어 있지 않|명시되어 있지 않|언급이 없|나와 있지 않/.test(draft) },\n  { name: 'cites_excerpt', passed: cited.length > 0 },\n  { name: 'grounded', passed: overlap(plain, ctx.context) >= 0.3 },\n  { name: 'numbers_from_policies', passed: numbersInAnswer.every(n => ctx.context.includes(n)) },\n];\nconst failed = checks.filter(check => !check.passed).map(check => check.name);\nreturn [{ json: { route: failed.length ? '담당자 연결' : '자동 답변', answer: failed.length ? '규정에서 확실한 답을 찾지 못해 IT 담당자에게 전달했습니다.' : answer, draft: answer, sources: [...new Set(ctx.hits.map(hit => hit.source))], cited, top_score: ctx.top_score, checks, failed } }];"
+      }
+    },
+    {
+      "name": "Not in policies",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1080,
+        520
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0",
+              "name": "route",
+              "value": "담당자 연결",
+              "type": "string"
+            },
+            {
+              "id": "a1",
+              "name": "answer",
+              "value": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "sources",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a3",
+              "name": "cited",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "a4",
+              "name": "top_score",
+              "value": "={{ $json.top_score }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1540,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "node": "Has question?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has question?": {
+      "main": [
+        [
+          {
+            "node": "Search policies",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search policies",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search policies": {
+      "main": [
+        [
+          {
+            "node": "Build context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build context": {
+      "main": [
+        [
+          {
+            "node": "Relevant?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Relevant?": {
+      "main": [
+        [
+          {
+            "node": "Answer from policies",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not in policies",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer from policies",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer from policies": {
+      "main": [
+        [
+          {
+            "node": "Build answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build answer": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Not in policies": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

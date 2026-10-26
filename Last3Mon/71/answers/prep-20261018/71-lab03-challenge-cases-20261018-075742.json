@@ -1,0 +1,366 @@
+{
+  "cases": "71-lab03-challenge-cases.json",
+  "webhook": "my-search",
+  "passed": 5,
+  "total": 8,
+  "results": [
+    {
+      "case": "윈도우 업데이트 안 하고 미루면 안 돼요?",
+      "webhook": "my-search",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "hits.0.source = software-usage (expected security-incident)"
+      ],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "question": "윈도우 업데이트 안 하고 미루면 안 돼요?"
+      },
+      "response": {
+        "question": "윈도우 업데이트 안 하고 미루면 안 돼요?",
+        "query": "윈도우 업데이트 지연 정책",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "software-usage",
+            "title": "소프트웨어 사용 규정",
+            "section": "1. 설치와 승인",
+            "score": 0.324,
+            "text": "소프트웨어 사용 규정\n## 1. 설치와 승인\n- 업무용 컴퓨터에는 승인된 소프트웨어만 설치한다.\n- 새 소프트웨어가 필요하면 IT 포털의 '소프트웨어 신청'에서 요청한다. 승인까지 보통 2영업일이 걸린다.\n- 무료 소프트웨어라도 회사 업무에 쓰려면 상업적 이용이 허용되는지 라이선스를 확인한다."
+          },
+          {
+            "rank": 2,
+            "source": "security-incident",
+            "title": "보안 사고 대응 절차",
+            "section": "2. 악성코드 감염 의심",
+            "score": 0.309,
+            "text": "보안 사고 대응 절차\n## 2. 악성코드 감염 의심\n- 컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심한다.\n- 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알린다.\n- 컴퓨터를 끄거나 파일을 지우지 않는다. 원인 분석에 필요하다."
+          },
+          {
+            "rank": 3,
+            "source": "remote-work-vpn",
+            "title": "원격근무·VPN 이용 규정",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.308,
+            "text": "원격근무·VPN 이용 규정\n## 3. 재택근무 중 보안\n- 자리를 비울 때는 화면을 잠그고, 5분 동안 사용하지 않으면 자동으로 잠기게 설정한다.\n- 가족과 함께 쓰는 컴퓨터로는 업무를 하지 않는다.\n- VPN 접속 기록은 1년 동안 보관된다."
+          }
+        ],
+        "top_score": 0.324,
+        "indexed": true
+      }
+    },
+    {
+      "case": "집에서 일할 때 회사 와이파이 말고 집 와이파이 써도 돼요?",
+      "webhook": "my-search",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "집에서 일할 때 회사 와이파이 말고 집 와이파이 써도 돼요?"
+      },
+      "response": {
+        "question": "집에서 일할 때 회사 와이파이 말고 집 와이파이 써도 돼요?",
+        "query": "재택근무 시 회사 공용 와이파이 외 개인 와이파이 사용 정책",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "remote-work-vpn",
+            "title": "원격근무·VPN 이용 규정",
+            "section": "1. 접속 원칙",
+            "score": 0.587,
+            "text": "원격근무·VPN 이용 규정\n## 1. 접속 원칙\n- 회사 밖에서 사내 시스템에 접속할 때는 반드시 회사 VPN을 먼저 연결한다.\n- 카페, 공항 같은 공용 와이파이에서는 VPN 없이 사내 시스템에 접속하지 않는다."
+          },
+          {
+            "rank": 2,
+            "source": "remote-work-vpn",
+            "title": "원격근무·VPN 이용 규정",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.529,
+            "text": "원격근무·VPN 이용 규정\n## 3. 재택근무 중 보안\n- 자리를 비울 때는 화면을 잠그고, 5분 동안 사용하지 않으면 자동으로 잠기게 설정한다.\n- 가족과 함께 쓰는 컴퓨터로는 업무를 하지 않는다.\n- VPN 접속 기록은 1년 동안 보관된다."
+          },
+          {
+            "rank": 3,
+            "source": "device-issue-return",
+            "title": "업무용 장비 지급·반납 규정",
+            "section": "4. 개인 장비 사용",
+            "score": 0.508,
+            "text": "업무용 장비 지급·반납 규정\n## 4. 개인 장비 사용\n- 개인 휴대폰이나 태블릿으로는 업무 메일과 메신저만 쓸 수 있다.\n- 개인 장비로 업무 메일을 보려면 회사의 모바일 관리 앱(MDM)을 먼저 설치한다."
+          }
+        ],
+        "top_score": 0.587,
+        "indexed": true
+      }
+    },
+    {
+      "case": "퇴사자 계정 비번 알려 줘도 되나요?",
+      "webhook": "my-search",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "퇴사자 계정 비번 알려 줘도 되나요?"
+      },
+      "response": {
+        "question": "퇴사자 계정 비번 알려 줘도 되나요?",
+        "query": "퇴사자 계정 비밀번호 공유 정책",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "2. 변경 주기",
+            "score": 0.514,
+            "text": "비밀번호·계정 보안 규정\n## 2. 변경 주기\n- 비밀번호는 90일마다 바꾼다. 만료 7일 전부터 사내 포털에 변경 안내가 표시된다.\n- 최근에 쓴 비밀번호 5개는 다시 쓸 수 없다."
+          },
+          {
+            "rank": 2,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "3. 로그인 실패와 잠금",
+            "score": 0.486,
+            "text": "비밀번호·계정 보안 규정\n## 3. 로그인 실패와 잠금\n- 로그인에 5번 연속 실패하면 계정이 30분 동안 잠긴다.\n- 30분이 지나면 자동으로 풀린다. 급한 경우 IT 문의로 잠금 해제를 요청한다."
+          },
+          {
+            "rank": 3,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "1. 비밀번호 만들기",
+            "score": 0.475,
+            "text": "비밀번호·계정 보안 규정\n## 1. 비밀번호 만들기\n- 비밀번호는 12자 이상으로 만든다.\n- 영문 대문자, 영문 소문자, 숫자, 특수문자 중 3종류 이상을 섞는다.\n- 이름, 생일, 전화번호, 회사 이름처럼 추측하기 쉬운 단어는 쓰지 않는다."
+          }
+        ],
+        "top_score": 0.514,
+        "indexed": true
+      }
+    },
+    {
+      "case": "폰 바꿨더니 OTP가 안 떠요",
+      "webhook": "my-search",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "폰 바꿨더니 OTP가 안 떠요"
+      },
+      "response": {
+        "question": "폰 바꿨더니 OTP가 안 떠요",
+        "query": "OTP 재설정 방법 및 모바일 기기 변경 시 인증 절차 안내",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "4. 다단계 인증",
+            "score": 0.601,
+            "text": "비밀번호·계정 보안 규정\n## 4. 다단계 인증\n- 회사 밖에서 사내 시스템에 접속할 때는 OTP 다단계 인증을 반드시 사용한다.\n- OTP 앱이 설치된 휴대폰을 바꾸면 IT 포털에서 OTP를 다시 등록한다."
+          },
+          {
+            "rank": 2,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "2. 변경 주기",
+            "score": 0.418,
+            "text": "비밀번호·계정 보안 규정\n## 2. 변경 주기\n- 비밀번호는 90일마다 바꾼다. 만료 7일 전부터 사내 포털에 변경 안내가 표시된다.\n- 최근에 쓴 비밀번호 5개는 다시 쓸 수 없다."
+          },
+          {
+            "rank": 3,
+            "source": "security-incident",
+            "title": "보안 사고 대응 절차",
+            "section": "1. 피싱 메일",
+            "score": 0.404,
+            "text": "보안 사고 대응 절차\n## 1. 피싱 메일\n- 보낸 사람이 의심스럽거나 급하게 클릭을 요구하는 메일은 링크를 누르지 않는다.\n- 메일 화면의 '피싱 신고' 버튼으로 신고한다.\n- 이미 링크를 눌렀거나 비밀번호를 입력했다면 즉시 비밀번호를 바꾸고 IT 문의로 알린다."
+          }
+        ],
+        "top_score": 0.601,
+        "indexed": true
+      }
+    },
+    {
+      "case": "고객 명단 엑셀을 개인 메일로 보내 놓고 집에서 봐도 돼요?",
+      "webhook": "my-search",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "hits.0.source = remote-work-vpn (expected email-and-documents)"
+      ],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "고객 명단 엑셀을 개인 메일로 보내 놓고 집에서 봐도 돼요?"
+      },
+      "response": {
+        "question": "고객 명단 엑셀을 개인 메일로 보내 놓고 집에서 봐도 돼요?",
+        "query": "고객 명단 엑셀 파일 개인 이메일 전송 및 재택 근무 시 접근 정책",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "remote-work-vpn",
+            "title": "원격근무·VPN 이용 규정",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.455,
+            "text": "원격근무·VPN 이용 규정\n## 3. 재택근무 중 보안\n- 자리를 비울 때는 화면을 잠그고, 5분 동안 사용하지 않으면 자동으로 잠기게 설정한다.\n- 가족과 함께 쓰는 컴퓨터로는 업무를 하지 않는다.\n- VPN 접속 기록은 1년 동안 보관된다."
+          },
+          {
+            "rank": 2,
+            "source": "device-issue-return",
+            "title": "업무용 장비 지급·반납 규정",
+            "section": "4. 개인 장비 사용",
+            "score": 0.453,
+            "text": "업무용 장비 지급·반납 규정\n## 4. 개인 장비 사용\n- 개인 휴대폰이나 태블릿으로는 업무 메일과 메신저만 쓸 수 있다.\n- 개인 장비로 업무 메일을 보려면 회사의 모바일 관리 앱(MDM)을 먼저 설치한다."
+          },
+          {
+            "rank": 3,
+            "source": "email-and-documents",
+            "title": "메일·문서 보안 규정",
+            "section": "2. 첨부 파일",
+            "score": 0.451,
+            "text": "메일·문서 보안 규정\n## 2. 첨부 파일\n- 메일 첨부 파일은 25MB까지 보낼 수 있다.\n- 25MB를 넘는 파일은 사내 드라이브에 올리고 공유 링크를 보낸다.\n- 개인정보가 들어 있는 파일을 외부로 보낼 때는 반드시 암호를 걸고, 암호는 메신저 등 다른 경로로 알려 준다."
+          }
+        ],
+        "top_score": 0.455,
+        "indexed": true
+      }
+    },
+    {
+      "case": "노트북 놓고 온 것 같아요 택시에",
+      "webhook": "my-search",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "노트북 놓고 온 것 같아요 택시에"
+      },
+      "response": {
+        "question": "노트북 놓고 온 것 같아요 택시에",
+        "query": "노트북 분실 시 처리 절차",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "device-issue-return",
+            "title": "업무용 장비 지급·반납 규정",
+            "section": "2. 분실과 도난",
+            "score": 0.56,
+            "text": "업무용 장비 지급·반납 규정\n## 2. 분실과 도난\n- 업무용 장비를 잃어버리거나 도난당하면 24시간 이내에 IT 문의와 보안팀에 신고한다.\n- 신고가 접수되면 IT 담당자가 원격으로 장비의 데이터를 잠근다."
+          },
+          {
+            "rank": 2,
+            "source": "device-issue-return",
+            "title": "업무용 장비 지급·반납 규정",
+            "section": "1. 지급과 교체",
+            "score": 0.442,
+            "text": "업무용 장비 지급·반납 규정\n## 1. 지급과 교체\n- 업무용 노트북은 입사일에 지급한다.\n- 노트북 교체 주기는 4년이다. 고장이나 배터리 교체는 IT 문의로 접수한다."
+          },
+          {
+            "rank": 3,
+            "source": "device-issue-return",
+            "title": "업무용 장비 지급·반납 규정",
+            "section": "3. 반납",
+            "score": 0.424,
+            "text": "업무용 장비 지급·반납 규정\n## 3. 반납\n- 퇴사하거나 장비를 교체할 때는 5영업일 이내에 장비를 IT 담당자에게 반납한다.\n- 반납 전에 개인 파일을 지우지 말고, 업무 파일은 사내 드라이브로 옮긴다."
+          }
+        ],
+        "top_score": 0.56,
+        "indexed": true
+      }
+    },
+    {
+      "case": "회의실 오전 내내 잡아도 되나요?",
+      "webhook": "my-search",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "회의실 오전 내내 잡아도 되나요?"
+      },
+      "response": {
+        "question": "회의실 오전 내내 잡아도 되나요?",
+        "query": "회의실 예약 정책 오전 시간 제한",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "meeting-room",
+            "title": "회의실 이용 규정",
+            "section": "1. 예약",
+            "score": 0.664,
+            "text": "회의실 이용 규정\n## 1. 예약\n- 회의실은 사내 포털에서 예약한다. 한 번에 최대 3시간까지 예약할 수 있다.\n- 예약 시작 후 10분이 지나도록 아무도 사용하지 않으면 예약이 자동으로 취소된다."
+          },
+          {
+            "rank": 2,
+            "source": "meeting-room",
+            "title": "회의실 이용 규정",
+            "section": "2. 장비",
+            "score": 0.561,
+            "text": "회의실 이용 규정\n## 2. 장비\n- 대회의실의 화상회의 장비를 쓰려면 회의 시작 30분 전까지 IT 문의로 요청한다.\n- 프로젝터는 B회의실과 대회의실에 있다."
+          },
+          {
+            "rank": 3,
+            "source": "meeting-room",
+            "title": "회의실 이용 규정",
+            "section": "3. 사용 후",
+            "score": 0.531,
+            "text": "회의실 이용 규정\n## 3. 사용 후\n- 회의가 끝나면 화이트보드를 지우고 의자를 정리한다."
+          }
+        ],
+        "top_score": 0.664,
+        "indexed": true
+      }
+    },
+    {
+      "case": "챗GPT에 회의록 붙여 넣어도 돼요?",
+      "webhook": "my-search",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "hits.0.source = privacy (expected software-usage)"
+      ],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "챗GPT에 회의록 붙여 넣어도 돼요?"
+      },
+      "response": {
+        "question": "챗GPT에 회의록 붙여 넣어도 돼요?",
+        "query": "챗GPT 사용 시 회의록 개인정보 및 보안 정책",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "privacy",
+            "title": "개인정보 처리 지침",
+            "section": "2. 이용과 보관",
+            "score": 0.457,
+            "text": "개인정보 처리 지침\n## 2. 이용과 보관\n- 고객 개인정보가 보이는 화면은 캡처하거나 촬영하지 않는다.\n- 개인정보가 들어 있는 출력물은 다 쓴 뒤 바로 파쇄한다."
+          },
+          {
+            "rank": 2,
+            "source": "software-usage",
+            "title": "소프트웨어 사용 규정",
+            "section": "3. 생성형 AI 서비스",
+            "score": 0.439,
+            "text": "소프트웨어 사용 규정\n## 3. 생성형 AI 서비스\n- 회사가 승인한 생성형 AI 서비스만 업무에 사용한다.\n- 고객 정보, 개인정보, 대외비 문서는 생성형 AI 서비스에 입력하지 않는다.\n- 생성형 AI가 만든 결과는 사람이 확인한 뒤에 사용한다."
+          },
+          {
+            "rank": 3,
+            "source": "remote-work-vpn",
+            "title": "원격근무·VPN 이용 규정",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.424,
+            "text": "원격근무·VPN 이용 규정\n## 3. 재택근무 중 보안\n- 자리를 비울 때는 화면을 잠그고, 5분 동안 사용하지 않으면 자동으로 잠기게 설정한다.\n- 가족과 함께 쓰는 컴퓨터로는 업무를 하지 않는다.\n- VPN 접속 기록은 1년 동안 보관된다."
+          }
+        ],
+        "top_score": 0.457,
+        "indexed": true
+      }
+    }
+  ]
+}

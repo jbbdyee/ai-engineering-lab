@@ -1,0 +1,104 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/cache-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "처음 묻는 VPN (캐시 없음)",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "cached": false
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "다른 말로 묻는 VPN → FAQ 번호 캐시",
+      "body": {
+        "question": "VPN 연결이 계속 끊어지는데요",
+        "user": "최유진"
+      },
+      "expect": {
+        "equals": {
+          "cached": true,
+          "cache_by": "faq",
+          "llm_calls": 0
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        },
+        "max_seconds": 1
+      }
+    },
+    {
+      "name": "같은 말은 질문 캐시",
+      "request": "requests/faq-vpn-again.json",
+      "expect": {
+        "equals": {
+          "cached": true,
+          "cache_by": "question",
+          "llm_calls": 0
+        },
+        "max_seconds": 1
+      }
+    },
+    {
+      "name": "no_cache면 FAQ 번호 캐시도 안 씀",
+      "body": {
+        "question": "VPN 연결이 계속 끊어지는데요",
+        "user": "최유진",
+        "no_cache": true
+      },
+      "expect": {
+        "equals": {
+          "cached": false
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "다른 FAQ는 따로 (프린터 처음)",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "cached": false
+        },
+        "contains": {
+          "answer": [
+            "대기열",
+            "전원"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황은 캐시 안 함",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "cached": false
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    }
+  ]
+}

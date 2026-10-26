@@ -1,0 +1,27 @@
+# Sample company data API for day 72 (day 71 API + fault switch + cache), attached to the day 65 n8n network
+# (n8n installed in ~/day65-n8n, Docker project day65-n8n, network day65-n8n_default).
+#   docker compose up -d        (run from this folder, after day 65 n8n is running)
+#   from n8n : http://data-api:8800
+#   from WSL : http://localhost:8800
+name: day67-data
+
+services:
+  data-api:
+    image: python:3.12-slim
+    command: python /app/server.py
+    environment:
+      - DATA_DIR=/data
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8800:8800"
+    volumes:
+      - ./server.py:/app/server.py:ro
+      - ./data:/data:ro
+    networks:
+      - n8n
+    restart: unless-stopped
+
+networks:
+  n8n:
+    external: true
+    name: day65-n8n_default

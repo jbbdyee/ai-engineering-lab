@@ -1,0 +1,12 @@
+$ uv run tools/flow.py call my-index requests/index-section.json -v
+HTTP 200 · 1.7s
+    → request  POST /webhook/my-index
+      {
+        "chunking": "section"
+      }
+    ← response HTTP 200
+      {
+        "indexed_chunks": 25,
+        "chunking": "section"
+      }
+

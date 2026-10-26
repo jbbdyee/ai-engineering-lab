@@ -1,0 +1,15 @@
+$ uv run tools/flow.py call my-policy-qa requests/q-off-topic.json -v
+HTTP 200 · 0.3s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "오늘 점심 메뉴 추천해줘"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+        "sources": [],
+        "cited": [],
+        "top_score": 0.202
+      }
+

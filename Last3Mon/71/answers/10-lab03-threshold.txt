@@ -1,0 +1,257 @@
+✔ before: POST /webhook/my-index · HTTP 200 · 0.5s · {"indexed_chunks": 25, "chunking": "section"}
+POST http://localhost:5678/webhook/my-policy-qa · 10 case(s) × 1
+✔ 규정 질문 · 암호를 얼마나 자주 바꿔야 해? · 1.5s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "암호를 얼마나 자주 바꿔야 해?"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "암호는 90일마다 변경해야 하며, 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다. 또한 최근에 사용한 비밀번호 5개는 다시 사용할 수 없습니다[비밀번호·계정 보안 규정].",
+        "draft": "암호는 90일마다 변경해야 하며, 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다. 또한 최근에 사용한 비밀번호 5개는 다시 사용할 수 없습니다[비밀번호·계정 보안 규정].",
+        "sources": [
+          "password-policy"
+        ],
+        "cited": [
+          "password-policy"
+        ],
+        "top_score": 0.575,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": true
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": true
+          },
+          {
+            "name": "grounded",
+            "passed": true
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": []
+      }
+✔ 규정 질문 · 회사를 그만두면 노트북은 언제까지 돌려줘야 하나요? · 1.4s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "회사를 그만두면 노트북은 언제까지 돌려줘야 하나요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "회사를 그만두면 업무용 노트북은 퇴사 후 5영업일 이내에 IT 담당자에게 반납해야 합니다. 반납 전에 개인 파일을 지우지 말고, 업무 파일은 사내 드라이브로 옮겨야 합니다[업무용 장비 지급·반납 규정].",
+        "draft": "회사를 그만두면 업무용 노트북은 퇴사 후 5영업일 이내에 IT 담당자에게 반납해야 합니다. 반납 전에 개인 파일을 지우지 말고, 업무 파일은 사내 드라이브로 옮겨야 합니다[업무용 장비 지급·반납 규정].",
+        "sources": [
+          "device-issue-return"
+        ],
+        "cited": [
+          "device-issue-return"
+        ],
+        "top_score": 0.464,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": true
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": true
+          },
+          {
+            "name": "grounded",
+            "passed": true
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": []
+      }
+✔ 규정 질문 · 첨부 파일이 너무 커서 메일이 안 보내져요 · 1.7s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "첨부 파일이 너무 커서 메일이 안 보내져요"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "메일 첨부 파일은 25MB까지 보낼 수 있으며, 25MB를 넘는 파일은 사내 드라이브에 올리고 공유 링크를 보내야 합니다[메일·문서 보안 규정]. 따라서 첨부 파일이 너무 커서 메일이 안 보내진다면, 파일을 사내 드라이브에 올리고 링크를 공유하세요[메일·문서 보안 규정].",
+        "draft": "메일 첨부 파일은 25MB까지 보낼 수 있으며, 25MB를 넘는 파일은 사내 드라이브에 올리고 공유 링크를 보내야 합니다[메일·문서 보안 규정]. 따라서 첨부 파일이 너무 커서 메일이 안 보내진다면, 파일을 사내 드라이브에 올리고 링크를 공유하세요[메일·문서 보안 규정].",
+        "sources": [
+          "email-and-documents",
+          "security-incident"
+        ],
+        "cited": [
+          "email-and-documents"
+        ],
+        "top_score": 0.616,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": true
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": true
+          },
+          {
+            "name": "grounded",
+            "passed": true
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": []
+      }
+✔ 규정 질문 · 생성형 AI에 고객 자료를 넣어도 되나요? · 1.8s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "생성형 AI에 고객 자료를 넣어도 되나요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "고객 정보는 생성형 AI 서비스에 입력하지 말아야 합니다. 회사가 승인한 생성형 AI 서비스만 업무에 사용해야 하며, 고객 정보, 개인정보, 대외비 문서는 생성형 AI 서비스에 입력하지 않는 것이 규정입니다[소프트웨어 사용 규정].",
+        "draft": "고객 정보는 생성형 AI 서비스에 입력하지 말아야 합니다. 회사가 승인한 생성형 AI 서비스만 업무에 사용해야 하며, 고객 정보, 개인정보, 대외비 문서는 생성형 AI 서비스에 입력하지 않는 것이 규정입니다[소프트웨어 사용 규정].",
+        "sources": [
+          "software-usage",
+          "privacy"
+        ],
+        "cited": [
+          "software-usage"
+        ],
+        "top_score": 0.51,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": true
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": true
+          },
+          {
+            "name": "grounded",
+            "passed": true
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": []
+      }
+✔ 규정 질문 · 컴퓨터가 바이러스에 걸린 것 같아요 · 1.4s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심해야 합니다. 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알리세요. 컴퓨터를 끄거나 파일을 지우지 마십시오. 원인 분석에 필요합니다[보안 사고 대응 절차].",
+        "draft": "컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심해야 합니다. 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알리세요. 컴퓨터를 끄거나 파일을 지우지 마십시오. 원인 분석에 필요합니다[보안 사고 대응 절차].",
+        "sources": [
+          "security-incident",
+          "remote-work-vpn"
+        ],
+        "cited": [
+          "security-incident"
+        ],
+        "top_score": 0.478,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": true
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": true
+          },
+          {
+            "name": "grounded",
+            "passed": true
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": []
+      }
+✔ 규정 밖 · 오늘 점심 메뉴 추천해줘 · 0.3s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "오늘 점심 메뉴 추천해줘"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+        "sources": [],
+        "cited": [],
+        "top_score": 0.202
+      }
+✔ 규정 밖 · 연차 휴가는 며칠이에요? · 0.3s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "연차 휴가는 며칠이에요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+        "sources": [],
+        "cited": [],
+        "top_score": 0.259
+      }
+✔ 규정 밖 · 주말에 볼 영화 추천해 주세요 · 0.3s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "주말에 볼 영화 추천해 주세요"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+        "sources": [],
+        "cited": [],
+        "top_score": 0.211
+      }
+✔ 규정 밖 · 회사 근처 맛집 알려 줘 · 0.4s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "회사 근처 맛집 알려 줘"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+        "sources": [],
+        "cited": [],
+        "top_score": 0.232
+      }
+✔ 규정 밖 · 올해 연봉 인상률은요? · 0.5s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "올해 연봉 인상률은요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+        "sources": [],
+        "cited": [],
+        "top_score": 0.261
+      }
+Passed 10/10
+report: runs/lab03-threshold-20261022-201035.json

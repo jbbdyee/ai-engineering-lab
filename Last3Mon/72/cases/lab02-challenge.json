@@ -1,0 +1,87 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "webhook": "my-helpdesk",
+      "body": {
+        "question": "워밍업: 프린터 출력이 안 돼요",
+        "user": "이준호",
+        "no_cache": true
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "VPN · LLM 한 번 · 2.5초 안",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1,
+          "cached": false
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        },
+        "max_seconds": 2.5
+      }
+    },
+    {
+      "name": "비밀번호 · LLM 한 번",
+      "body": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈",
+        "no_cache": true
+      },
+      "expect": {
+        "equals": {
+          "llm_calls": 1
+        },
+        "contains": {
+          "answer": [
+            "비밀번호 찾기",
+            "휴대폰"
+          ]
+        },
+        "max_seconds": 2.5
+      }
+    },
+    {
+      "name": "접수 현황 · LLM 한 번",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        },
+        "max_seconds": 2.5
+      }
+    },
+    {
+      "name": "규칙으로 모르면 분류 + 답 두 번",
+      "expect": {
+        "equals": {
+          "llm_calls": 2
+        }
+      },
+      "body": {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    },
+    {
+      "name": "빈 질문은 LLM 없이",
+      "request": "requests/empty-question.json",
+      "expect": {
+        "status": 400,
+        "max_seconds": 1
+      }
+    }
+  ]
+}

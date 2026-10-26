@@ -1,0 +1,100 @@
+{
+  "webhook": "my-search",
+  "description": "hard questions: colloquial words, other names, two topics",
+  "before": [
+    {
+      "webhook": "my-index",
+      "request": "requests/index-section.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "모르는 프로그램이 자꾸 저절로 떠요",
+      "body": {
+        "question": "모르는 프로그램이 자꾸 저절로 떠요"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "security-incident"
+        }
+      }
+    },
+    {
+      "name": "집에서 일할 때 회사 와이파이 말고 집 와이파이 써도 돼요?",
+      "body": {
+        "question": "집에서 일할 때 회사 와이파이 말고 집 와이파이 써도 돼요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "remote-work-vpn"
+        }
+      }
+    },
+    {
+      "name": "퇴사자 계정 비번 알려 줘도 되나요?",
+      "body": {
+        "question": "퇴사자 계정 비번 알려 줘도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "password-policy"
+        }
+      }
+    },
+    {
+      "name": "폰 바꿨더니 OTP가 안 떠요",
+      "body": {
+        "question": "폰 바꿨더니 OTP가 안 떠요"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "password-policy"
+        }
+      }
+    },
+    {
+      "name": "고객 명단 엑셀을 개인 메일로 보내 놓고 집에서 봐도 돼요?",
+      "body": {
+        "question": "고객 명단 엑셀을 개인 메일로 보내 놓고 집에서 봐도 돼요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "email-and-documents"
+        }
+      }
+    },
+    {
+      "name": "노트북 놓고 온 것 같아요 택시에",
+      "body": {
+        "question": "노트북 놓고 온 것 같아요 택시에"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "device-issue-return"
+        }
+      }
+    },
+    {
+      "name": "회의실 오전 내내 잡아도 되나요?",
+      "body": {
+        "question": "회의실 오전 내내 잡아도 되나요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "meeting-room"
+        }
+      }
+    },
+    {
+      "name": "챗GPT에 회의록 붙여 넣어도 돼요?",
+      "body": {
+        "question": "챗GPT에 회의록 붙여 넣어도 돼요?"
+      },
+      "expect": {
+        "equals": {
+          "hits.0.source": "software-usage"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "webhook": "my-health",
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "평소",
+      "request": "requests/health.json",
+      "expect": {
+        "equals": {
+          "status": "ok",
+          "checks.llm": true,
+          "checks.faq": true
+        }
+      }
+    },
+    {
+      "name": "FAQ 오류",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok"
+          }
+        }
+      ],
+      "request": "requests/health.json",
+      "expect": {
+        "equals": {
+          "status": "degraded",
+          "checks.faq": false,
+          "checks.data_api": true
+        }
+      }
+    },
+    {
+      "name": "FAQ 느림 (8초) · 점검은 빨리 끝남",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "slow",
+            "slow_seconds": 8
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok"
+          }
+        }
+      ],
+      "request": "requests/health.json",
+      "expect": {
+        "equals": {
+          "status": "degraded",
+          "checks.faq": false
+        },
+        "max_seconds": 5
+      }
+    },
+    {
+      "name": "LLM 멈춤",
+      "before": [
+        {
+          "llm": "down"
+        }
+      ],
+      "after": [
+        {
+          "llm": "up"
+        }
+      ],
+      "request": "requests/health.json",
+      "expect": {
+        "equals": {
+          "status": "degraded",
+          "checks.llm": false,
+          "checks.faq": true
+        }
+      }
+    }
+  ]
+}

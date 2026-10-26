@@ -1,0 +1,104 @@
+{
+  "webhook": "my-helpdesk",
+  "cases": [
+    {
+      "name": "예산 안 (넉넉한 예산)",
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true,
+        "budget_ms": 60000
+      },
+      "expect": {
+        "equals": {
+          "over_budget": false,
+          "budget_ms": 60000
+        },
+        "contains": {
+          "llm_ms": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+          ],
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예산 넘음 (0.5초 예산)",
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true,
+        "budget_ms": 500
+      },
+      "expect": {
+        "equals": {
+          "over_budget": true,
+          "budget_ms": 500
+        }
+      }
+    },
+    {
+      "name": "예산을 안 주면 3초",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "equals": {
+          "budget_ms": 3000
+        },
+        "contains": {
+          "llm_ms": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황도 같은 모양",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "budget_ms": 3000,
+          "category": "ticket"
+        },
+        "contains": {
+          "llm_ms": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+          ],
+          "slowest_step": [
+            "classify",
+            "answer",
+            "review"
+          ]
+        }
+      }
+    }
+  ]
+}

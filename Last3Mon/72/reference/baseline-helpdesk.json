@@ -1,0 +1,442 @@
+{
+  "name": "72 IT helpdesk baseline (provided)",
+  "nodes": [
+    {
+      "name": "Question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "base-helpdesk",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "f7f86794-1216-5eae-93b9-9e69bb515ce3",
+      "position": [
+        0,
+        300
+      ],
+      "id": "73fa6963-23cf-5fab-be79-21db3461385e"
+    },
+    {
+      "name": "Has question?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.question }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "108e39d5-615a-517a-9060-e09e7c4379f9"
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"question is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        560
+      ],
+      "id": "1d7d4c12-dba9-5291-95eb-fbcf440257be"
+    },
+    {
+      "name": "Classify",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "You sort one company IT help-desk question. Categories: faq (how to fix or use something: password, account lock, VPN, printer, mail box, software install), ticket (asks about the status of an IT request ticket like T-1002), other (anything else). Return only JSON, no code fence: {\"category\": \"faq\"}",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "e44002cd-d810-5fbe-9eef-d0d9e897b974"
+    },
+    {
+      "name": "Classify model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        440,
+        520
+      ],
+      "id": "555c72bf-fdc6-5560-9c4a-386b1cf78fe7"
+    },
+    {
+      "name": "Parse category",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const raw = String($json.output ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet category = 'other';\ntry { category = JSON.parse(raw).category ?? 'other'; } catch (error) { category = 'other'; }\nif (!['faq', 'ticket', 'other'].includes(category)) category = 'other';\nreturn [{ json: { category, by: 'llm' } }];"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "169c07e6-bc8e-5307-9502-4a8114c854fa"
+    },
+    {
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq",
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('Question webhook').first().json.body.question }}"
+            }
+          ]
+        }
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "7459ee39-7124-57c0-8bdf-c596f65f7deb"
+    },
+    {
+      "name": "Get ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/tickets/{{ (($('Question webhook').first().json.body.question.match(/T-?\\d{4}/i) || ['NONE'])[0]).toUpperCase().replace(/^T(\\d)/, 'T-$1') }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "requester",
+              "value": "={{ $('Question webhook').first().json.body.user ?? '' }}"
+            }
+          ]
+        }
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "70d6cf5f-6064-5790-a7e6-628e044f95b9"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $('Question webhook').first().json.body.question }}\n분류: {{ $('Parse category').first().json.category }}\nFAQ: {{ JSON.stringify($('Search FAQ').first().json.results ?? []) }}\n접수 건: {{ JSON.stringify($('Get ticket').first().json) }}",
+        "options": {
+          "systemMessage": "You are the company IT help desk. Answer in Korean in at most 3 sentences, using only the FAQ entries and the ticket record given. Never invent steps, dates or names. For a ticket, say its status and note. If the data does not answer the question, say \"찾지 못했습니다\" and that a staff member will help.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "bd94eff5-ddeb-5a04-bfb7-e8d62ca7ed45"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        1320,
+        520
+      ],
+      "id": "e40a7e46-cf90-5b11-a629-6f92fe5a043c"
+    },
+    {
+      "name": "Review",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=초안: {{ $('Answer').first().json.output }}",
+        "options": {
+          "systemMessage": "You review a Korean IT help-desk answer before it is sent. Keep the facts exactly. Make it polite (합니다체), remove anything not supported by the data, keep at most 3 sentences. Return only the final answer text.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "540513f3-f96b-5672-913f-ba4846dd768b"
+    },
+    {
+      "name": "Review model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        1540,
+        520
+      ],
+      "id": "6f1ffb5c-b821-593b-8cd2-ebb68d63a277"
+    },
+    {
+      "name": "Build result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const ran = (name) => { try { return $(name).isExecuted; } catch (error) { return false; } };\nconst body = $('Question webhook').first().json.body;\nconst category = $('Parse category').first().json.category;\nconst answer = String($('Review').first().json.output ?? '').trim();\nconst results = $('Search FAQ').first().json.results ?? [];\nconst sources = category === 'faq' ? results.map((r) => r.id) : [];\nconst steps = [];\nif (ran('Rule classify')) steps.push('rule');\nif (ran('Classify')) steps.push('classify');\nsteps.push('faq', 'ticket', 'answer');\nsteps.push('review');\nconst llm_calls = (ran('Classify') ? 1 : 0) + 1 + 1;\nconst result = { route: '자동 답변', category, answer, sources };\nreturn [{ json: result }];"
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "a749f7a2-8109-50f4-a3c4-dd1dbe29f8e8"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1980,
+        300
+      ],
+      "id": "86789b60-2654-528e-aef9-adf67767dbd3"
+    }
+  ],
+  "connections": {
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "node": "Has question?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has question?": {
+      "main": [
+        [
+          {
+            "node": "Classify",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify": {
+      "main": [
+        [
+          {
+            "node": "Parse category",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse category": {
+      "main": [
+        [
+          {
+            "node": "Search FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "main": [
+        [
+          {
+            "node": "Get ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Review",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review": {
+      "main": [
+        [
+          {
+            "node": "Build result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build result": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,894 @@
+{
+  "name": "72 IT helpdesk + cache (reference)",
+  "nodes": [
+    {
+      "name": "Question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-helpdesk",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "de518e93-ed19-541f-a6fc-687a4efaf1b2",
+      "position": [
+        0,
+        300
+      ],
+      "id": "c9a72036-8a27-592b-bd8b-38a2db4d6d06"
+    },
+    {
+      "name": "Has question?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.question }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "6c786a1e-1989-51a4-90a5-db92e73869b1"
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"question is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        560
+      ],
+      "id": "a4a18f10-bc62-5d90-9b67-68c9feee398e"
+    },
+    {
+      "name": "Start clock",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { t: Date.now() } }];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "997a12bd-2387-5f2b-9bd8-41d0fd96b3c0"
+    },
+    {
+      "name": "Cache key",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Question webhook').first().json.body;\nconst key = String(body.question ?? '').trim().toLowerCase().replace(/\\s+/g, ' ');\nreturn [{ json: { ...$json, key, use_cache: body.no_cache !== true } }];"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "f5beb6a3-5fd1-5dd9-9940-8180d0461375"
+    },
+    {
+      "name": "Cache lookup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/cache/{{ encodeURIComponent($json.key) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "e4ac7f07-094d-5369-877c-b6124bb369be"
+    },
+    {
+      "name": "Cached?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.value !== undefined && $('Cache key').first().json.use_cache }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "d7643f14-e849-5965-98c1-0984a9164992"
+    },
+    {
+      "name": "Cached result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const value = $json.value;\nconst t0 = $('Start clock').first().json.t;\nreturn [{ json: { route: value.route, category: value.category, answer: value.answer, sources: value.sources ?? [],\n  llm_calls: 0, cached: true, steps: ['cache'], timings: { total_ms: t0 ? Date.now() - t0 : 0 } } }];"
+      },
+      "position": [
+        1320,
+        40
+      ],
+      "id": "1eb4a1d1-0752-549e-8419-f421001f6ce7"
+    },
+    {
+      "name": "Send cached",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1540,
+        40
+      ],
+      "id": "ef4c0dcc-6923-515a-9a47-16b96f870458"
+    },
+    {
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq",
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('Question webhook').first().json.body.question }}"
+            }
+          ]
+        }
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "c0ca4c44-24ab-5e35-bc09-3e1a46b5eaf2"
+    },
+    {
+      "name": "Get ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/tickets/{{ (($('Question webhook').first().json.body.question.match(/T-?\\d{4}/i) || ['NONE'])[0]).toUpperCase().replace(/^T(\\d)/, 'T-$1') }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "requester",
+              "value": "={{ $('Question webhook').first().json.body.user ?? '' }}"
+            }
+          ]
+        }
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "8bfa2f94-cfd3-5c47-9907-9cbe520709f5"
+    },
+    {
+      "name": "After data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, t: Date.now() } }];"
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "ec991b78-5d32-523e-8650-1b705d664347"
+    },
+    {
+      "name": "Rule classify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const question = String($('Question webhook').first().json.body.question ?? '');\nconst results = $('Search FAQ').first().json.results ?? [];\nlet category = 'unknown';\nif (/T-?\\d{4}/i.test(question)) category = 'ticket';\nelse if (results.length > 0) category = 'faq';\nreturn [{ json: { category, by: 'rule' } }];"
+      },
+      "position": [
+        1980,
+        300
+      ],
+      "id": "3aea9b36-7147-5a1e-b214-dde00e3b07a8"
+    },
+    {
+      "name": "Known?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.category }}",
+              "rightValue": "unknown",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        2200,
+        300
+      ],
+      "id": "cb84100b-77a0-54e2-ab8a-82439f9a06a2"
+    },
+    {
+      "name": "Classify",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "You sort one company IT help-desk question. Categories: faq (how to fix or use something: password, account lock, VPN, printer, mail box, software install), ticket (asks about the status of an IT request ticket like T-1002), other (anything else). Return only JSON, no code fence: {\"category\": \"faq\"}",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        2420,
+        300
+      ],
+      "id": "24cdba37-3d33-5b58-bdf8-843fdceb921d"
+    },
+    {
+      "name": "Classify model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        2420,
+        520
+      ],
+      "id": "14a4b607-e7e0-5946-a6dd-429db1749efe"
+    },
+    {
+      "name": "Parse category",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const raw = String($json.output ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet category = 'other';\ntry { category = JSON.parse(raw).category ?? 'other'; } catch (error) { category = 'other'; }\nif (!['faq', 'ticket', 'other'].includes(category)) category = 'other';\nreturn [{ json: { category, by: 'llm' } }];"
+      },
+      "position": [
+        2640,
+        300
+      ],
+      "id": "e2e83cde-1e8e-57a3-9873-e21b349e8e9c"
+    },
+    {
+      "name": "After classify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, t: Date.now() } }];"
+      },
+      "position": [
+        2860,
+        300
+      ],
+      "id": "52489cc0-dc17-55fd-abc1-d0560f984a09"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $('Question webhook').first().json.body.question }}\n분류: {{ $json.category }}\nFAQ: {{ JSON.stringify($('Search FAQ').first().json.results ?? []) }}\n접수 건: {{ JSON.stringify($('Get ticket').first().json) }}",
+        "options": {
+          "systemMessage": "You are the company IT help desk. Answer in Korean in at most 3 sentences, using only the FAQ entries and the ticket record given. Never invent steps, dates or names. For a ticket, say its status and note. If the data does not answer the question, say \"찾지 못했습니다\" and that a staff member will help.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        3080,
+        300
+      ],
+      "id": "af3fff36-6c0f-561b-892c-c114ba138f00"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        3080,
+        520
+      ],
+      "id": "a17533bf-9c80-521d-b6e3-1a50309fecba"
+    },
+    {
+      "name": "After answer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, t: Date.now() } }];"
+      },
+      "position": [
+        3300,
+        300
+      ],
+      "id": "f8f2abf1-fe1f-5e26-bbdf-a7265cc0af82"
+    },
+    {
+      "name": "Review",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=초안: {{ $('Answer').first().json.output }}",
+        "options": {
+          "systemMessage": "You review a Korean IT help-desk answer before it is sent. Keep the facts exactly. Make it polite (합니다체), remove anything not supported by the data, keep at most 3 sentences. Return only the final answer text.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        3520,
+        300
+      ],
+      "id": "db2e207e-bf3f-573b-b812-8903cfe2e8b0"
+    },
+    {
+      "name": "Review model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        3520,
+        520
+      ],
+      "id": "45781a30-03fe-5886-8936-2d8a9ae3bd31"
+    },
+    {
+      "name": "After review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, t: Date.now() } }];"
+      },
+      "position": [
+        3740,
+        300
+      ],
+      "id": "e4200614-0722-52ad-b86b-166d8325db9e"
+    },
+    {
+      "name": "Build result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const ran = (name) => { try { return $(name).isExecuted; } catch (error) { return false; } };\nconst body = $('Question webhook').first().json.body;\nconst category = $('Parse category').isExecuted ? $('Parse category').first().json.category : $('Rule classify').first().json.category;\nconst answer = String($('Review').first().json.output ?? '').trim();\nconst results = $('Search FAQ').first().json.results ?? [];\nconst sources = category === 'faq' ? results.map((r) => r.id) : [];\nconst steps = [];\nif (ran('Rule classify')) steps.push('rule');\nif (ran('Classify')) steps.push('classify');\nsteps.push('faq', 'ticket', 'answer');\nsteps.push('review');\nconst llm_calls = (ran('Classify') ? 1 : 0) + 1 + 1;\nconst result = { route: '자동 답변', category, answer, sources };\nconst t = (name) => (ran(name) ? $(name).first().json.t : null);\nconst t0 = t('Start clock');\nconst marks = [['data', t('After data')], ['classify', t('After classify')], ['answer', t('After answer')], ['review', t('After review')]];\nconst timings = {};\nlet last = t0;\nfor (const [label, mark] of marks) {\n  if (mark === null) continue;\n  timings[`${label}_ms`] = mark - last;\n  last = mark;\n}\ntimings.total_ms = Date.now() - t0;\nObject.assign(result, { llm_calls, cached: false, steps, timings });\nreturn [{ json: result }];"
+      },
+      "position": [
+        3960,
+        300
+      ],
+      "id": "aca47054-6aa3-5773-91c4-1b71155360a1"
+    },
+    {
+      "name": "Cache it?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.category === 'faq' && $('Cache key').first().json.use_cache }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        4180,
+        300
+      ],
+      "id": "6173c5a7-0f27-5472-b65d-7b1e1e4a8c2a"
+    },
+    {
+      "name": "Store in cache",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/cache/{{ encodeURIComponent($('Cache key').first().json.key) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ value: { route: $json.route, category: $json.category, answer: $json.answer, sources: $json.sources }, ttl: 600 }) }}"
+      },
+      "position": [
+        4400,
+        180
+      ],
+      "id": "131ba1d7-a5c6-59d8-b998-6d56b6dcbb90"
+    },
+    {
+      "name": "Result again",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: $('Build result').first().json }];"
+      },
+      "position": [
+        4620,
+        180
+      ],
+      "id": "9fa5ecbb-8ba2-53cf-9ed0-e39b0f0abce4"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        4840,
+        300
+      ],
+      "id": "6452676c-2624-523c-a63e-cb1f2cdf88ce"
+    }
+  ],
+  "connections": {
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "node": "Has question?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has question?": {
+      "main": [
+        [
+          {
+            "node": "Start clock",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start clock": {
+      "main": [
+        [
+          {
+            "node": "Cache key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cache key": {
+      "main": [
+        [
+          {
+            "node": "Cache lookup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cache lookup": {
+      "main": [
+        [
+          {
+            "node": "Cached?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cached?": {
+      "main": [
+        [
+          {
+            "node": "Cached result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cached result": {
+      "main": [
+        [
+          {
+            "node": "Send cached",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "main": [
+        [
+          {
+            "node": "Get ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "main": [
+        [
+          {
+            "node": "After data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After data": {
+      "main": [
+        [
+          {
+            "node": "Rule classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rule classify": {
+      "main": [
+        [
+          {
+            "node": "Known?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known?": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify": {
+      "main": [
+        [
+          {
+            "node": "Parse category",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse category": {
+      "main": [
+        [
+          {
+            "node": "After classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After classify": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "After answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After answer": {
+      "main": [
+        [
+          {
+            "node": "Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Review",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review": {
+      "main": [
+        [
+          {
+            "node": "After review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After review": {
+      "main": [
+        [
+          {
+            "node": "Build result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build result": {
+      "main": [
+        [
+          {
+            "node": "Cache it?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cache it?": {
+      "main": [
+        [
+          {
+            "node": "Store in cache",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in cache": {
+      "main": [
+        [
+          {
+            "node": "Result again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result again": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

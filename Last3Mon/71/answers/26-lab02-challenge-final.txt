@@ -1,0 +1,288 @@
+✔ before: POST /webhook/my-index · HTTP 200 · 0.7s · {"indexed_chunks": 25, "chunking": "section"}
+POST http://localhost:5678/webhook/my-policy-qa · 8 case(s) × 1
+✔ 점수는 높은데 규정에 없음 (VPN 속도) · 1.4s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "VPN 접속 속도가 느리면 어떻게 해요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 확실한 답을 찾지 못해 IT 담당자에게 전달했습니다.",
+        "draft": "규정에서는 VPN 접속 속도가 느릴 때의 대처 방법에 대해 언급하고 있지 않습니다. 따라서 답변을 드리기 어렵습니다. 규정에서 답을 찾지 못했습니다.",
+        "sources": [
+          "remote-work-vpn"
+        ],
+        "cited": [],
+        "top_score": 0.462,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": false
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": false
+          },
+          {
+            "name": "grounded",
+            "passed": false
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": [
+          "found_in_policies",
+          "cites_excerpt",
+          "grounded"
+        ]
+      }
+✔ 점수는 높은데 규정에 없음 (노트북 사양) · 1.1s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "노트북 사양은 어떻게 되나요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 확실한 답을 찾지 못해 IT 담당자에게 전달했습니다.",
+        "draft": "규정 발췌에는 노트북 사양에 대한 내용이 포함되어 있지 않습니다. 따라서 노트북 사양에 대해서는 규정에서 답을 찾지 못했습니다.",
+        "sources": [
+          "device-issue-return",
+          "email-and-documents"
+        ],
+        "cited": [],
+        "top_score": 0.379,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": false
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": false
+          },
+          {
+            "name": "grounded",
+            "passed": false
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": [
+          "found_in_policies",
+          "cites_excerpt",
+          "grounded"
+        ]
+      }
+✔ 점수는 높은데 규정에 없음 (비밀번호 잊음) · 1.1s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "비밀번호를 잊어버리면 어디서 바꿔요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 확실한 답을 찾지 못해 IT 담당자에게 전달했습니다.",
+        "draft": "규정에서 답을 찾지 못했습니다.",
+        "sources": [
+          "password-policy"
+        ],
+        "cited": [],
+        "top_score": 0.55,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": false
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": false
+          },
+          {
+            "name": "grounded",
+            "passed": false
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": [
+          "found_in_policies",
+          "cites_excerpt",
+          "grounded"
+        ]
+      }
+✔ 점수는 높은데 규정에 없음 (보안 교육) · 1.4s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "보안 교육은 1년에 몇 번 받아야 하나요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 확실한 답을 찾지 못해 IT 담당자에게 전달했습니다.",
+        "draft": "규정에서 답을 찾지 못했습니다.",
+        "sources": [
+          "security-incident",
+          "remote-work-vpn",
+          "password-policy"
+        ],
+        "cited": [],
+        "top_score": 0.353,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": false
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": false
+          },
+          {
+            "name": "grounded",
+            "passed": false
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": [
+          "found_in_policies",
+          "cites_excerpt",
+          "grounded"
+        ]
+      }
+✔ 점수가 낮아 걸러짐 (연차) · 0.3s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "연차 휴가는 며칠이에요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+        "sources": [],
+        "cited": [],
+        "top_score": 0.259
+      }
+✔ 틀린 전제 (30일) · 1.4s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "비밀번호는 30일마다 바꾸면 되죠?"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "비밀번호는 30일마다 바꾸는 것이 아니라 90일마다 바꿔야 합니다. 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다[비밀번호·계정 보안 규정].",
+        "draft": "비밀번호는 30일마다 바꾸는 것이 아니라 90일마다 바꿔야 합니다. 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다[비밀번호·계정 보안 규정].",
+        "sources": [
+          "password-policy"
+        ],
+        "cited": [
+          "password-policy"
+        ],
+        "top_score": 0.684,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": true
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": true
+          },
+          {
+            "name": "grounded",
+            "passed": true
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": []
+      }
+✔ 근거 있는 답은 그대로 · 1.5s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "암호를 얼마나 자주 바꿔야 해?"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "암호는 90일마다 변경해야 하며, 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다. 또한 최근에 사용한 비밀번호 5개는 다시 사용할 수 없습니다[비밀번호·계정 보안 규정].",
+        "draft": "암호는 90일마다 변경해야 하며, 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다. 또한 최근에 사용한 비밀번호 5개는 다시 사용할 수 없습니다[비밀번호·계정 보안 규정].",
+        "sources": [
+          "password-policy"
+        ],
+        "cited": [
+          "password-policy"
+        ],
+        "top_score": 0.575,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": true
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": true
+          },
+          {
+            "name": "grounded",
+            "passed": true
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": []
+      }
+✔ 검사 기록 · 1.5s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심해야 합니다. 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알리세요. 컴퓨터를 끄거나 파일을 지우지 마십시오, 원인 분석에 필요합니다[보안 사고 대응 절차].",
+        "draft": "컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심해야 합니다. 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알리세요. 컴퓨터를 끄거나 파일을 지우지 마십시오, 원인 분석에 필요합니다[보안 사고 대응 절차].",
+        "sources": [
+          "security-incident",
+          "remote-work-vpn"
+        ],
+        "cited": [
+          "security-incident"
+        ],
+        "top_score": 0.479,
+        "checks": [
+          {
+            "name": "found_in_policies",
+            "passed": true
+          },
+          {
+            "name": "cites_excerpt",
+            "passed": true
+          },
+          {
+            "name": "grounded",
+            "passed": true
+          },
+          {
+            "name": "numbers_from_policies",
+            "passed": true
+          }
+        ],
+        "failed": []
+      }
+Passed 8/8
+report: runs/lab02-challenge-20261022-201335.json

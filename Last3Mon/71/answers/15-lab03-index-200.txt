@@ -1,0 +1,12 @@
+$ uv run tools/flow.py call my-index requests/index-200.json -v
+HTTP 200 · 0.5s
+    → request  POST /webhook/my-index
+      {
+        "chunking": 200
+      }
+    ← response HTTP 200
+      {
+        "indexed_chunks": 20,
+        "chunking": 200
+      }
+

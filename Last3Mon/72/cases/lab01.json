@@ -1,0 +1,66 @@
+{
+  "webhook": "my-helpdesk",
+  "cases": [
+    {
+      "name": "VPN FAQ · 단계별 시간",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "category": "faq"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ],
+          "timings": [
+            "answer_ms"
+          ]
+        }
+      }
+    },
+    {
+      "name": "VPN FAQ · 전체 시간 · LLM 호출 수",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "contains": {
+          "timings": [
+            "total_ms"
+          ],
+          "steps": [
+            "answer"
+          ],
+          "llm_calls": [
+            "1",
+            "2",
+            "3"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "category": "ticket"
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ],
+          "timings": [
+            "answer_ms"
+          ]
+        }
+      }
+    },
+    {
+      "name": "빈 질문",
+      "request": "requests/empty-question.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

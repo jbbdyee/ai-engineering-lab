@@ -1,0 +1,66 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/cache-clear",
+      "body": {}
+    },
+    {
+      "llm": "down"
+    }
+  ],
+  "after": [
+    {
+      "llm": "up"
+    }
+  ],
+  "cases": [
+    {
+      "name": "VPN · FAQ 원문으로",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "간단 답변"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황 · 상태 그대로",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "간단 답변"
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "모르는 질문 · 담당자",
+      "request": "requests/off-topic.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "담당자 연결"
+        }
+      }
+    },
+    {
+      "name": "빈 질문",
+      "request": "requests/empty-question.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

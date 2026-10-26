@@ -1,0 +1,96 @@
+✔ before: POST /webhook/my-index · HTTP 200 · 1.4s · {"indexed_chunks": 25, "chunking": "section"}
+POST http://localhost:5678/webhook/my-policy-qa · 6 case(s) × 1
+✔ 비밀번호 주기 · 답과 출처 · 3.0s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "암호를 얼마나 자주 바꿔야 해?"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "암호는 90일마다 변경해야 하며, 만료 7일 전부터 사내 포털에 변경 안내가 표시됩니다. 또한 최근에 사용한 비밀번호 5개는 다시 사용할 수 없습니다[비밀번호·계정 보안 규정].",
+        "sources": [
+          "password-policy"
+        ],
+        "cited": [
+          "password-policy"
+        ],
+        "top_score": 0.576
+      }
+✔ 퇴사 노트북 · 1.8s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "회사를 그만두면 노트북은 언제까지 돌려줘야 하나요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "회사를 그만두면 업무용 노트북은 퇴사 후 5영업일 이내에 IT 담당자에게 반납해야 합니다. 반납 전에 개인 파일을 지우지 말고, 업무 파일은 사내 드라이브로 옮겨야 합니다[업무용 장비 지급·반납 규정].",
+        "sources": [
+          "device-issue-return"
+        ],
+        "cited": [
+          "device-issue-return"
+        ],
+        "top_score": 0.461
+      }
+✔ 생성형 AI · 1.9s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "생성형 AI에 고객 자료를 넣어도 되나요?"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "고객 정보는 생성형 AI 서비스에 입력하지 말아야 합니다. 회사가 승인한 생성형 AI 서비스만 업무에 사용해야 하며, 고객 정보, 개인정보, 대외비 문서는 생성형 AI 서비스에 입력하지 않는 것이 규정입니다[소프트웨어 사용 규정].",
+        "sources": [
+          "software-usage",
+          "privacy"
+        ],
+        "cited": [
+          "software-usage"
+        ],
+        "top_score": 0.51
+      }
+✔ 출처는 제목으로 · 2.1s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "첨부 파일이 너무 커서 메일이 안 보내져요"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "메일 첨부 파일은 25MB까지 보낼 수 있으며, 25MB를 넘는 파일은 사내 드라이브에 올리고 공유 링크를 보내야 합니다. 따라서 첨부 파일이 너무 크면 사내 드라이브에 올린 후 링크를 보내세요[메일·문서 보안 규정].",
+        "sources": [
+          "email-and-documents",
+          "security-incident"
+        ],
+        "cited": [
+          "email-and-documents"
+        ],
+        "top_score": 0.616
+      }
+✔ 점심 메뉴 · 담당자 연결 · 0.3s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": "오늘 점심 메뉴 추천해줘"
+      }
+    ← response HTTP 200
+      {
+        "route": "담당자 연결",
+        "answer": "규정에서 답을 찾지 못했습니다. IT 문의 창구로 연결해 드릴게요.",
+        "sources": [],
+        "cited": [],
+        "top_score": 0.202
+      }
+✔ 질문 없음 · 0.0s
+    → request  POST /webhook/my-policy-qa
+      {
+        "question": ""
+      }
+    ← response HTTP 400
+      {
+        "error": "question is required"
+      }
+Passed 6/6
+report: runs/lab02-20261022-200916.json

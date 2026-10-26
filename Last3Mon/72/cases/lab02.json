@@ -1,0 +1,158 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/cache-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "예제 1 · 프린터 FAQ는 규칙으로",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "category": "faq"
+        },
+        "contains": {
+          "steps": [
+            "rule"
+          ],
+          "answer": [
+            "대기열",
+            "전원"
+          ]
+        },
+        "not_contains": {
+          "steps": [
+            "classify"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 1 · 접수 번호는 규칙으로",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "category": "ticket"
+        },
+        "contains": {
+          "steps": [
+            "rule"
+          ],
+          "answer": [
+            "처리 중"
+          ]
+        },
+        "not_contains": {
+          "steps": [
+            "classify"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 1 · 없는 접수 번호",
+      "request": "requests/ticket-missing.json",
+      "expect": {
+        "equals": {
+          "category": "ticket"
+        },
+        "contains": {
+          "answer": [
+            "찾지 못",
+            "확인되지",
+            "없습니다",
+            "존재하지"
+          ]
+        },
+        "not_contains": {
+          "answer": [
+            "처리 중",
+            "처리 완료",
+            "접수됨",
+            "반려"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 1 · 규칙으로 모르면 LLM이 분류",
+      "expect": {
+        "contains": {
+          "steps": [
+            "classify"
+          ]
+        }
+      },
+      "body": {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    },
+    {
+      "name": "예제 2 · 처음 묻는 VPN",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "cached": false
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 같은 질문 (띄어쓰기·대소문자 다름)",
+      "request": "requests/faq-vpn-again.json",
+      "expect": {
+        "equals": {
+          "cached": true,
+          "llm_calls": 0
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        },
+        "max_seconds": 1
+      }
+    },
+    {
+      "name": "예제 2 · no_cache면 캐시 안 씀",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "equals": {
+          "cached": false
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 접수 현황은 캐시 안 함 (1)",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "cached": false
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 접수 현황은 캐시 안 함 (2)",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "cached": false
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    }
+  ]
+}

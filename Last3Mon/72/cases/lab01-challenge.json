@@ -1,0 +1,56 @@
+{
+  "webhook": "my-helpdesk",
+  "cases": [
+    {
+      "name": "FAQ · 접수 시간 따로",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "contains": {
+          "timings": [
+            "faq_ms"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 조회 시간",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "contains": {
+          "timings": [
+            "ticket_ms"
+          ]
+        }
+      }
+    },
+    {
+      "name": "가장 오래 걸린 단계",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "contains": {
+          "slowest_step": [
+            "classify",
+            "answer",
+            "review"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황도 같은 모양",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "처리 중"
+          ],
+          "slowest_step": [
+            "classify",
+            "answer",
+            "review"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+✔ before: POST /webhook/my-index · HTTP 200 · 0.4s · {"indexed_chunks": 25, "chunking": "section"}
+POST http://localhost:5678/webhook/my-search · 4 case(s) × 1
+✔ 섹션 · 비밀번호 길이 · 1.0s
+    → request  POST /webhook/my-search
+      {
+        "question": "비밀번호는 몇 자 이상이어야 하나요?"
+      }
+    ← response HTTP 200
+      {
+        "question": "비밀번호는 몇 자 이상이어야 하나요?",
+        "query": "비밀번호 최소 길이 기준",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "1. 비밀번호 만들기",
+            "score": 0.675,
+            "text": "비밀번호·계정 보안 규정\n## 1. 비밀번호 만들기\n- 비밀번호는 12자 이상으로 만든다.\n- 영문 대문자, 영문 소문자, 숫자, 특수문자 중 3종류 이상을 섞는다.\n- 이름, 생일, 전화번호, 회사 이름처럼 추측하기 쉬운 단어는 쓰지 않는다."
+          },
+          {
+            "rank": 2,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "2. 변경 주기",
+            "score": 0.55,
+            "text": "비밀번호·계정 보안 규정\n## 2. 변경 주기\n- 비밀번호는 90일마다 바꾼다. 만료 7일 전부터 사내 포털에 변경 안내가 표시된다.\n- 최근에 쓴 비밀번호 5개는 다시 쓸 수 없다."
+          },
+          {
+            "rank": 3,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "3. 로그인 실패와 잠금",
+            "score": 0.499,
+            "text": "비밀번호·계정 보안 규정\n## 3. 로그인 실패와 잠금\n- 로그인에 5번 연속 실패하면 계정이 30분 동안 잠긴다.\n- 30분이 지나면 자동으로 풀린다. 급한 경우 IT 문의로 잠금 해제를 요청한다."
+          }
+        ],
+        "top_score": 0.675,
+        "indexed": true
+      }
+✔ 섹션 · 변경 주기 · 1.2s
+    → request  POST /webhook/my-search
+      {
+        "question": "암호를 얼마나 자주 바꿔야 해?"
+      }
+    ← response HTTP 200
+      {
+        "question": "암호를 얼마나 자주 바꿔야 해?",
+        "query": "비밀번호 변경 주기 정책",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "2. 변경 주기",
+            "score": 0.715,
+            "text": "비밀번호·계정 보안 규정\n## 2. 변경 주기\n- 비밀번호는 90일마다 바꾼다. 만료 7일 전부터 사내 포털에 변경 안내가 표시된다.\n- 최근에 쓴 비밀번호 5개는 다시 쓸 수 없다."
+          },
+          {
+            "rank": 2,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "1. 비밀번호 만들기",
+            "score": 0.628,
+            "text": "비밀번호·계정 보안 규정\n## 1. 비밀번호 만들기\n- 비밀번호는 12자 이상으로 만든다.\n- 영문 대문자, 영문 소문자, 숫자, 특수문자 중 3종류 이상을 섞는다.\n- 이름, 생일, 전화번호, 회사 이름처럼 추측하기 쉬운 단어는 쓰지 않는다."
+          },
+          {
+            "rank": 3,
+            "source": "password-policy",
+            "title": "비밀번호·계정 보안 규정",
+            "section": "3. 로그인 실패와 잠금",
+            "score": 0.558,
+            "text": "비밀번호·계정 보안 규정\n## 3. 로그인 실패와 잠금\n- 로그인에 5번 연속 실패하면 계정이 30분 동안 잠긴다.\n- 30분이 지나면 자동으로 풀린다. 급한 경우 IT 문의로 잠금 해제를 요청한다."
+          }
+        ],
+        "top_score": 0.715,
+        "indexed": true
+      }
+✔ top_k 5 · 1.1s
+    → request  POST /webhook/my-search
+      {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요",
+        "top_k": 5
+      }
+    ← response HTTP 200
+      {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요",
+        "query": "컴퓨터 바이러스 감염 대응 정책",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "security-incident",
+            "title": "보안 사고 대응 절차",
+            "section": "2. 악성코드 감염 의심",
+            "score": 0.531,
+            "text": "보안 사고 대응 절차\n## 2. 악성코드 감염 의심\n- 컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심한다.\n- 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알린다.\n- 컴퓨터를 끄거나 파일을 지우지 않는다. 원인 분석에 필요하다."
+          },
+          {
+            "rank": 2,
+            "source": "security-incident",
+            "title": "보안 사고 대응 절차",
+            "section": "1. 피싱 메일",
+            "score": 0.456,
+            "text": "보안 사고 대응 절차\n## 1. 피싱 메일\n- 보낸 사람이 의심스럽거나 급하게 클릭을 요구하는 메일은 링크를 누르지 않는다.\n- 메일 화면의 '피싱 신고' 버튼으로 신고한다.\n- 이미 링크를 눌렀거나 비밀번호를 입력했다면 즉시 비밀번호를 바꾸고 IT 문의로 알린다."
+          },
+          {
+            "rank": 3,
+            "source": "privacy",
+            "title": "개인정보 처리 지침",
+            "section": "3. 유출 대응",
+            "score": 0.413,
+            "text": "개인정보 처리 지침\n## 3. 유출 대응\n- 개인정보가 유출되었거나 유출이 의심되면 1시간 이내에 보안팀에 신고한다.\n- 신고할 때는 유출된 정보의 종류, 대략적인 건수, 발견한 시각을 함께 알린다."
+          },
+          {
+            "rank": 4,
+            "source": "remote-work-vpn",
+            "title": "원격근무·VPN 이용 규정",
+            "section": "1. 접속 원칙",
+            "score": 0.397,
+            "text": "원격근무·VPN 이용 규정\n## 1. 접속 원칙\n- 회사 밖에서 사내 시스템에 접속할 때는 반드시 회사 VPN을 먼저 연결한다.\n- 카페, 공항 같은 공용 와이파이에서는 VPN 없이 사내 시스템에 접속하지 않는다."
+          },
+          {
+            "rank": 5,
+            "source": "remote-work-vpn",
+            "title": "원격근무·VPN 이용 규정",
+            "section": "3. 재택근무 중 보안",
+            "score": 0.386,
+            "text": "원격근무·VPN 이용 규정\n## 3. 재택근무 중 보안\n- 자리를 비울 때는 화면을 잠그고, 5분 동안 사용하지 않으면 자동으로 잠기게 설정한다.\n- 가족과 함께 쓰는 컴퓨터로는 업무를 하지 않는다.\n- VPN 접속 기록은 1년 동안 보관된다."
+          }
+        ],
+        "top_score": 0.531,
+        "indexed": true
+      }
+✔ top_k 1 · 1.2s
+    → request  POST /webhook/my-search
+      {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요",
+        "top_k": 1
+      }
+    ← response HTTP 200
+      {
+        "question": "컴퓨터가 바이러스에 걸린 것 같아요",
+        "query": "컴퓨터 바이러스 감염 대응 정책",
+        "hits": [
+          {
+            "rank": 1,
+            "source": "security-incident",
+            "title": "보안 사고 대응 절차",
+            "section": "2. 악성코드 감염 의심",
+            "score": 0.531,
+            "text": "보안 사고 대응 절차\n## 2. 악성코드 감염 의심\n- 컴퓨터가 갑자기 느려지거나 모르는 프로그램이 실행되면 악성코드 감염을 의심한다.\n- 감염이 의심되면 먼저 랜선을 뽑고 와이파이를 꺼서 네트워크에서 분리한 뒤 IT 문의로 알린다.\n- 컴퓨터를 끄거나 파일을 지우지 않는다. 원인 분석에 필요하다."
+          }
+        ],
+        "top_score": 0.531,
+        "indexed": true
+      }
+Passed 4/4
+report: runs/lab01-challenge-20261022-201325.json

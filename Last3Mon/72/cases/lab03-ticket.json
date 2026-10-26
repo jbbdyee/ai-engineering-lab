@@ -1,0 +1,123 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/cache-clear",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "평소 접수 현황",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "category": "ticket"
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 API 500 · 접수 질문은 담당자",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok"
+          }
+        }
+      ],
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "담당자 연결",
+          "reason": "tickets_down"
+        },
+        "not_contains": {
+          "answer": [
+            "처리 중",
+            "처리 완료",
+            "접수됨",
+            "반려"
+          ]
+        },
+        "max_seconds": 3
+      }
+    },
+    {
+      "name": "접수 API 500 · FAQ 질문은 그대로 답",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok"
+          }
+        }
+      ],
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변",
+          "category": "faq"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "없는 접수 번호는 그대로 (404는 고장이 아님)",
+      "request": "requests/ticket-missing.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "category": "ticket"
+        },
+        "contains": {
+          "answer": [
+            "찾지 못",
+            "확인되지",
+            "없습니다",
+            "존재하지"
+          ]
+        }
+      }
+    }
+  ]
+}

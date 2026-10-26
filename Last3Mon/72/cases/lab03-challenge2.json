@@ -1,0 +1,106 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/cache-clear",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok"
+      }
+    },
+    {
+      "url": "http://localhost:8800/cache-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "평소",
+      "request": "requests/faq-vpn-nocache.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "FAQ 느림 · 처음 한 번은 기다린 뒤 담당자",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "slow",
+            "slow_seconds": 8
+          }
+        }
+      ],
+      "body": {
+        "question": "비밀번호를 잊어버렸어요",
+        "user": "한지훈",
+        "no_cache": true
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "담당자 연결",
+          "reason": "data_api_down"
+        },
+        "max_seconds": 7
+      }
+    },
+    {
+      "name": "FAQ 느림 · 다음 질문은 기다리지 않음 (차단기 열림)",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진",
+        "no_cache": true
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "담당자 연결",
+          "reason": "breaker_open"
+        },
+        "max_seconds": 1
+      }
+    },
+    {
+      "name": "FAQ가 돌아오고 차단기를 비우면 평소대로",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok"
+          }
+        },
+        {
+          "url": "http://localhost:8800/cache-clear",
+          "body": {}
+        }
+      ],
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진",
+        "no_cache": true
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "대기열",
+            "전원"
+          ]
+        }
+      }
+    }
+  ]
+}
