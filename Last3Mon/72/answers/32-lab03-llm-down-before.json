@@ -1,0 +1,84 @@
+{
+  "cases": "lab03-llm-down.json",
+  "webhook": "my-helpdesk",
+  "passed": 1,
+  "total": 4,
+  "results": [
+    {
+      "case": "VPN · FAQ 원문으로",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 500 (expected 200)",
+        "route = null (expected 간단 답변)",
+        "answer has none of ['인증서']"
+      ],
+      "seconds": 0.9,
+      "status": 500,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "접수 현황 · 상태 그대로",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 500 (expected 200)",
+        "route = null (expected 간단 답변)",
+        "answer has none of ['처리 중']"
+      ],
+      "seconds": 0.4,
+      "status": 500,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "모르는 질문 · 담당자",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 500 (expected 200)",
+        "route = null (expected 담당자 연결)"
+      ],
+      "seconds": 0.9,
+      "status": 500,
+      "request": {
+        "question": "오늘 점심 메뉴 추천해 주세요",
+        "user": "이준호"
+      },
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "빈 질문",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "",
+        "user": "이준호"
+      },
+      "response": {
+        "error": "question is required"
+      }
+    }
+  ]
+}

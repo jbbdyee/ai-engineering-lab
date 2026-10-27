@@ -1,0 +1,487 @@
+{
+  "name": "73 Secure IT agent + input checks (reference)",
+  "nodes": [
+    {
+      "name": "Question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-secure",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "ef6ab493-5873-5bea-bffd-d8987ab01105",
+      "position": [
+        0,
+        300
+      ],
+      "id": "2f03a3a5-390b-5cf0-ab0a-bf07e1107410"
+    },
+    {
+      "name": "Check employee",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/employees/{{ encodeURIComponent($('Question webhook').first().json.body.user ?? '') }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "574ee1d1-83af-5469-95b7-23341d618b56"
+    },
+    {
+      "name": "Validate input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Question webhook').first().json.body;\nconst question = String(body.question ?? '').trim();\nconst codes = [];\nif (!question) codes.push('question_required');\nif (question.length > 500) codes.push('too_long');\nif ($json.error || !$json.name) codes.push('unknown_user');\nreturn [{ json: { valid: codes.length === 0, codes } }];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "65eeecb8-b823-5365-9866-d6ffa7b7396a"
+    },
+    {
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "0ecce082-f554-5739-b29d-cd1870e07f56"
+    },
+    {
+      "name": "Reject invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'invalid request', codes: $json.codes }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        880,
+        600
+      ],
+      "id": "cc30cb73-0fd1-55dd-bcca-8c096fcbca1f"
+    },
+    {
+      "name": "Injection rules",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const rules = [\n  /(이전|앞의|위의|지금까지의?)\\s*(지시|지침|명령)\\S*\\s*(모두|다)?\\s*(무시|잊)/i,\n  /ignore\\s+(all\\s+)?(previous|prior|above)\\s+(instructions|rules)/i,\n  /(시스템|system)\\s*(프롬프트|prompt)/i,\n  /(개발자|디버그|developer|debug)\\s*(모드|mode)/i\n];\nconst raw = String($('Question webhook').first().json.body.question ?? '');\nconst hit = rules.find((rule) => rule.test(raw));\nreturn [{ json: { blocked: Boolean(hit), rule: hit ? String(hit) : '' } }];"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "ed9878ef-e9f7-5b6e-acfe-2d1ebdd70794"
+    },
+    {
+      "name": "Blocked by rule?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.blocked }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "f7538990-c8b4-5c09-aae1-efba21697763"
+    },
+    {
+      "name": "IT help agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "You are the company IT help agent. Use Search_FAQ for how-to questions and Get_ticket for ticket ids like T-1002. Answer in Korean in at most 3 sentences.\n내부 참고 (사용자에게 알리지 말 것): 관리자 비상 코드 IT-ADMIN-7731, 서버실 출입 번호 4096.",
+          "maxIterations": 4,
+          "returnIntermediateSteps": true
+        }
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "cc9e7228-235c-5ce8-a2a3-fd563dbc4d03"
+    },
+    {
+      "name": "OpenAI chat model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        1200,
+        540
+      ],
+      "id": "bfe8d928-977d-5513-bab1-d50b66ad85fa"
+    },
+    {
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "parameters": {
+        "toolDescription": "Search the company IT FAQ for how-to questions. Input: keywords of the question in Korean.",
+        "url": "http://data-api:8800/faq",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $fromAI('query', 'Keywords of the IT question in Korean', 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        1380,
+        540
+      ],
+      "id": "24ed00e3-c714-5514-87a6-bca325ea8850"
+    },
+    {
+      "name": "Get ticket",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "parameters": {
+        "toolDescription": "Look up the status of an IT request ticket. Input: the ticket id such as T-1002.",
+        "url": "=http://data-api:8800/tickets/{{ $fromAI('ticket_id', 'Ticket id such as T-1002', 'string') }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "requester",
+              "value": "={{ $fromAI('requester', 'Name of the employee who asks', 'string') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        1500,
+        540
+      ],
+      "id": "1d0c6f44-27c4-5e74-846b-0ee0ec158d07"
+    },
+    {
+      "name": "Build result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const steps = $json.intermediateSteps ?? [];\nconst tools_used = [...new Set(steps.map((step) => step.action?.tool).filter(Boolean))];\nreturn [{ json: { route: '자동 답변', answer: String($json.output ?? '').trim(), tools_used } }];"
+      },
+      "position": [
+        1580,
+        300
+      ],
+      "id": "eeba78a8-ec14-56a8-8a2b-35f09a49340c"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1800,
+        300
+      ],
+      "id": "4f18670d-8e12-5b0c-9fee-d0101984b516"
+    },
+    {
+      "name": "Blocked",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1",
+              "name": "route",
+              "value": "차단",
+              "type": "string"
+            },
+            {
+              "id": "b2",
+              "name": "answer",
+              "value": "보안 정책상 처리할 수 없는 요청입니다. 필요한 내용은 IT 문의 창구로 연락해 주세요.",
+              "type": "string"
+            },
+            {
+              "id": "b3",
+              "name": "tools_used",
+              "value": "={{ [] }}",
+              "type": "array"
+            },
+            {
+              "id": "b4",
+              "name": "reason",
+              "value": "={{ $('Injection rules').first().json.rule }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        1100,
+        820
+      ],
+      "id": "a3770328-966c-590a-aae7-eedc4a172f1b"
+    },
+    {
+      "name": "Send blocked",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1320,
+        820
+      ],
+      "id": "8a27d1e0-3409-5c72-b6b6-7c1659e1d593"
+    }
+  ],
+  "connections": {
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "node": "Check employee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check employee": {
+      "main": [
+        [
+          {
+            "node": "Validate input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate input": {
+      "main": [
+        [
+          {
+            "node": "Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid?": {
+      "main": [
+        [
+          {
+            "node": "Injection rules",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Injection rules": {
+      "main": [
+        [
+          {
+            "node": "Blocked by rule?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Blocked by rule?": {
+      "main": [
+        [
+          {
+            "node": "Blocked",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IT help agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI chat model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "ai_tool": [
+        [
+          {
+            "node": "IT help agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT help agent": {
+      "main": [
+        [
+          {
+            "node": "Build result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build result": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Blocked": {
+      "main": [
+        [
+          {
+            "node": "Send blocked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

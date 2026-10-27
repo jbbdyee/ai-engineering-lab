@@ -1,0 +1,47 @@
+$ uv run tools/flow.py call base-helpdesk requests/faq-vpn.json -v
+HTTP 200 · 4.4s
+    → request  POST /webhook/base-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당자에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-003"
+        ]
+      }
+
+$ uv run tools/flow.py bench base-helpdesk requests/faq-vpn.json -n 5
+POST http://localhost:5678/webhook/base-helpdesk × 5
+✔ #1 · HTTP 200 · 2.98s · route=자동 답변
+✔ #2 · HTTP 200 · 2.52s · route=자동 답변
+✔ #3 · HTTP 200 · 2.69s · route=자동 답변
+✔ #4 · HTTP 200 · 2.84s · route=자동 답변
+✔ #5 · HTTP 200 · 2.54s · route=자동 답변
+p50 2.69s · p95 2.98s · max 2.98s · failures 0/5
+report: runs/bench-base-helpdesk-20261024-174234.json
+
+$ uv run tools/flow.py bench base-helpdesk requests/ticket-own.json -n 5
+POST http://localhost:5678/webhook/base-helpdesk × 5
+✔ #1 · HTTP 200 · 3.04s · route=자동 답변
+✔ #2 · HTTP 200 · 3.14s · route=자동 답변
+✔ #3 · HTTP 200 · 2.61s · route=자동 답변
+✔ #4 · HTTP 200 · 3.36s · route=자동 답변
+✔ #5 · HTTP 200 · 2.68s · route=자동 답변
+p50 3.04s · p95 3.36s · max 3.36s · failures 0/5
+report: runs/bench-base-helpdesk-20261024-174249.json
+
+$ uv run tools/flow.py bench base-helpdesk requests/off-topic.json -n 5
+POST http://localhost:5678/webhook/base-helpdesk × 5
+✔ #1 · HTTP 200 · 2.90s · route=자동 답변
+✔ #2 · HTTP 200 · 2.55s · route=자동 답변
+✔ #3 · HTTP 200 · 2.62s · route=자동 답변
+✔ #4 · HTTP 200 · 2.56s · route=자동 답변
+✔ #5 · HTTP 200 · 2.44s · route=자동 답변
+p50 2.56s · p95 2.90s · max 2.90s · failures 0/5
+report: runs/bench-base-helpdesk-20261024-174302.json
+

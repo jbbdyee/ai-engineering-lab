@@ -1,0 +1,90 @@
+{
+  "cases": "lab03-llm-down.json",
+  "webhook": "my-helpdesk",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "VPN · FAQ 원문으로",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.7,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "간단 답변",
+        "category": "faq",
+        "answer": "VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속합니다. (자동 답변 기능을 잠시 쓸 수 없어 FAQ 원문으로 안내합니다.)",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 0,
+        "reason": "llm_down"
+      }
+    },
+    {
+      "case": "접수 현황 · 상태 그대로",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.5,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "간단 답변",
+        "category": "ticket",
+        "answer": "T-1002 접수 건은 현재 '처리 중' 상태입니다. 인증서 발급 승인 대기 중이며 10월 20일 완료 예정입니다.",
+        "sources": [],
+        "llm_calls": 0,
+        "reason": "llm_down"
+      }
+    },
+    {
+      "case": "모르는 질문 · 담당자",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.3,
+      "status": 200,
+      "request": {
+        "question": "오늘 점심 메뉴 추천해 주세요",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "category": "other",
+        "answer": "지금은 자동 답변을 할 수 없어 담당자에게 연결합니다.",
+        "sources": [],
+        "llm_calls": 0,
+        "reason": "llm_down"
+      }
+    },
+    {
+      "case": "빈 질문",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "",
+        "user": "이준호"
+      },
+      "response": {
+        "error": "question is required"
+      }
+    }
+  ]
+}

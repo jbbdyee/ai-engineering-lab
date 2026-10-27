@@ -1,0 +1,19 @@
+$ uv run tools/flow.py llm down
+✔ OpenAI credential: broken key (drill). Restore with: uv run tools/flow.py llm up
+
+$ uv run tools/flow.py call my-helpdesk requests/faq-vpn-nocache.json -v
+HTTP 500 · 1.3s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+
+$ uv run tools/flow.py llm up
+✔ OpenAI credential: real key from .env restored
+

@@ -1,0 +1,10 @@
+$ uv run tools/flow.py bench my-helpdesk requests/faq-vpn-nocache.json -n 5
+POST http://localhost:5678/webhook/my-helpdesk × 5
+✔ #1 · HTTP 200 · 1.32s · route=자동 답변, llm_calls=1, cached=false
+✔ #2 · HTTP 200 · 1.14s · route=자동 답변, llm_calls=1, cached=false
+✔ #3 · HTTP 200 · 1.11s · route=자동 답변, llm_calls=1, cached=false
+✔ #4 · HTTP 200 · 1.12s · route=자동 답변, llm_calls=1, cached=false
+✔ #5 · HTTP 200 · 1.05s · route=자동 답변, llm_calls=1, cached=false
+p50 1.12s · p95 1.32s · max 1.32s · failures 0/5
+report: runs/bench-my-helpdesk-20261024-174855.json
+

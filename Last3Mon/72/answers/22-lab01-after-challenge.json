@@ -1,0 +1,132 @@
+{
+  "cases": "lab01.json",
+  "webhook": "my-helpdesk",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "VPN FAQ · 단계별 시간",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 32,
+          "answer_ms": 1122,
+          "review_ms": 11,
+          "total_ms": 1173
+        }
+      }
+    },
+    {
+      "case": "VPN FAQ · 전체 시간 · LLM 호출 수",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 28,
+          "answer_ms": 1219,
+          "review_ms": 14,
+          "total_ms": 1268
+        }
+      }
+    },
+    {
+      "case": "접수 현황",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 28,
+          "answer_ms": 907,
+          "review_ms": 15,
+          "total_ms": 956
+        }
+      }
+    },
+    {
+      "case": "빈 질문",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "",
+        "user": "이준호"
+      },
+      "response": {
+        "error": "question is required"
+      }
+    }
+  ]
+}

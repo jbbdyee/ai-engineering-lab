@@ -1,0 +1,491 @@
+{
+  "cases": "lab02-challenge.json",
+  "webhook": "my-helpdesk",
+  "passed": 15,
+  "total": 15,
+  "results": [
+    {
+      "case": "VPN · LLM 한 번 · 2.5초 안",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 37,
+          "answer_ms": 986,
+          "review_ms": 11,
+          "total_ms": 1046
+        }
+      }
+    },
+    {
+      "case": "VPN · LLM 한 번 · 2.5초 안",
+      "webhook": "my-helpdesk",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 28,
+          "answer_ms": 1057,
+          "review_ms": 14,
+          "total_ms": 1107
+        }
+      }
+    },
+    {
+      "case": "VPN · LLM 한 번 · 2.5초 안",
+      "webhook": "my-helpdesk",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 41,
+          "answer_ms": 952,
+          "review_ms": 20,
+          "total_ms": 1023
+        }
+      }
+    },
+    {
+      "case": "비밀번호 · LLM 한 번",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 도움이 필요하시면 언제든 문의해 주세요.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 81,
+          "answer_ms": 868,
+          "review_ms": 16,
+          "total_ms": 974
+        }
+      }
+    },
+    {
+      "case": "비밀번호 · LLM 한 번",
+      "webhook": "my-helpdesk",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 32,
+          "answer_ms": 824,
+          "review_ms": 15,
+          "total_ms": 881
+        }
+      }
+    },
+    {
+      "case": "비밀번호 · LLM 한 번",
+      "webhook": "my-helpdesk",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 48,
+          "answer_ms": 811,
+          "review_ms": 12,
+          "total_ms": 879
+        }
+      }
+    },
+    {
+      "case": "접수 현황 · LLM 한 번",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 29,
+          "answer_ms": 798,
+          "review_ms": 15,
+          "total_ms": 848
+        }
+      }
+    },
+    {
+      "case": "접수 현황 · LLM 한 번",
+      "webhook": "my-helpdesk",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 28,
+          "answer_ms": 924,
+          "review_ms": 12,
+          "total_ms": 971
+        }
+      }
+    },
+    {
+      "case": "접수 현황 · LLM 한 번",
+      "webhook": "my-helpdesk",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 30,
+          "answer_ms": 1001,
+          "review_ms": 45,
+          "total_ms": 1096
+        }
+      }
+    },
+    {
+      "case": "규칙으로 모르면 분류 + 답 두 번",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "찾지 못했습니다. 담당 직원이 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 2,
+        "cached": false,
+        "steps": [
+          "rule",
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 23,
+          "classify_ms": 723,
+          "answer_ms": 838,
+          "review_ms": 15,
+          "total_ms": 1606
+        }
+      }
+    },
+    {
+      "case": "규칙으로 모르면 분류 + 답 두 번",
+      "webhook": "my-helpdesk",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.4,
+      "status": 200,
+      "request": {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "찾지 못했습니다. 담당 직원이 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 2,
+        "cached": false,
+        "steps": [
+          "rule",
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 27,
+          "classify_ms": 594,
+          "answer_ms": 698,
+          "review_ms": 13,
+          "total_ms": 1339
+        }
+      }
+    },
+    {
+      "case": "규칙으로 모르면 분류 + 답 두 번",
+      "webhook": "my-helpdesk",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "찾지 못했습니다. 담당 직원이 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 2,
+        "cached": false,
+        "steps": [
+          "rule",
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 30,
+          "classify_ms": 746,
+          "answer_ms": 801,
+          "review_ms": 15,
+          "total_ms": 1599
+        }
+      }
+    },
+    {
+      "case": "빈 질문은 LLM 없이",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "",
+        "user": "이준호"
+      },
+      "response": {
+        "error": "question is required"
+      }
+    },
+    {
+      "case": "빈 질문은 LLM 없이",
+      "webhook": "my-helpdesk",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 400,
+      "request": {
+        "question": "",
+        "user": "이준호"
+      },
+      "response": {
+        "error": "question is required"
+      }
+    },
+    {
+      "case": "빈 질문은 LLM 없이",
+      "webhook": "my-helpdesk",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "",
+        "user": "이준호"
+      },
+      "response": {
+        "error": "question is required"
+      }
+    }
+  ]
+}

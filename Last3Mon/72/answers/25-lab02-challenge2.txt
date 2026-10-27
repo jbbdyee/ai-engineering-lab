@@ -1,0 +1,177 @@
+✔ before: POST http://localhost:8800/cache-clear · HTTP 200 · 0.0s · {"cleared": 3}
+POST http://localhost:5678/webhook/my-helpdesk · 6 case(s) × 1
+✔ 처음 묻는 VPN (캐시 없음) · 2.5s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "cache_by": null,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 71,
+          "answer_ms": 1556,
+          "review_ms": 23,
+          "total_ms": 1665
+        }
+      }
+✔ 다른 말로 묻는 VPN → FAQ 번호 캐시 · 0.1s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 연결이 계속 끊어지는데요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 0,
+        "cached": true,
+        "cache_by": "faq",
+        "steps": [
+          "faq",
+          "rule",
+          "cache"
+        ],
+        "timings": {
+          "total_ms": 44
+        }
+      }
+✔ 같은 말은 질문 캐시 · 0.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "  vpn 접속이 자꾸   끊겨요. 어떻게 하나요? ",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 0,
+        "cached": true,
+        "cache_by": "question",
+        "steps": [
+          "cache"
+        ],
+        "timings": {
+          "total_ms": 19
+        }
+      }
+✔ no_cache면 FAQ 번호 캐시도 안 씀 · 1.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 연결이 계속 끊어지는데요",
+        "user": "최유진",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 연결이 계속 끊어질 경우, VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 현재 접수된 관련 티켓은 없습니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "cache_by": null,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 27,
+          "answer_ms": 1052,
+          "review_ms": 20,
+          "total_ms": 1110
+        }
+      }
+✔ 다른 FAQ는 따로 (프린터 처음) · 1.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보세요. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "cache_by": null,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 42,
+          "answer_ms": 1035,
+          "review_ms": 14,
+          "total_ms": 1102
+        }
+      }
+✔ 접수 현황은 캐시 안 함 · 1.1s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "cache_by": null,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 34,
+          "answer_ms": 796,
+          "review_ms": 14,
+          "total_ms": 852
+        }
+      }
+Passed 6/6
+report: runs/lab02-challenge2-20261024-174920.json

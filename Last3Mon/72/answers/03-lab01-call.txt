@@ -1,0 +1,33 @@
+$ uv run tools/flow.py call my-helpdesk requests/faq-vpn.json -v
+HTTP 200 · 2.7s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 클라이언트를 최신 버전으로 업데이트하시고, 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원에게 문의해 주십시오.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 616,
+          "data_ms": 18,
+          "answer_ms": 1124,
+          "review_ms": 920,
+          "total_ms": 2698
+        }
+      }
+

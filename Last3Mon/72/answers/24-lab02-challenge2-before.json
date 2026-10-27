@@ -1,0 +1,223 @@
+{
+  "cases": "lab02-challenge2.json",
+  "webhook": "my-helpdesk",
+  "passed": 4,
+  "total": 6,
+  "results": [
+    {
+      "case": "처음 묻는 VPN (캐시 없음)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 39,
+          "answer_ms": 947,
+          "review_ms": 16,
+          "total_ms": 1009
+        }
+      }
+    },
+    {
+      "case": "다른 말로 묻는 VPN → FAQ 번호 캐시",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "took 1.2s (expected at most 1s)",
+        "cached = false (expected true)",
+        "cache_by = null (expected faq)",
+        "llm_calls = 1 (expected 0)"
+      ],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 연결이 계속 끊어지는데요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 연결이 계속 끊어질 경우, VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 현재 접수된 관련 티켓은 없습니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 27,
+          "answer_ms": 1067,
+          "review_ms": 14,
+          "total_ms": 1117
+        }
+      }
+    },
+    {
+      "case": "같은 말은 질문 캐시",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "cache_by = null (expected question)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "question": "  vpn 접속이 자꾸   끊겨요. 어떻게 하나요? ",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 0,
+        "cached": true,
+        "steps": [
+          "cache"
+        ],
+        "timings": {
+          "total_ms": 14
+        }
+      }
+    },
+    {
+      "case": "no_cache면 FAQ 번호 캐시도 안 씀",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 연결이 계속 끊어지는데요",
+        "user": "최유진",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 연결이 계속 끊어질 경우, VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 21,
+          "answer_ms": 1014,
+          "review_ms": 9,
+          "total_ms": 1051
+        }
+      }
+    },
+    {
+      "case": "다른 FAQ는 따로 (프린터 처음)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보세요. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 26,
+          "answer_ms": 1041,
+          "review_ms": 17,
+          "total_ms": 1091
+        }
+      }
+    },
+    {
+      "case": "접수 현황은 캐시 안 함",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 25,
+          "answer_ms": 869,
+          "review_ms": 13,
+          "total_ms": 913
+        }
+      }
+    }
+  ]
+}

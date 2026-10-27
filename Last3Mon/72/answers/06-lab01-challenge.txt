@@ -1,0 +1,136 @@
+POST http://localhost:5678/webhook/my-helpdesk · 4 case(s) × 1
+✔ FAQ · 접수 시간 따로 · 4.5s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당자에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 1365,
+          "faq_ms": 16,
+          "ticket_ms": 14,
+          "answer_ms": 1196,
+          "review_ms": 993,
+          "total_ms": 3614
+        },
+        "slowest_step": "classify"
+      }
+✔ 접수 조회 시간 · 2.7s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당자에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 774,
+          "faq_ms": 17,
+          "ticket_ms": 13,
+          "answer_ms": 971,
+          "review_ms": 815,
+          "total_ms": 2601
+        },
+        "slowest_step": "answer"
+      }
+✔ 가장 오래 걸린 단계 · 3.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 시도해 보시기 바랍니다. 추가 도움이 필요하시면 담당자에게 문의해 주십시오.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 680,
+          "faq_ms": 17,
+          "ticket_ms": 10,
+          "answer_ms": 1044,
+          "review_ms": 1007,
+          "total_ms": 2769
+        },
+        "slowest_step": "answer"
+      }
+✔ 접수 현황도 같은 모양 · 3.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의 사항이 있으시면 010-2718-2818로 연락해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 723,
+          "faq_ms": 13,
+          "ticket_ms": 11,
+          "answer_ms": 1029,
+          "review_ms": 1162,
+          "total_ms": 2951
+        },
+        "slowest_step": "review"
+      }
+Passed 4/4
+report: runs/lab01-challenge-20261024-174502.json

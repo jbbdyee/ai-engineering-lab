@@ -1,0 +1,47 @@
+✔ before: POST http://localhost:8800/cache-clear · HTTP 200 · 0.0s · {"cleared": 2}
+✔ OpenAI credential: broken key (drill). Restore with: uv run tools/flow.py llm up
+POST http://localhost:5678/webhook/my-helpdesk · 4 case(s) × 1
+✘ VPN · FAQ 원문으로 · 0.9s · status 500 (expected 200); route = null (expected 간단 답변); answer has none of ['인증서']
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+✘ 접수 현황 · 상태 그대로 · 0.4s · status 500 (expected 200); route = null (expected 간단 답변); answer has none of ['처리 중']
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+✘ 모르는 질문 · 담당자 · 0.9s · status 500 (expected 200); route = null (expected 담당자 연결)
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "오늘 점심 메뉴 추천해 주세요",
+        "user": "이준호"
+      }
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+✔ 빈 질문 · 0.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "",
+        "user": "이준호"
+      }
+    ← response HTTP 400
+      {
+        "error": "question is required"
+      }
+Passed 1/4
+report: runs/lab03-llm-down-20261024-175047.json
+✔ OpenAI credential: real key from .env restored

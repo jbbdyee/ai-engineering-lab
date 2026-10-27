@@ -1,0 +1,53 @@
+$ uv run tools/flow.py fault faq slow
+✔ fault switch: {"faq": "slow", "tickets": "ok", "slow_seconds": 8.0}
+
+$ uv run tools/flow.py call my-helpdesk '{"question": "비밀번호를 잊어버렸어요", "no_cache": true}' -v
+HTTP 200 · 11.5s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "비밀번호를 잊어버렸어요",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 추가 도움이 필요하시면 언제든 문의해 주세요.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 2,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "data_ms": 8144,
+          "answer_ms": 1518,
+          "review_ms": 1013,
+          "total_ms": 10701
+        }
+      }
+
+$ uv run tools/flow.py fault faq error
+✔ fault switch: {"faq": "error", "tickets": "ok", "slow_seconds": 8.0}
+
+$ uv run tools/flow.py call my-helpdesk '{"question": "비밀번호를 잊어버렸어요", "no_cache": true}' -v
+HTTP 500 · 0.3s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "비밀번호를 잊어버렸어요",
+        "no_cache": true
+      }
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+
+$ uv run tools/flow.py fault all ok
+✔ fault switch: {"faq": "ok", "tickets": "ok", "slow_seconds": 8.0}
+

@@ -1,0 +1,139 @@
+✔ before: POST /webhook/my-helpdesk · HTTP 200 · 1.1s · {"route": "자동 답변", "category": "faq", "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보세요. 추가 도움이 필요하면 담당 직원이 도와드리
+POST http://localhost:5678/webhook/my-helpdesk · 5 case(s) × 1
+✔ VPN · LLM 한 번 · 2.5초 안 · 1.1s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "cache_by": null,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 27,
+          "answer_ms": 1017,
+          "review_ms": 16,
+          "total_ms": 1067
+        }
+      }
+✔ 비밀번호 · LLM 한 번 · 1.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 도움이 필요하시면 언제든 문의해 주세요.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "cache_by": null,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 27,
+          "answer_ms": 840,
+          "review_ms": 40,
+          "total_ms": 928
+        }
+      }
+✔ 접수 현황 · LLM 한 번 · 0.9s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "cache_by": null,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 28,
+          "answer_ms": 835,
+          "review_ms": 19,
+          "total_ms": 891
+        }
+      }
+✔ 규칙으로 모르면 분류 + 답 두 번 · 1.7s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "찾지 못했습니다. 담당 직원이 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 2,
+        "cached": false,
+        "cache_by": null,
+        "steps": [
+          "rule",
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 27,
+          "classify_ms": 842,
+          "answer_ms": 771,
+          "review_ms": 11,
+          "total_ms": 1659
+        }
+      }
+✔ 빈 질문은 LLM 없이 · 0.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "",
+        "user": "이준호"
+      }
+    ← response HTTP 400
+      {
+        "error": "question is required"
+      }
+Passed 5/5
+report: runs/lab02-challenge-20261024-174926.json

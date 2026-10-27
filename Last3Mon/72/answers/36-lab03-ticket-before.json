@@ -1,0 +1,119 @@
+{
+  "cases": "lab03-ticket.json",
+  "webhook": "my-helpdesk",
+  "passed": 2,
+  "total": 4,
+  "results": [
+    {
+      "case": "평소 접수 현황",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 처리 중이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 33,
+          "answer_ms": 915,
+          "review_ms": 12,
+          "total_ms": 970
+        }
+      }
+    },
+    {
+      "case": "접수 API 500 · 접수 질문은 담당자",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "reason = data_api_down (expected tickets_down)"
+      ],
+      "seconds": 0.6,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "answer": "사내 데이터 시스템이 응답하지 않아 담당자에게 연결합니다.",
+        "reason": "data_api_down"
+      }
+    },
+    {
+      "case": "접수 API 500 · FAQ 질문은 그대로 답",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "route = 담당자 연결 (expected 자동 답변)",
+        "category = null (expected faq)",
+        "answer has none of ['인증서']"
+      ],
+      "seconds": 0.6,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "담당자 연결",
+        "answer": "사내 데이터 시스템이 응답하지 않아 담당자에게 연결합니다.",
+        "reason": "data_api_down"
+      }
+    },
+    {
+      "case": "없는 접수 번호는 그대로 (404는 고장이 아님)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "question": "T-9999 접수 건은 어떻게 됐나요?",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-9999 접수 건은 찾지 못했습니다. 담당 직원이 도와드릴 예정입니다.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 564,
+          "answer_ms": 978,
+          "review_ms": 10,
+          "total_ms": 1558
+        }
+      }
+    }
+  ]
+}

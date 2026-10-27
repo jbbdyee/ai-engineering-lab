@@ -1,0 +1,1319 @@
+{
+  "name": "72 IT helpdesk + FAQ circuit breaker (answer)",
+  "nodes": [
+    {
+      "name": "Question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-helpdesk",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "de518e93-ed19-541f-a6fc-687a4efaf1b2",
+      "position": [
+        0,
+        300
+      ],
+      "id": "da213575-a9a7-5052-9259-1235f4e340f0"
+    },
+    {
+      "name": "Has question?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.question }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "4ea38fda-f28a-5e1d-a504-05874f837f02"
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"question is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        560
+      ],
+      "id": "ff743009-a8ea-5c5f-8b83-9e29a2c60111"
+    },
+    {
+      "name": "Start clock",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { t: Date.now() } }];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "f1cc57e6-9966-5f49-90c4-cbd65be68041"
+    },
+    {
+      "name": "Cache key",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Question webhook').first().json.body;\nconst key = String(body.question ?? '').trim().toLowerCase().replace(/\\s+/g, ' ');\nreturn [{ json: { ...$json, key, use_cache: body.no_cache !== true } }];"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "3c70cd68-4a52-59c2-a5c3-d30c86914021"
+    },
+    {
+      "name": "Cache lookup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/cache/{{ encodeURIComponent($json.key) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "506d8e43-b396-596a-8197-08f2aa58381b"
+    },
+    {
+      "name": "Cached?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.value !== undefined && $('Cache key').first().json.use_cache }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "1113fdf6-f964-5534-8d8a-dd41344c2725"
+    },
+    {
+      "name": "Cached result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const value = $json.value;\nconst t0 = $('Start clock').first().json.t;\nreturn [{ json: { route: value.route, category: value.category, answer: value.answer, sources: value.sources ?? [],\n  llm_calls: 0, cached: true, steps: ['cache'], timings: { total_ms: t0 ? Date.now() - t0 : 0 } } }];"
+      },
+      "position": [
+        1320,
+        40
+      ],
+      "id": "82a7f0f0-356b-5164-baaa-a478f74db65e"
+    },
+    {
+      "name": "Send cached",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1540,
+        40
+      ],
+      "id": "addd6ac5-76a5-5da7-ac2b-84c005eb7520"
+    },
+    {
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq",
+        "options": {
+          "timeout": 2000
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('Question webhook').first().json.body.question }}"
+            }
+          ]
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 500,
+      "onError": "continueErrorOutput",
+      "position": [
+        1320,
+        300
+      ],
+      "id": "52b6a8a9-bf1f-5b58-8644-0077cfd01dd0"
+    },
+    {
+      "name": "Get ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/tickets/{{ (($('Question webhook').first().json.body.question.match(/T-?\\d{4}/i) || ['NONE'])[0]).toUpperCase().replace(/^T(\\d)/, 'T-$1') }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          },
+          "timeout": 2000
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "requester",
+              "value": "={{ $('Question webhook').first().json.body.user ?? '' }}"
+            }
+          ]
+        }
+      },
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 500,
+      "onError": "continueErrorOutput",
+      "position": [
+        1540,
+        300
+      ],
+      "id": "0a16cd98-b769-5067-b867-beabec01b00d"
+    },
+    {
+      "name": "After data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, t: Date.now() } }];"
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "ba6f2475-7cea-5c3d-95a6-dc6125a0441c"
+    },
+    {
+      "name": "Rule classify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const question = String($('Question webhook').first().json.body.question ?? '');\nconst results = $('Search FAQ').first().json.results ?? [];\nlet category = 'unknown';\nif (/T-?\\d{4}/i.test(question)) category = 'ticket';\nelse if (results.length > 0) category = 'faq';\nreturn [{ json: { category, by: 'rule' } }];"
+      },
+      "position": [
+        1980,
+        300
+      ],
+      "id": "a2e2c597-6870-5bcc-833c-a44526b343f3"
+    },
+    {
+      "name": "Known?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.category }}",
+              "rightValue": "unknown",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        2200,
+        300
+      ],
+      "id": "e0758a6f-de55-5309-a696-3ed0755ab1f0"
+    },
+    {
+      "name": "Classify",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Question webhook').first().json.body.question }}",
+        "options": {
+          "systemMessage": "You sort one company IT help-desk question. Categories: faq (how to fix or use something: password, account lock, VPN, printer, mail box, software install), ticket (asks about the status of an IT request ticket like T-1002), other (anything else). Return only JSON, no code fence: {\"category\": \"faq\"}",
+          "maxIterations": 1
+        }
+      },
+      "onError": "continueErrorOutput",
+      "position": [
+        2420,
+        300
+      ],
+      "id": "05ed7c16-110e-53ab-9b03-ce872d616695"
+    },
+    {
+      "name": "Classify model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        2420,
+        520
+      ],
+      "id": "5a7c30c2-472e-54b3-89c2-85b53e3f432b"
+    },
+    {
+      "name": "Parse category",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const raw = String($json.output ?? '').trim().replace(/^```(json)?\\s*|```$/g, '');\nlet category = 'other';\ntry { category = JSON.parse(raw).category ?? 'other'; } catch (error) { category = 'other'; }\nif (!['faq', 'ticket', 'other'].includes(category)) category = 'other';\nreturn [{ json: { category, by: 'llm' } }];"
+      },
+      "position": [
+        2640,
+        300
+      ],
+      "id": "1407c587-1e10-5d76-b43a-9bf6570eb619"
+    },
+    {
+      "name": "After classify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, t: Date.now() } }];"
+      },
+      "position": [
+        2860,
+        300
+      ],
+      "id": "77f26c5e-fd71-59c5-b02f-cee875e87ee7"
+    },
+    {
+      "name": "Data down",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1",
+              "name": "route",
+              "value": "담당자 연결",
+              "type": "string"
+            },
+            {
+              "id": "d2",
+              "name": "answer",
+              "value": "사내 데이터 시스템이 응답하지 않아 담당자에게 연결합니다.",
+              "type": "string"
+            },
+            {
+              "id": "d3",
+              "name": "reason",
+              "value": "data_api_down",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        3080,
+        820
+      ],
+      "id": "7db7288e-627d-5b0f-8634-2bd12ba22e35"
+    },
+    {
+      "name": "Send data down",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        3300,
+        820
+      ],
+      "id": "e582596a-b12d-550c-8ba8-ea5661be5b32"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $('Question webhook').first().json.body.question }}\n분류: {{ $json.category }}\nFAQ: {{ JSON.stringify($('Search FAQ').first().json.results ?? []) }}\n접수 건: {{ JSON.stringify($('Ticket check').first().json.ticket) }}",
+        "options": {
+          "systemMessage": "You are the company IT help desk. Answer in Korean in at most 3 sentences, using only the FAQ entries and the ticket record given. Never invent steps, dates or names. For a ticket, say its status and note. If the data does not answer the question, say \"찾지 못했습니다\" and that a staff member will help.",
+          "maxIterations": 1
+        }
+      },
+      "onError": "continueErrorOutput",
+      "position": [
+        3080,
+        300
+      ],
+      "id": "a0b37e8a-ba45-5496-baf5-3fe7eb4e11cb"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        3080,
+        520
+      ],
+      "id": "eadbe0ed-8031-5d85-91c2-258b144dcc6d"
+    },
+    {
+      "name": "After answer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, t: Date.now() } }];"
+      },
+      "position": [
+        3300,
+        300
+      ],
+      "id": "2a0a5546-0677-5a3b-89b9-cfb1887a696b"
+    },
+    {
+      "name": "Review check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "let answer = String($('Answer').first().json.output ?? '').trim();\nconst problems = [];\nif (!answer) problems.push('empty');\nif (!/[가-힣]/.test(answer)) problems.push('not_korean');\nif (answer.length > 400) { answer = answer.slice(0, 400); problems.push('too_long'); }\nreturn [{ json: { ...$json, answer, review_problems: problems } }];"
+      },
+      "position": [
+        3520,
+        300
+      ],
+      "id": "24064ede-b012-51e6-8e8a-a40032982e5b"
+    },
+    {
+      "name": "After review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, t: Date.now() } }];"
+      },
+      "position": [
+        3740,
+        300
+      ],
+      "id": "d6ea34a2-56fe-5d19-b1fe-a07a2176b6cf"
+    },
+    {
+      "name": "Build result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const ran = (name) => { try { return $(name).isExecuted; } catch (error) { return false; } };\nconst body = $('Question webhook').first().json.body;\nconst category = $('Parse category').isExecuted ? $('Parse category').first().json.category : $('Rule classify').first().json.category;\nconst answer = $('Review check').first().json.answer;\nconst results = $('Search FAQ').first().json.results ?? [];\nconst sources = category === 'faq' ? results.map((r) => r.id) : [];\nconst steps = [];\nif (ran('Rule classify')) steps.push('rule');\nif (ran('Classify')) steps.push('classify');\nsteps.push('faq', 'ticket', 'answer');\nsteps.push('check');\nconst llm_calls = (ran('Classify') ? 1 : 0) + 1 + 0;\nconst result = { route: '자동 답변', category, answer, sources };\nconst t = (name) => (ran(name) ? $(name).first().json.t : null);\nconst t0 = t('Start clock');\nconst marks = [['data', t('After data')], ['classify', t('After classify')], ['answer', t('After answer')], ['review', t('After review')]];\nconst timings = {};\nlet last = t0;\nfor (const [label, mark] of marks) {\n  if (mark === null) continue;\n  timings[`${label}_ms`] = mark - last;\n  last = mark;\n}\ntimings.total_ms = Date.now() - t0;\nObject.assign(result, { llm_calls, cached: false, steps, timings });\nreturn [{ json: result }];"
+      },
+      "position": [
+        3960,
+        300
+      ],
+      "id": "ddb667d7-58f4-591a-99b1-9fdee196e7a9"
+    },
+    {
+      "name": "Cache it?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.category === 'faq' && $('Cache key').first().json.use_cache }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        4180,
+        300
+      ],
+      "id": "be269673-e6ef-5484-adb9-d2b266f59f97"
+    },
+    {
+      "name": "Store in cache",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/cache/{{ encodeURIComponent($('Cache key').first().json.key) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ value: { route: $json.route, category: $json.category, answer: $json.answer, sources: $json.sources }, ttl: 600 }) }}"
+      },
+      "position": [
+        4400,
+        180
+      ],
+      "id": "1d551b65-ef7f-527e-8339-ce95e2272e2d"
+    },
+    {
+      "name": "Result again",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: $('Build result').first().json }];"
+      },
+      "position": [
+        4620,
+        180
+      ],
+      "id": "056a1325-c8d0-501f-9dab-599a8380748e"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        4840,
+        300
+      ],
+      "id": "0bc9ba7d-cc11-5f62-a05e-107089fe53b4"
+    },
+    {
+      "name": "Simple answer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Question webhook').first().json.body;\nlet results = [];\ntry { results = $('Search FAQ').first().json.results ?? []; } catch (error) { results = []; }\nlet ticket = {};\ntry { ticket = $('Ticket check').first().json.ticket ?? {}; } catch (error) { ticket = {}; }\nconst isTicket = /T-?\\d{4}/i.test(String(body.question ?? ''));\nif (isTicket && ticket.status) {\n  return [{ json: { route: '간단 답변', category: 'ticket', answer: `${ticket.ticket_id} 접수 건은 현재 '${ticket.status}' 상태입니다. ${ticket.note ?? ''}`.trim(),\n    sources: [], llm_calls: 0, reason: 'llm_down' } }];\n}\nif (!isTicket && results.length > 0) {\n  return [{ json: { route: '간단 답변', category: 'faq', answer: `${results[0].answer} (자동 답변 기능을 잠시 쓸 수 없어 FAQ 원문으로 안내합니다.)`,\n    sources: [results[0].id], llm_calls: 0, reason: 'llm_down' } }];\n}\nreturn [{ json: { route: '담당자 연결', category: 'other', answer: '지금은 자동 답변을 할 수 없어 담당자에게 연결합니다.', sources: [], llm_calls: 0, reason: 'llm_down' } }];"
+      },
+      "position": [
+        4400,
+        1060
+      ],
+      "id": "9d9bceef-74c6-5bea-8e09-8d6fca3dd417"
+    },
+    {
+      "name": "Send simple answer",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        4620,
+        1060
+      ],
+      "id": "3ab6f0cb-6d8f-5292-86c1-86b2645c74b5"
+    },
+    {
+      "name": "Ticket check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1640,
+        460
+      ],
+      "parameters": {
+        "jsCode": "const question = String($('Question webhook').first().json.body.question ?? '');\nconst status = Number($json.statusCode ?? 200);\nconst is_ticket = /T-?\\d{4}/i.test(question);\nconst tickets_down = status >= 500;\nreturn [{ json: { ticket: tickets_down ? {} : ($json.body ?? {}), ticket_status: status, tickets_down: tickets_down && is_ticket } }];"
+      }
+    },
+    {
+      "name": "Tickets down?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1840,
+        460
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.tickets_down }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Tickets down",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2040,
+        620
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "t1",
+              "name": "route",
+              "value": "담당자 연결",
+              "type": "string"
+            },
+            {
+              "id": "t2",
+              "name": "category",
+              "value": "ticket",
+              "type": "string"
+            },
+            {
+              "id": "t3",
+              "name": "answer",
+              "value": "접수 현황 시스템이 응답하지 않아 담당자에게 연결합니다. 잠시 뒤 다시 물어봐 주세요.",
+              "type": "string"
+            },
+            {
+              "id": "t4",
+              "name": "reason",
+              "value": "tickets_down",
+              "type": "string"
+            },
+            {
+              "id": "t5",
+              "name": "llm_calls",
+              "value": 0,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Send tickets down",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        620
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    },
+    {
+      "name": "Breaker check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1160,
+        100
+      ],
+      "parameters": {
+        "url": "http://data-api:8800/cache/breaker-faq",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Breaker open?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        100
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.value !== undefined }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Breaker open",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1520,
+        -60
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1",
+              "name": "route",
+              "value": "담당자 연결",
+              "type": "string"
+            },
+            {
+              "id": "b2",
+              "name": "answer",
+              "value": "사내 데이터 시스템이 응답하지 않아 담당자에게 연결합니다.",
+              "type": "string"
+            },
+            {
+              "id": "b3",
+              "name": "reason",
+              "value": "breaker_open",
+              "type": "string"
+            },
+            {
+              "id": "b4",
+              "name": "llm_calls",
+              "value": 0,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Send breaker open",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1720,
+        -60
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    },
+    {
+      "name": "Open breaker",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        660
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/cache/breaker-faq",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ value: { open: true, since: Date.now() }, ttl: 30 }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "node": "Has question?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has question?": {
+      "main": [
+        [
+          {
+            "node": "Start clock",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start clock": {
+      "main": [
+        [
+          {
+            "node": "Cache key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cache key": {
+      "main": [
+        [
+          {
+            "node": "Cache lookup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cache lookup": {
+      "main": [
+        [
+          {
+            "node": "Cached?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cached?": {
+      "main": [
+        [
+          {
+            "node": "Cached result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Breaker check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cached result": {
+      "main": [
+        [
+          {
+            "node": "Send cached",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "main": [
+        [
+          {
+            "node": "Get ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Open breaker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "main": [
+        [
+          {
+            "node": "Ticket check",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Data down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After data": {
+      "main": [
+        [
+          {
+            "node": "Rule classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rule classify": {
+      "main": [
+        [
+          {
+            "node": "Known?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known?": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify": {
+      "main": [
+        [
+          {
+            "node": "Parse category",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Simple answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse category": {
+      "main": [
+        [
+          {
+            "node": "After classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data down": {
+      "main": [
+        [
+          {
+            "node": "Send data down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After classify": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "After answer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Simple answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After answer": {
+      "main": [
+        [
+          {
+            "node": "Review check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review check": {
+      "main": [
+        [
+          {
+            "node": "After review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "After review": {
+      "main": [
+        [
+          {
+            "node": "Build result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build result": {
+      "main": [
+        [
+          {
+            "node": "Cache it?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cache it?": {
+      "main": [
+        [
+          {
+            "node": "Store in cache",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in cache": {
+      "main": [
+        [
+          {
+            "node": "Result again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result again": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple answer": {
+      "main": [
+        [
+          {
+            "node": "Send simple answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticket check": {
+      "main": [
+        [
+          {
+            "node": "Tickets down?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tickets down?": {
+      "main": [
+        [
+          {
+            "node": "Tickets down",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "After data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tickets down": {
+      "main": [
+        [
+          {
+            "node": "Send tickets down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Breaker check": {
+      "main": [
+        [
+          {
+            "node": "Breaker open?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Breaker open?": {
+      "main": [
+        [
+          {
+            "node": "Breaker open",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Breaker open": {
+      "main": [
+        [
+          {
+            "node": "Send breaker open",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Open breaker": {
+      "main": [
+        [
+          {
+            "node": "Data down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

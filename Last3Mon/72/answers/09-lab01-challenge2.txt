@@ -1,0 +1,150 @@
+POST http://localhost:5678/webhook/my-helpdesk · 4 case(s) × 1
+✔ 예산 안 (넉넉한 예산) · 4.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true,
+        "budget_ms": 60000
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당자에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 1208,
+          "faq_ms": 17,
+          "ticket_ms": 14,
+          "answer_ms": 1230,
+          "review_ms": 857,
+          "total_ms": 3357
+        },
+        "slowest_step": "answer",
+        "llm_ms": 3295,
+        "budget_ms": 60000,
+        "over_budget": false
+      }
+✔ 예산 넘음 (0.5초 예산) · 2.7s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true,
+        "budget_ms": 500
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당자에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 667,
+          "faq_ms": 15,
+          "ticket_ms": 11,
+          "answer_ms": 980,
+          "review_ms": 916,
+          "total_ms": 2609
+        },
+        "slowest_step": "answer",
+        "llm_ms": 2563,
+        "budget_ms": 500,
+        "over_budget": true
+      }
+✔ 예산을 안 주면 3초 · 3.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당자에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 761,
+          "faq_ms": 18,
+          "ticket_ms": 18,
+          "answer_ms": 1027,
+          "review_ms": 1185,
+          "total_ms": 3023
+        },
+        "slowest_step": "review",
+        "llm_ms": 2973,
+        "budget_ms": 3000,
+        "over_budget": true
+      }
+✔ 접수 현황도 같은 모양 · 2.9s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 완료 예정일은 10월 20일입니다. 추가 문의 사항이 있으시면 010-2718-2818로 연락해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 795,
+          "faq_ms": 13,
+          "ticket_ms": 14,
+          "answer_ms": 1017,
+          "review_ms": 1046,
+          "total_ms": 2904
+        },
+        "slowest_step": "review",
+        "llm_ms": 2858,
+        "budget_ms": 3000,
+        "over_budget": false
+      }
+Passed 4/4
+report: runs/lab01-challenge2-20261024-174548.json

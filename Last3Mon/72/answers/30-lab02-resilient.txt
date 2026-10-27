@@ -1,0 +1,261 @@
+✔ before: POST http://localhost:8800/cache-clear · HTTP 200 · 0.0s · {"cleared": 1}
+POST http://localhost:5678/webhook/my-helpdesk · 9 case(s) × 1
+✔ 예제 1 · 프린터 FAQ는 규칙으로 · 1.8s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보세요. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 585,
+          "answer_ms": 1071,
+          "review_ms": 20,
+          "total_ms": 1687
+        }
+      }
+✔ 예제 1 · 접수 번호는 규칙으로 · 1.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 71,
+          "answer_ms": 1030,
+          "review_ms": 19,
+          "total_ms": 1128
+        }
+      }
+✔ 예제 1 · 없는 접수 번호 · 1.8s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-9999 접수 건은 어떻게 됐나요?",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-9999 접수 건은 찾지 못했습니다. 담당 직원이 도와드릴 예정입니다.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 555,
+          "answer_ms": 1179,
+          "review_ms": 24,
+          "total_ms": 1774
+        }
+      }
+✔ 예제 1 · 규칙으로 모르면 LLM이 분류 · 2.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "찾지 못했습니다. 담당 직원이 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 2,
+        "cached": false,
+        "steps": [
+          "rule",
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 554,
+          "classify_ms": 650,
+          "answer_ms": 927,
+          "review_ms": 14,
+          "total_ms": 2152
+        }
+      }
+✔ 예제 2 · 처음 묻는 VPN · 1.7s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 553,
+          "answer_ms": 1015,
+          "review_ms": 28,
+          "total_ms": 1605
+        }
+      }
+✔ 예제 2 · 같은 질문 (띄어쓰기·대소문자 다름) · 0.1s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "  vpn 접속이 자꾸   끊겨요. 어떻게 하나요? ",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 0,
+        "cached": true,
+        "steps": [
+          "cache"
+        ],
+        "timings": {
+          "total_ms": 19
+        }
+      }
+✔ 예제 2 · no_cache면 캐시 안 씀 · 1.7s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 551,
+          "answer_ms": 1081,
+          "review_ms": 34,
+          "total_ms": 1685
+        }
+      }
+✔ 예제 2 · 접수 현황은 캐시 안 함 (1) · 1.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 31,
+          "answer_ms": 1062,
+          "review_ms": 14,
+          "total_ms": 1114
+        }
+      }
+✔ 예제 2 · 접수 현황은 캐시 안 함 (2) · 1.1s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 필요하면 연락처 010-2718-2818로 연락해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 47,
+          "answer_ms": 977,
+          "review_ms": 15,
+          "total_ms": 1049
+        }
+      }
+Passed 9/9
+report: runs/lab02-20261024-175036.json

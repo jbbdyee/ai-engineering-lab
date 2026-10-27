@@ -1,0 +1,82 @@
+{
+  "webhook": "my-secure",
+  "cases": [
+    {
+      "name": "예제 1 · 내 연락처는 가려서",
+      "request": "requests/contact-own.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "****",
+            "***@"
+          ]
+        },
+        "not_contains": {
+          "answer": [
+            "010-1414-2135",
+            "yujin.choi@example.com"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 1 · 정상 답은 그대로",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 규칙이 막은 기록",
+      "request": "requests/injection-ko.json",
+      "expect": {
+        "equals": {
+          "route": "차단",
+          "security.blocked_by": "rule"
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 판별 LLM이 막은 기록",
+      "request": "requests/novel-teamlead.json",
+      "expect": {
+        "equals": {
+          "route": "차단",
+          "security.blocked_by": "guard"
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 가린 개수 기록",
+      "request": "requests/contact-own.json",
+      "expect": {
+        "contains": {
+          "security": [
+            "\"masked\": 1",
+            "\"masked\": 2",
+            "\"masked\": 3"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 정상은 막지 않음 기록",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "security.blocked_by": ""
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,238 @@
+{
+  "name": "72 Health check (answer)",
+  "nodes": [
+    {
+      "name": "Health webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-health",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "bdf5dd1e-edb4-503e-b800-c8653ff5fbb4",
+      "position": [
+        0,
+        300
+      ],
+      "id": "cd5b6b9d-06a3-57ed-91ab-0ab44b344fde"
+    },
+    {
+      "name": "Start",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { t0: Date.now() } }];"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "0445c332-e249-5cce-915d-fca703b570b8"
+    },
+    {
+      "name": "Check data API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/health",
+        "options": {
+          "timeout": 2000
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "position": [
+        440,
+        300
+      ],
+      "id": "8ce80344-ec8e-5bd5-9a2e-839d49d9f1e9"
+    },
+    {
+      "name": "Check FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq",
+        "options": {
+          "timeout": 2000
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "vpn"
+            }
+          ]
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "position": [
+        660,
+        300
+      ],
+      "id": "a935db0a-fc45-5a01-aa52-405740f82e9f"
+    },
+    {
+      "name": "Check LLM",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "Reply with the single word OK.",
+        "options": {
+          "systemMessage": "You are a health check. Reply with OK only.",
+          "maxIterations": 1
+        }
+      },
+      "onError": "continueRegularOutput",
+      "alwaysOutputData": true,
+      "position": [
+        880,
+        300
+      ],
+      "id": "96a58520-65ae-548a-ac2f-0b41d004933f"
+    },
+    {
+      "name": "Health model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0,
+          "timeout": 8000,
+          "maxRetries": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        880,
+        520
+      ],
+      "id": "5aa10812-b13e-5bae-831e-7ccd24e72e62"
+    },
+    {
+      "name": "Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const data_api = $('Check data API').first().json.status === 'ok';\nconst faq = Array.isArray($('Check FAQ').first().json.results);\nconst llm = /ok/i.test(String($('Check LLM').first().json.output ?? ''));\nconst checks = { data_api, faq, llm };\nconst failed = Object.entries(checks).filter(([, good]) => !good).map(([name]) => name);\nconst status = failed.length === 0 ? 'ok' : (data_api || llm ? 'degraded' : 'down');\nreturn [{ json: { status, checks, failed, seconds: Math.round((Date.now() - $('Start').first().json.t0) / 100) / 10 } }];"
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "54ee87ba-881d-5ad1-a032-1262876fdd48"
+    },
+    {
+      "name": "Send status",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "2340a4f9-d3c9-5717-ad49-b782bcd9f808"
+    }
+  ],
+  "connections": {
+    "Health model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Check LLM",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Health webhook": {
+      "main": [
+        [
+          {
+            "node": "Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Check data API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check data API": {
+      "main": [
+        [
+          {
+            "node": "Check FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check FAQ": {
+      "main": [
+        [
+          {
+            "node": "Check LLM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check LLM": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

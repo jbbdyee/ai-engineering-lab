@@ -1,0 +1,94 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-health",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "평소",
+      "webhook": "my-health",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.2,
+      "status": 200,
+      "request": {},
+      "response": {
+        "status": "ok",
+        "checks": {
+          "data_api": true,
+          "faq": true,
+          "llm": true
+        },
+        "failed": [],
+        "seconds": 1.4
+      }
+    },
+    {
+      "case": "FAQ 오류",
+      "webhook": "my-health",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "status": "degraded",
+        "checks": {
+          "data_api": true,
+          "faq": false,
+          "llm": true
+        },
+        "failed": [
+          "faq"
+        ],
+        "seconds": 1
+      }
+    },
+    {
+      "case": "FAQ 느림 (8초) · 점검은 빨리 끝남",
+      "webhook": "my-health",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "status": "degraded",
+        "checks": {
+          "data_api": true,
+          "faq": false,
+          "llm": true
+        },
+        "failed": [
+          "faq"
+        ],
+        "seconds": 2.9
+      }
+    },
+    {
+      "case": "LLM 멈춤",
+      "webhook": "my-health",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.4,
+      "status": 200,
+      "request": {},
+      "response": {
+        "status": "degraded",
+        "checks": {
+          "data_api": true,
+          "faq": true,
+          "llm": false
+        },
+        "failed": [
+          "llm"
+        ],
+        "seconds": 0.3
+      }
+    }
+  ]
+}

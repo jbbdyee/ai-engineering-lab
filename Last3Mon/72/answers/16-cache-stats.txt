@@ -1,0 +1,3 @@
+$ curl -s localhost:8800/cache-stats; echo
+{"entries": 2, "hits": 4, "misses": 8}
+

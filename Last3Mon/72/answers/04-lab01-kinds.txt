@@ -1,0 +1,92 @@
+$ uv run tools/flow.py bench my-helpdesk requests/faq-vpn-nocache.json -n 5
+POST http://localhost:5678/webhook/my-helpdesk × 5
+✔ #1 · HTTP 200 · 2.57s · route=자동 답변, llm_calls=3, cached=false
+✔ #2 · HTTP 200 · 3.08s · route=자동 답변, llm_calls=3, cached=false
+✔ #3 · HTTP 200 · 2.91s · route=자동 답변, llm_calls=3, cached=false
+✔ #4 · HTTP 200 · 2.99s · route=자동 답변, llm_calls=3, cached=false
+✔ #5 · HTTP 200 · 2.80s · route=자동 답변, llm_calls=3, cached=false
+p50 2.91s · p95 3.08s · max 3.08s · failures 0/5
+report: runs/bench-my-helpdesk-20261024-174351.json
+
+$ uv run tools/flow.py bench my-helpdesk requests/ticket-own.json -n 5
+POST http://localhost:5678/webhook/my-helpdesk × 5
+✔ #1 · HTTP 200 · 2.86s · route=자동 답변, llm_calls=3, cached=false
+✔ #2 · HTTP 200 · 3.05s · route=자동 답변, llm_calls=3, cached=false
+✔ #3 · HTTP 200 · 3.12s · route=자동 답변, llm_calls=3, cached=false
+✔ #4 · HTTP 200 · 2.94s · route=자동 답변, llm_calls=3, cached=false
+✔ #5 · HTTP 200 · 2.99s · route=자동 답변, llm_calls=3, cached=false
+p50 2.99s · p95 3.12s · max 3.12s · failures 0/5
+report: runs/bench-my-helpdesk-20261024-174406.json
+
+$ uv run tools/flow.py bench my-helpdesk requests/off-topic.json -n 5
+POST http://localhost:5678/webhook/my-helpdesk × 5
+✔ #1 · HTTP 200 · 2.38s · route=자동 답변, llm_calls=3, cached=false
+✔ #2 · HTTP 200 · 2.36s · route=자동 답변, llm_calls=3, cached=false
+✔ #3 · HTTP 200 · 2.48s · route=자동 답변, llm_calls=3, cached=false
+✔ #4 · HTTP 200 · 2.49s · route=자동 답변, llm_calls=3, cached=false
+✔ #5 · HTTP 200 · 2.84s · route=자동 답변, llm_calls=3, cached=false
+p50 2.48s · p95 2.84s · max 2.84s · failures 0/5
+report: runs/bench-my-helpdesk-20261024-174419.json
+
+$ uv run tools/flow.py call my-helpdesk requests/ticket-own.json -v
+HTTP 200 · 2.8s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 인증서 발급 승인 대기 중이며, 10월 20일에 완료될 예정입니다. 추가 문의 사항이 있으시면 010-2718-2818로 연락해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 818,
+          "data_ms": 43,
+          "answer_ms": 877,
+          "review_ms": 895,
+          "total_ms": 2647
+        }
+      }
+
+$ uv run tools/flow.py call my-helpdesk requests/off-topic.json -v
+HTTP 200 · 2.5s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "오늘 점심 메뉴 추천해 주세요",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "other",
+        "answer": "찾으시는 정보를 확인하지 못했습니다. 점심 메뉴 추천은 담당 직원에게 문의해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 732,
+          "data_ms": 19,
+          "answer_ms": 740,
+          "review_ms": 978,
+          "total_ms": 2482
+        }
+      }
+

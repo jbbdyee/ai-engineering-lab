@@ -1,0 +1,113 @@
+{
+  "cases": "lab03.json",
+  "webhook": "my-helpdesk",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "평소",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "cached": false,
+        "steps": [
+          "rule",
+          "faq",
+          "ticket",
+          "answer",
+          "check"
+        ],
+        "timings": {
+          "data_ms": 77,
+          "answer_ms": 1000,
+          "review_ms": 16,
+          "total_ms": 1104
+        }
+      }
+    },
+    {
+      "case": "FAQ가 느릴 때 (8초)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.6,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요",
+        "user": "한지훈",
+        "no_cache": true
+      },
+      "response": {
+        "route": "담당자 연결",
+        "answer": "사내 데이터 시스템이 응답하지 않아 담당자에게 연결합니다.",
+        "reason": "data_api_down"
+      }
+    },
+    {
+      "case": "FAQ가 오류일 때 (500)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요",
+        "user": "한지훈",
+        "no_cache": true
+      },
+      "response": {
+        "route": "담당자 연결",
+        "answer": "사내 데이터 시스템이 응답하지 않아 담당자에게 연결합니다.",
+        "reason": "breaker_open",
+        "llm_calls": 0
+      }
+    },
+    {
+      "case": "캐시에 있으면 FAQ가 멈춰도 답",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보세요. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 0,
+        "cached": true,
+        "steps": [
+          "cache"
+        ],
+        "timings": {
+          "total_ms": 21
+        }
+      }
+    }
+  ]
+}

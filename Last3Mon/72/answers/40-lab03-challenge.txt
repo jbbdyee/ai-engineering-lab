@@ -1,0 +1,72 @@
+POST http://localhost:5678/webhook/my-health · 4 case(s) × 1
+✔ 평소 · 2.2s
+    → request  POST /webhook/my-health
+      {}
+    ← response HTTP 200
+      {
+        "status": "ok",
+        "checks": {
+          "data_api": true,
+          "faq": true,
+          "llm": true
+        },
+        "failed": [],
+        "seconds": 1.4
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "error", "tickets": "ok", "slow_seconds": 8.0}
+✔ FAQ 오류 · 1.0s
+    → request  POST /webhook/my-health
+      {}
+    ← response HTTP 200
+      {
+        "status": "degraded",
+        "checks": {
+          "data_api": true,
+          "faq": false,
+          "llm": true
+        },
+        "failed": [
+          "faq"
+        ],
+        "seconds": 1
+      }
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "slow_seconds": 8.0}
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "slow", "tickets": "ok", "slow_seconds": 8.0}
+✔ FAQ 느림 (8초) · 점검은 빨리 끝남 · 3.0s
+    → request  POST /webhook/my-health
+      {}
+    ← response HTTP 200
+      {
+        "status": "degraded",
+        "checks": {
+          "data_api": true,
+          "faq": false,
+          "llm": true
+        },
+        "failed": [
+          "faq"
+        ],
+        "seconds": 2.9
+      }
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "slow_seconds": 8.0}
+✔ OpenAI credential: broken key (drill). Restore with: uv run tools/flow.py llm up
+✔ LLM 멈춤 · 0.4s
+    → request  POST /webhook/my-health
+      {}
+    ← response HTTP 200
+      {
+        "status": "degraded",
+        "checks": {
+          "data_api": true,
+          "faq": true,
+          "llm": false
+        },
+        "failed": [
+          "llm"
+        ],
+        "seconds": 0.3
+      }
+✔ OpenAI credential: real key from .env restored
+Passed 4/4
+report: runs/lab03-challenge-20261024-175230.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "slow_seconds": 8.0}

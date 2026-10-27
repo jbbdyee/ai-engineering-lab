@@ -1,0 +1,138 @@
+POST http://localhost:5678/webhook/my-helpdesk · 4 case(s) × 1
+✘ 예산 안 (넉넉한 예산) · 2.9s · over_budget = null (expected false); budget_ms = null (expected 60000); llm_ms has none of ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true,
+        "budget_ms": 60000
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 628,
+          "faq_ms": 11,
+          "ticket_ms": 11,
+          "answer_ms": 1142,
+          "review_ms": 1028,
+          "total_ms": 2862
+        },
+        "slowest_step": "answer"
+      }
+✘ 예산 넘음 (0.5초 예산) · 2.7s · over_budget = null (expected true); budget_ms = null (expected 500)
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true,
+        "budget_ms": 500
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 658,
+          "faq_ms": 14,
+          "ticket_ms": 11,
+          "answer_ms": 1013,
+          "review_ms": 930,
+          "total_ms": 2640
+        },
+        "slowest_step": "answer"
+      }
+✘ 예산을 안 주면 3초 · 3.6s · budget_ms = null (expected 3000); llm_ms has none of ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "no_cache": true
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "faq",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 확인한 후 다시 접속해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원에게 문의해 주십시오.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 650,
+          "faq_ms": 14,
+          "ticket_ms": 13,
+          "answer_ms": 1767,
+          "review_ms": 1061,
+          "total_ms": 3520
+        },
+        "slowest_step": "answer"
+      }
+✘ 접수 현황도 같은 모양 · 2.8s · budget_ms = null (expected 3000); llm_ms has none of ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "category": "ticket",
+        "answer": "T-1002 티켓은 현재 \"처리 중\" 상태이며, 인증서 발급 승인 대기 중입니다. 완료 예정일은 10월 20일입니다. 추가 문의 사항이 있으시면 010-2718-2818로 연락해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "cached": false,
+        "steps": [
+          "classify",
+          "faq",
+          "ticket",
+          "answer",
+          "review"
+        ],
+        "timings": {
+          "classify_ms": 772,
+          "faq_ms": 14,
+          "ticket_ms": 12,
+          "answer_ms": 895,
+          "review_ms": 1006,
+          "total_ms": 2719
+        },
+        "slowest_step": "review"
+      }
+Passed 0/4
+report: runs/lab01-challenge2-20261024-174523.json
