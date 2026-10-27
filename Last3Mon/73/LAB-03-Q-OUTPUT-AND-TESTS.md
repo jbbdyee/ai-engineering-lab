@@ -67,7 +67,7 @@ flowchart LR
 위 표의 "남긴 것" 칸. 가린 개수(`masked`)를 셀 때 한 번 가릴 때마다 1씩 더합니다.
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 넣을 자리 ② 가릴 것 셋과 가리는 모양 ③ 가린 수 ④ 막을 표시와 그때의 답 · reason ⑤ 기대 결과**. 아래 빈칸 4개(`____①`~`____④`)를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 
@@ -141,7 +141,7 @@ flowchart LR
 위 표의 네 줄이 모두 같은 칸 셋을 가집니다. 답한 길의 `security`는 어느 노드에서 만들까요? (출력 필터 뒤)
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 차단 길의 security(누가 · 이유 · 0) ② 누가 막았는지 아는 법 ③ 답 길의 security(출력 필터 뒤) ④ 겉의 칸 정리 ⑤ 기대 결과**. 아래 빈칸 4개(`____①`~`____④`)를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 
@@ -260,7 +260,7 @@ flowchart LR
 실패마다 "입력 검증 · 규칙 · 판별 LLM · 데이터 API · 지시문 · 출력 필터" 중 어디서 막혀야 했는지(또는 어디서 잘못 막았는지) 먼저 말합니다. 정상이 막혔다면 응답 `security.blocked_by`와 `reason`이 답을 줍니다.
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 고칠 노드와 고칠 규칙 수 ② 막힌 정상 질문과 그것을 막은 규칙 ③ 좁힌 뒤 받쳐 줄 관문 ④ 함께 돌릴 테스트**. 아래 빈칸 4개(`____①`~`____④`)를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다 (막힌 정상 질문이 규칙이 아닌 곳에서 막혔다면 그 관문 이름으로 바꿔 씁니다).
 
@@ -354,7 +354,7 @@ flowchart LR
 `GET /audit`의 `events` 배열을 돌며 `blocked_by`별로 셉니다. 빈 글자는 `answered`. `pii_in_log`는 `JSON.stringify(events)`에 Output filter와 같은 정규식을 씁니다.
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 로그 노드와 이을 자리 ② 로그 본문 칸과 남기지 않을 것 ③ 기록이 실패해도 ④ 새 요약 워크플로우(웹훅 · 세기 · pii_in_log) ⑤ 테스트와 push**. 아래 빈칸 4개(`____①`~`____④`)를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 
