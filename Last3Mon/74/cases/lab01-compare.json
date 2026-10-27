@@ -1,0 +1,61 @@
+{
+  "webhook": "rel-v1",
+  "cases": [
+    {
+      "name": "VPN · 해결 낱말",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "VPN · 출처 번호",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "[FAQ-003]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "프린터 · 해결 낱말",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "대기열",
+            "전원"
+          ]
+        }
+      }
+    },
+    {
+      "name": "프린터 · 출처 번호",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "[FAQ-"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    }
+  ]
+}

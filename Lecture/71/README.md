@@ -19,8 +19,8 @@
 | - | 13:00~14:00 | 점심 |  |
 | 5 | 14:00~14:50 | 3단계 · 검색 품질 측정과 개선, Lab 03 예제 1·2 | [3단계](03-STAGE3-RETRIEVAL-QUALITY.md), [Lab 03](../../Last3Mon/71/LAB-03-Q-MEASURE-AND-IMPROVE.md) |
 | 6 | 15:00~15:50 | 3단계 · Lab 03 과제 40분 (어려운 질문으로 고치기) · 풀이 | [Lab 03](../../Last3Mon/71/LAB-03-Q-MEASURE-AND-IMPROVE.md) |
-| 7 | 16:00~16:50 | 바이브 코딩 · `tdoc` 만들기 (각자, 요청서 → SPEC 먼저) | [VIBE-REQ-TDOC](../../Last3Mon/71/VIBE-REQ-TDOC.md) → [VIBE-Q-TDOC](../../Last3Mon/71/VIBE-Q-TDOC.md), [진행](04-VIBE-CODING.md) |
-| 8 | 17:00~17:50 | 바이브 코딩 발표 · 정리 · 강사 바이브 코딩 · 팁 · 72일차 예고 | [진행](04-VIBE-CODING.md) |
+| 7 | 16:00~16:50 | 바이브 코딩 · `tdoc` 만들기 (각자, 요청서 → SPEC 먼저) | [VIBE-REQ-TDOC](../../Last3Mon/71/VIBE-REQ-TDOC.md) → [VIBE-Q-TDOC](../../Last3Mon/71/VIBE-Q-TDOC.md), [진행](05-VIBE-CODING.md) |
+| 8 | 17:00~17:50 | 바이브 코딩 발표 · **4단계 정리** (의미 · 효과 · 회사에서 쓰는 법) · 다음 일차 예고 | [4단계 정리](04-STAGE4-WRAPUP.md), [진행](05-VIBE-CODING.md) |
 
 ```mermaid
 flowchart LR
@@ -36,4 +36,5 @@ flowchart LR
 | `01-STAGE1-RAG-AND-INDEX.md` | 왜 RAG인가(네 가지 방법 비교), 임베딩과 점수 읽기(실측), 정답표 먼저(질문 종류 · 정답표도 틀림), 청크 하나의 모양 · 메타데이터, 메모리 저장소의 한살이, 요청문 좋은 예 · 나쁜 예, 확인 질문 |
 | `02-STAGE2-RAG-ANSWER.md` | LLM이 받는 발췌의 실제 모양 · 실측 답, `sources`와 `cited`, 관련도 기준 10개 · 정하는 순서 · 양쪽으로 틀림, 점수는 높은데 답이 없을 때, 답 검사 넷(계산 방법 · 결과 JSON), 넘기는 길 세 갈래, 확인 질문 |
 | `03-STAGE3-RETRIEVAL-QUALITY.md` | doc@1 · answer@1 · answer@3(아슬아슬한 1등), 재는 순서 · 실험 기록, 청크 크기(잘린 문장 · 섞인 청크 · 틀린 질문이 다름), 어려운 질문 8개와 다시 쓴 검색어, 같은 설정 다른 결과, 개선 방법 고르기 · 멈출 때, 확인 질문 |
-| `04-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tdoc), 발표, 강사 정리, 추가 바이브 코딩, 팁 |
+| `04-STAGE4-WRAPUP.md` | 8교시 35분: 오늘의 의미 · 효과 숫자 · 업계 이름 · 산업별 응용 · 면접 · 최종 프로젝트 체크리스트 |
+| `05-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tdoc), 발표, 강사 정리, 추가 바이브 코딩, 팁 |

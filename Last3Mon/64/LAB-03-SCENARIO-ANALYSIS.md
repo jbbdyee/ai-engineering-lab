@@ -10,7 +10,7 @@
 ## 1. 예시 먼저 실행해 보기 (10분)
 
 ```bash
-cd Last3Mon/64/workflow-lab
+cd ~/aio-01d4-stu/Last3Mon/64/workflow-lab
 uv run miniflow memory --clear
 uv run miniflow run flows/05-tech-support-ticket.json -i user=kim -i ticket="비밀번호를 잊어버려서 로그인이 안 돼요"
 uv run miniflow run flows/05-tech-support-ticket.json -i user=kim -i ticket="VPN 접속이 계속 끊겨요"
@@ -49,6 +49,7 @@ uv run miniflow run flows/05-tech-support-ticket.json -i user=lee -i ticket="점
 2. 템플릿을 복사합니다.
 
    ```bash
+   cd ~/aio-01d4-stu
    mkdir -p Last3Mon/64/my-work
    cp Last3Mon/64/templates/SCENARIO-ANALYSIS-TEMPLATE.md Last3Mon/64/my-work/LAB-03-SCENARIO-ANALYSIS.md
    ```

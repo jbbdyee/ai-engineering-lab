@@ -1,0 +1,20 @@
+$ uv run tools/flow.py bench my-secure requests/faq-vpn.json -n 5
+POST http://localhost:5678/webhook/my-secure × 5
+✔ #1 · HTTP 200 · 4.35s · route=자동 답변
+✔ #2 · HTTP 200 · 6.96s · route=자동 답변
+✔ #3 · HTTP 200 · 3.02s · route=자동 답변
+✔ #4 · HTTP 200 · 2.89s · route=자동 답변
+✔ #5 · HTTP 200 · 3.74s · route=자동 답변
+p50 3.74s · p95 6.96s · max 6.96s · failures 0/5
+report: runs/bench-my-secure-20261026-204551.json
+
+$ uv run tools/flow.py bench my-secure requests/injection-ko.json -n 5
+POST http://localhost:5678/webhook/my-secure × 5
+✔ #1 · HTTP 200 · 0.10s · route=차단
+✔ #2 · HTTP 200 · 0.06s · route=차단
+✔ #3 · HTTP 200 · 0.09s · route=차단
+✔ #4 · HTTP 200 · 0.08s · route=차단
+✔ #5 · HTTP 200 · 0.05s · route=차단
+p50 0.08s · p95 0.10s · max 0.10s · failures 0/5
+report: runs/bench-my-secure-20261026-204553.json
+

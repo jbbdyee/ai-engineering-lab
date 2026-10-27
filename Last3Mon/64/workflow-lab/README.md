@@ -14,7 +14,7 @@ flowchart LR
 ## 1. 설치와 확인
 
 ```bash
-cd Last3Mon/64/workflow-lab
+cd ~/aio-01d4-stu/Last3Mon/64/workflow-lab
 uv sync
 uv run miniflow tools
 uv run pytest -q

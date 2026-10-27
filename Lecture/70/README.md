@@ -19,8 +19,8 @@
 | - | 13:00~14:00 | 점심 |  |
 | 5 | 14:00~14:50 | 3단계 · 재사용 구조의 변경 관리, Lab 03 예제 1·2 | [3단계](03-STAGE3-CHANGE-AND-VERSION.md), [Lab 03](../../Last3Mon/70/LAB-03-Q-CHANGE-AND-VERSION.md) |
 | 6 | 15:00~15:50 | 3단계 · Lab 03 과제 40분 (영향 표 · 어려운 테스트) · 풀이 | [Lab 03](../../Last3Mon/70/LAB-03-Q-CHANGE-AND-VERSION.md) |
-| 7 | 16:00~16:50 | 바이브 코딩 · `tkit` 만들기 (각자) | [VIBE-Q-TKIT](../../Last3Mon/70/VIBE-Q-TKIT.md), [진행](04-VIBE-CODING.md) |
-| 8 | 17:00~17:50 | 바이브 코딩 발표 · 정리 · 강사 바이브 코딩 · 팁 · 71일차 예고 | [진행](04-VIBE-CODING.md) |
+| 7 | 16:00~16:50 | 바이브 코딩 · `tkit` 만들기 (각자) | [VIBE-Q-TKIT](../../Last3Mon/70/VIBE-Q-TKIT.md), [진행](05-VIBE-CODING.md) |
+| 8 | 17:00~17:50 | 바이브 코딩 발표 · **4단계 정리** (의미 · 효과 · 회사에서 쓰는 법) · 다음 일차 예고 | [4단계 정리](04-STAGE4-WRAPUP.md), [진행](05-VIBE-CODING.md) |
 
 ```mermaid
 flowchart LR
@@ -36,4 +36,5 @@ flowchart LR
 | `01-STAGE1-TEMPLATE.md` | 복사의 비용, 같은 것·다른 것·우연히 다른 것, 설정 표, 없는 값은 멈춤 |
 | `02-STAGE2-MODULES.md` | 모듈의 조건, Sub-workflow(Execute Workflow · Trigger), 입력으로 받기, 시험용 웹훅, 리팩터링 |
 | `03-STAGE3-CHANGE-AND-VERSION.md` | 하위 호환 변경, 깨지는 변경과 새 버전, 계약은 층마다, 영향 표 |
-| `04-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tkit), 발표, 강사 정리, 추가 바이브 코딩, 팁 |
+| `04-STAGE4-WRAPUP.md` | 8교시 35분: 오늘의 의미 · 효과 숫자 · 업계 이름 · 산업별 응용 · 면접 · 최종 프로젝트 체크리스트 |
+| `05-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tkit), 발표, 강사 정리, 추가 바이브 코딩, 팁 |

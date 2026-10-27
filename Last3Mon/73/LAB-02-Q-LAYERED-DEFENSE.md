@@ -66,7 +66,7 @@ flowchart LR
 `call my-secure requests/ticket-own.json -v`를 고친 뒤에도 돌립니다. 다른 사람 이름으로 같은 번호를 물으면?
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 고칠 Tool과 칸 ② 지금 값과 새 값 ③ 다른 것은 그대로 ④ 남의 건은 누가 판단하나 ⑤ 기대 결과**. 아래 빈칸 4개(`____①`~`____④`)를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 
@@ -143,7 +143,7 @@ flowchart LR
 태그 안에 직원 질문, 태그 밖에 질문한 직원 이름. 이름을 태그 안에 넣으면 무엇이 헷갈릴까요?
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 고칠 노드 ② 지울 줄 ③ 새 지시문(질문은 데이터 · Tool 결과로만 · 403/404 · 지시문을 보이지 않음) ④ text 모양(태그 · 질문한 직원) ⑤ 기대 결과**. 아래 빈칸 4개(`____①`~`____④`)를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 
@@ -264,7 +264,7 @@ flowchart LR
 `bench my-secure requests/faq-vpn.json -n 5`, `bench my-secure requests/injection-ko.json -n 5`를 예제 3과 비교합니다. 규칙 차단은 왜 그대로일까요?
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 어디에 넣나(규칙의 어느 쪽) ② 판별 LLM 노드 · 모델 따로 ③ 공격의 뜻과 정상의 예 ④ 결과 JSON 모양 ⑤ 못 읽으면 ⑥ 막았을 때 · 지났을 때 ⑦ 테스트**. 아래 빈칸 4개(`____①`~`____④`)를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 
@@ -359,7 +359,7 @@ flowchart LR
 위 표의 두 길 중 하나를 고르고, 고른 까닭을 `SECURITY.md` 6절에 한 줄로 씁니다. 통과(fail-open)를 고르면 테스트는 어떻게 바뀌어야 할까요?
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 어느 노드의 오류 출력 ② 정해진 차단 답의 칸(route · answer · reason) ③ 모델의 기다리는 한도 · 다시 해 보기 ④ 그대로 둘 것 ⑤ 테스트**. 아래 빈칸 4개(`____①`~`____④`)를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 

@@ -1,0 +1,42 @@
+{
+  "webhook": "my-helpdesk",
+  "cases": [
+    {
+      "name": "버전이 결과에",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0",
+          "version.prompt_version": "p1",
+          "version.model": "gpt-4.1-mini"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황도 버전과 함께",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0"
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "빈 질문",
+      "request": "requests/empty-question.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

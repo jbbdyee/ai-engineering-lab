@@ -29,8 +29,8 @@
 | - | 13:00~14:00 | 점심 |  |
 | 5 | 14:00~14:50 | 3단계 · 실행 결과 검증과 테스트, Lab 03 예제 1·2 | [3단계](03-STAGE3-VERIFY-AND-FIX.md), [Lab 03](../../Last3Mon/67/LAB-03-Q-VERIFY-AND-FIX.md) |
 | 6 | 15:00~15:50 | 3단계 · Lab 03 과제 40분 (어려운 테스트 쓰고 고치기) · 풀이 | [Lab 03](../../Last3Mon/67/LAB-03-Q-VERIFY-AND-FIX.md) |
-| 7 | 16:00~16:50 | 바이브 코딩 · `tman` 만들기 (각자) | [VIBE-Q-TMAN](../../Last3Mon/67/VIBE-Q-TMAN.md), [진행](04-VIBE-CODING.md) |
-| 8 | 17:00~17:50 | 바이브 코딩 발표 · 정리 · 강사 바이브 코딩 · 팁 · 68일차 예고 | [진행](04-VIBE-CODING.md) |
+| 7 | 16:00~16:50 | 바이브 코딩 · `tman` 만들기 (각자) | [VIBE-Q-TMAN](../../Last3Mon/67/VIBE-Q-TMAN.md), [진행](05-VIBE-CODING.md) |
+| 8 | 17:00~17:50 | 바이브 코딩 발표 · **4단계 정리** (의미 · 효과 · 회사에서 쓰는 법) · 다음 일차 예고 | [4단계 정리](04-STAGE4-WRAPUP.md), [진행](05-VIBE-CODING.md) |
 
 ```mermaid
 flowchart LR
@@ -46,4 +46,5 @@ flowchart LR
 | `01-STAGE1-VIBE-N8N-AGENT-AND-TOOL.md` | 워크플로우는 JSON 파일, 에이전트에게 주는 규칙(AGENTS.md), 요청문 쓰는 법, 정해진 흐름 vs Agent, Tool, 그럴듯한 답 vs 근거 있는 답 |
 | `02-STAGE2-DATA-TOOLS.md` | 데이터 API, HTTP Request Tool, `$fromAI`, 데이터 없음 처리, LLM이 정하면 안 되는 값과 권한 범위 |
 | `03-STAGE3-VERIFY-AND-FIX.md` | 테스트 케이스 = 업무 규칙, 입력 검증, 결과 검증과 담당자 연결, 반복 실행, 실패 → 원인 → 수정 루프 |
-| `04-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tman), 발표, 강사 정리 포인트, 추가 바이브 코딩, 팁 |
+| `04-STAGE4-WRAPUP.md` | 8교시 35분: 오늘의 의미 · 효과 숫자 · 업계 이름 · 산업별 응용 · 면접 · 최종 프로젝트 체크리스트 |
+| `05-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tman), 발표, 강사 정리 포인트, 추가 바이브 코딩, 팁 |

@@ -9,7 +9,7 @@
 [사전 준비 안내](SETUP-WSL-LLM.md)를 마친 상태에서 WSL 터미널에서 실행합니다.
 
 ```bash
-cd ~/<수업 저장소>/Last3Mon/64/workflow-lab
+cd ~/aio-01d4-stu/Last3Mon/64/workflow-lab
 uv run pytest -q          # 18 passed, 1 skipped
 uv run miniflow check     # Reply (openai, ...) 가 나오면 준비 완료
 ```
@@ -68,7 +68,7 @@ MINIFLOW_LLM=mock uv run miniflow run flows/01-llm-only.json -i text="다음 주
 uv run miniflow show flows/01-llm-only.json
 ```
 
-위 명령은 워크플로우를 Mermaid 문법으로 출력합니다. 출력을 [Mermaid Live Editor](https://mermaid.live)에 붙여 넣으면 그림으로 볼 수 있습니다.
+위 명령은 워크플로우를 Mermaid 문법으로 출력합니다. 출력을 [Mermaid Viewer](https://mermaidviewer.com/ko)에 붙여 넣으면 그림으로 볼 수 있습니다.
 
 ## 4. 지난 프로젝트를 노드로 다시 그리기 (10분)
 

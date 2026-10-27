@@ -24,7 +24,7 @@ flowchart LR
 | 5 | 14:00~14:50 | 3단계 강의 · Lab 03 예제 1 · 2 | [3단계](../../Lecture/68/03-STAGE3-VERIFY-AND-SCALE.md), [Lab 03](LAB-03-Q-VERIFY-AND-ISOLATE.md) | `lab03` · `lab03-down` 통과 |
 | 6 | 15:00~15:50 | Lab 03 과제 40분 · 풀이 | Lab 03 | 내 케이스 5개 · 보고서 |
 | 7 | 16:00~16:50 | 바이브 코딩 `tflow`: 요청서 → 내 SPEC → 비교 → 만들기 | [VIBE-REQ-TFLOW](VIBE-REQ-TFLOW.md) → [VIBE-Q-TFLOW](VIBE-Q-TFLOW.md) | `SPEC.md` · R1~R6 · `pytest` |
-| 8 | 17:00~17:50 | 발표 · 강사 정리 · 강사 바이브 코딩 · 팁 · 69일차 예고 | [진행](../../Lecture/68/04-VIBE-CODING.md) | |
+| 8 | 17:00~17:50 | 발표 · 강사 정리 · 강사 바이브 코딩 · 팁 · 69일차 예고 | [진행](../../Lecture/68/05-VIBE-CODING.md) | |
 
 ## 1. 전날 준비 (약 15분)
 

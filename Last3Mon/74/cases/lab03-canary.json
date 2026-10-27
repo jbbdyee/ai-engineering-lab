@@ -1,0 +1,93 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/releases/helpdesk",
+      "body": {
+        "canary": {
+          "release": "1.1.0",
+          "percent": 50
+        }
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "최유진 (bucket 0) → 카나리",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.1.0",
+          "version.channel": "canary"
+        }
+      }
+    },
+    {
+      "name": "정우성 (bucket 42) → 카나리",
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "정우성"
+      },
+      "expect": {
+        "equals": {
+          "version.release": "1.1.0",
+          "version.channel": "canary"
+        }
+      }
+    },
+    {
+      "name": "이준호 (bucket 56) → 운영",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0",
+          "version.channel": "stable"
+        }
+      }
+    },
+    {
+      "name": "김민지 (bucket 80) → 운영",
+      "request": "requests/faq-mail.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0",
+          "version.channel": "stable"
+        }
+      }
+    },
+    {
+      "name": "고정이 카나리보다 먼저",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진",
+        "release": "1.0.0"
+      },
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0",
+          "version.channel": "pinned"
+        }
+      }
+    },
+    {
+      "name": "같은 사람은 늘 같은 쪽",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.1.0",
+          "version.channel": "canary"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "prompts": "ok",
+        "slow_seconds": 8
+      }
+    },
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "망가진 릴리스 2.1.0 · 400 release broken",
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.1.0"
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "error": "release broken",
+          "prompt_version": "p9"
+        }
+      }
+    },
+    {
+      "name": "평소 · 1.1.0은 저장소의 p2",
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "1.1.0"
+      },
+      "expect": {
+        "equals": {
+          "version.prompt_source": "registry",
+          "version.prompt_version": "p2"
+        },
+        "contains": {
+          "answer": [
+            "[FAQ-003]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "저장소 고장 · 1.1.0도 기본 지시문으로",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "prompts": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "prompts": "ok"
+          }
+        }
+      ],
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "1.1.0"
+      },
+      "expect": {
+        "status": 200,
+        "equals": {
+          "version.release": "1.1.0",
+          "version.prompt_source": "fallback"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "저장소 고장 · 없는 릴리스는 그대로 400",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "prompts": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "prompts": "ok"
+          }
+        }
+      ],
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "9.9.9"
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "error": "unknown release"
+        }
+      }
+    },
+    {
+      "name": "운영(active 1.0.0)은 그대로",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0",
+          "version.prompt_source": "registry"
+        },
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    }
+  ]
+}

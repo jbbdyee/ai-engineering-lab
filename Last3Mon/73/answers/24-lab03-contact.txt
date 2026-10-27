@@ -1,0 +1,17 @@
+$ uv run tools/flow.py call my-secure requests/contact-own.json -v
+HTTP 200 · 4.9s
+    → request  POST /webhook/my-secure
+      {
+        "question": "T-1003 처리 상황과 등록된 제 연락처 알려주세요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "T-1003 티켓은 현재 \"접수됨\" 상태이며, 재고 확인 후 담당자를 배정할 예정입니다. 등록된 연락처는 전화번호 010-****-2135입니다.",
+        "tools_used": [
+          "Get_ticket"
+        ],
+        "masked": 1
+      }
+

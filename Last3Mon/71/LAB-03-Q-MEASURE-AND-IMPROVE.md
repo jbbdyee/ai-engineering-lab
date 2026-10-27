@@ -236,7 +236,7 @@ uv run tools/flow.py test cases/retrieval-answer.json -v
 개선 뒤 **새로 틀린** 질문이 있나요? 있다면 그대로 적습니다. 좋아진 것과 나빠진 것을 함께 적는 것이 측정입니다. 시간(보고서 `seconds`)도 비교합니다.
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 고칠 파일 ② 어디에 무엇을 더하나 ③ LLM에게 줄 지시(무엇으로 바꾸나 · 예 · 그대로 둘 것) ④ 검색이 무엇을 쓰나 ⑤ 결과에 더할 칸 ⑥ 다시 잴 테스트 전부**. 아래 `____`를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 

@@ -24,7 +24,7 @@ flowchart LR
 | 5 | 14:00~14:50 | 3단계 강의 (변경 관리) · Lab 03 예제 1 · 2 | [3단계](../../Lecture/70/03-STAGE3-CHANGE-AND-VERSION.md), [Lab 03](LAB-03-Q-CHANGE-AND-VERSION.md) | `lab03` · `lab03-v2` 통과 |
 | 6 | 15:00~15:50 | Lab 03 과제 40분 (영향 표 · 어려운 테스트) · 풀이 | Lab 03 | 영향 표 · 내 케이스 5개 · 보고서 |
 | 7 | 16:00~16:50 | 바이브 코딩 `tkit` 각자 만들기 | [VIBE-Q-TKIT](VIBE-Q-TKIT.md) | R1~R5 · `pytest` |
-| 8 | 17:00~17:50 | 발표 · 강사 정리 · 강사 바이브 코딩 · 팁 · 71일차 예고 | [진행](../../Lecture/70/04-VIBE-CODING.md) | |
+| 8 | 17:00~17:50 | 발표 · 강사 정리 · 강사 바이브 코딩 · 팁 · 71일차 예고 | [진행](../../Lecture/70/05-VIBE-CODING.md) | |
 
 ## 1. 전날 준비 (약 5분)
 

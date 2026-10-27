@@ -1,0 +1,63 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "배포 · 1.1.0을 active로",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.1.0",
+          "version.channel": "stable"
+        },
+        "contains": {
+          "answer": [
+            "[FAQ-003]"
+          ]
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/releases/helpdesk",
+          "body": {
+            "active": "1.1.0"
+          }
+        }
+      ]
+    },
+    {
+      "name": "되돌리기 · 1.0.0",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0",
+          "version.channel": "stable"
+        },
+        "not_contains": {
+          "answer": [
+            "[FAQ-"
+          ]
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/releases/helpdesk",
+          "body": {
+            "active": "1.0.0"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,332 @@
+{
+  "name": "74 IT helpdesk + version (reference)",
+  "nodes": [
+    {
+      "name": "Question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-helpdesk",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "de518e93-ed19-541f-a6fc-687a4efaf1b2",
+      "position": [
+        0,
+        300
+      ],
+      "id": "12c0c985-096e-52df-aa1c-adf60b24ec37"
+    },
+    {
+      "name": "Has question?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.question }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "8228f635-e9f5-5cef-b36a-bc7db9222a73"
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"question is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        560
+      ],
+      "id": "d3276145-a2db-5c7f-8df3-0e8ad6d575f5"
+    },
+    {
+      "name": "Release info",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "release",
+              "value": "1.0.0",
+              "type": "string"
+            },
+            {
+              "id": "r2",
+              "name": "prompt_version",
+              "value": "p1",
+              "type": "string"
+            },
+            {
+              "id": "r3",
+              "name": "model",
+              "value": "gpt-4.1-mini",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "92d52537-7275-5dec-8237-f360569a0aec"
+    },
+    {
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq",
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('Question webhook').first().json.body.question }}"
+            }
+          ]
+        }
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "ec340048-5ab5-523f-b5f1-78c4b83a4bfe"
+    },
+    {
+      "name": "Get ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/tickets/{{ (($('Question webhook').first().json.body.question.match(/T-?\\d{4}/i) || ['NONE'])[0]).toUpperCase().replace(/^T(\\d)/, 'T-$1') }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "requester",
+              "value": "={{ $('Question webhook').first().json.body.user ?? '' }}"
+            }
+          ]
+        }
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "361b1c61-2b51-5e41-94f2-3220e9441f70"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $('Question webhook').first().json.body.question }}\nFAQ: {{ JSON.stringify($('Search FAQ').first().json.results ?? []) }}\n접수 건: {{ JSON.stringify($('Get ticket').first().json) }}",
+        "options": {
+          "systemMessage": "You are the company IT help desk. Answer in Korean in at most 3 sentences, using only the FAQ entries and the ticket record given. Never invent steps, dates or names. For a ticket, say its status and note. If the data does not answer the question, say \"찾지 못했습니다\" and that a staff member will help. Use 합니다체.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "a48913f5-de5d-5618-a8d4-54241134e6f4"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Release info').first().json.model }}"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        1100,
+        520
+      ],
+      "id": "2e24c3c6-9a59-5b13-98d9-6ff7f88b864f"
+    },
+    {
+      "name": "Build result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const results = $('Search FAQ').first().json.results ?? [];\nconst result = { route: '자동 답변', answer: String($json.output ?? '').trim(), sources: results.map((r) => r.id) };\nconst i = $('Release info').first().json;\nresult.version = { release: i.release, prompt_version: i.prompt_version, model: i.model };\nreturn [{ json: result }];"
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "250c7c69-ae85-5e10-94eb-60283736ff50"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "ed7592f4-6993-5633-82a4-1ac715e4895b"
+    }
+  ],
+  "connections": {
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "node": "Has question?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has question?": {
+      "main": [
+        [
+          {
+            "node": "Release info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Release info": {
+      "main": [
+        [
+          {
+            "node": "Search FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "main": [
+        [
+          {
+            "node": "Get ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "Build result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build result": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

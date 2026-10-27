@@ -4,6 +4,12 @@
 - 교과목: 노코드 멀티 에이전트 워크플로우 설계 및 운영
 - 단원: AI 워크플로우 개념 및 구성 요소 이해
 - 강의 자료: [Lecture/64](../../Lecture/64/README.md)
+- 수강생 저장소: [https://gl.isitsoft.kr/publicproj/aio-01d4-stu](https://gl.isitsoft.kr/publicproj/aio-01d4-stu) (공개)
+
+```bash
+cd ~ && git clone https://gl.isitsoft.kr/publicproj/aio-01d4-stu.git     # 처음 한 번
+cd ~/aio-01d4-stu && git pull                                     # 매일 수업 전
+```
 
 ## 구성
 

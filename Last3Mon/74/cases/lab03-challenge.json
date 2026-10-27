@@ -1,0 +1,35 @@
+{
+  "webhook": "my-release-check",
+  "cases": [
+    {
+      "name": "1.1.0 · 내보내도 됨",
+      "body": {
+        "release": "1.1.0"
+      },
+      "expect": {
+        "equals": {
+          "verdict": "promote",
+          "total": 6
+        }
+      }
+    },
+    {
+      "name": "1.2.0 · 되돌림",
+      "body": {
+        "release": "1.2.0"
+      },
+      "expect": {
+        "equals": {
+          "verdict": "rollback"
+        }
+      }
+    },
+    {
+      "name": "릴리스 없음",
+      "body": {},
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

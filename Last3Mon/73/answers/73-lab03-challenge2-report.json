@@ -1,0 +1,104 @@
+{
+  "name": "73 Security report (answer)",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "name": "Report webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "id": "d3699c15-4219-5e4e-a7ba-318fe052f116",
+      "webhookId": "e46df4f1-950b-5123-9603-b1c986ddf5b2",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-security-report",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "name": "Read audit",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        300
+      ],
+      "id": "3c2176b8-81af-5250-8983-63f5826a0ba3",
+      "parameters": {
+        "url": "http://data-api:8800/audit",
+        "options": {
+          "timeout": 2000
+        }
+      }
+    },
+    {
+      "name": "Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        300
+      ],
+      "id": "8b2be6af-ff99-5fe4-ba24-f1f2c91567b8",
+      "parameters": {
+        "jsCode": "const events = $json.events ?? [];\nconst blocked = { rule: 0, guard: 0, output_filter: 0 };\nlet answered = 0, masked = 0;\nfor (const e of events) {\n  if (e.blocked_by) blocked[e.blocked_by] = (blocked[e.blocked_by] ?? 0) + 1; else answered += 1;\n  masked += Number(e.masked ?? 0);\n}\nconst text = JSON.stringify(events);\nconst pii = /01[016789][-. ]?\\d{3,4}[-. ]?\\d{4}|[\\w.+-]+@[\\w-]+\\.[\\w.]+|\\d{6}[- ]?[1-4]\\d{6}/g;\nconst pii_in_log = (text.match(pii) ?? []).length;\nconst users = [...new Set(events.filter((e) => e.blocked_by).map((e) => e.user))];\nreturn [{ json: { total: events.length, answered, blocked, masked, pii_in_log, blocked_users: users } }];"
+      }
+    },
+    {
+      "name": "Send report",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        300
+      ],
+      "id": "945e4f03-7c03-5e50-a191-cb22b74b0932",
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Report webhook": {
+      "main": [
+        [
+          {
+            "node": "Read audit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read audit": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

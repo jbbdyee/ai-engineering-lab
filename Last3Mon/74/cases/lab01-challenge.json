@@ -1,0 +1,51 @@
+{
+  "webhook": "my-helpdesk",
+  "cases": [
+    {
+      "name": "지시문은 저장소에서",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.prompt_source": "registry",
+          "version.prompt_version": "p1"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "p1은 출처 번호를 붙이지 않음",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "version.prompt_version": "p1"
+        },
+        "contains": {
+          "answer": [
+            "대기열",
+            "전원"
+          ]
+        },
+        "not_contains": {
+          "answer": [
+            "[FAQ-"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    }
+  ]
+}

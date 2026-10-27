@@ -1,0 +1,104 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/releases/helpdesk",
+      "body": {
+        "canary": {
+          "release": "1.2.0",
+          "percent": 50
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "최유진 · 프린터",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "expect": {
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    },
+    {
+      "name": "정우성 · 프린터",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "정우성"
+      },
+      "expect": {
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    },
+    {
+      "name": "한지훈 · 프린터",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "한지훈"
+      },
+      "expect": {
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    },
+    {
+      "name": "이준호 · 프린터",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "이준호"
+      },
+      "expect": {
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    },
+    {
+      "name": "박서연 · 프린터",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "박서연"
+      },
+      "expect": {
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    },
+    {
+      "name": "김민지 · 프린터",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "김민지"
+      },
+      "expect": {
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    }
+  ]
+}

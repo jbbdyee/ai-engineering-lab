@@ -19,8 +19,8 @@
 | - | 13:00~14:00 | 점심 |  |
 | 5 | 14:00~14:50 | 3단계 · 검증과 장애 격리, Lab 03 예제 1·2 | [3단계](03-STAGE3-VERIFY-AND-SCALE.md), [Lab 03](../../Last3Mon/68/LAB-03-Q-VERIFY-AND-ISOLATE.md) |
 | 6 | 15:00~15:50 | 3단계 · Lab 03 과제 40분 (어려운 테스트 · 확장 계획) · 풀이 | [Lab 03](../../Last3Mon/68/LAB-03-Q-VERIFY-AND-ISOLATE.md) |
-| 7 | 16:00~16:50 | 바이브 코딩 · 요청서 → SPEC → `tflow` 만들기 (각자) | [VIBE-REQ-TFLOW](../../Last3Mon/68/VIBE-REQ-TFLOW.md) → [VIBE-Q-TFLOW](../../Last3Mon/68/VIBE-Q-TFLOW.md), [진행](04-VIBE-CODING.md) |
-| 8 | 17:00~17:50 | 바이브 코딩 발표 · 정리 · 강사 바이브 코딩 · 팁 · 69일차 예고 | [진행](04-VIBE-CODING.md) |
+| 7 | 16:00~16:50 | 바이브 코딩 · 요청서 → SPEC → `tflow` 만들기 (각자) | [VIBE-REQ-TFLOW](../../Last3Mon/68/VIBE-REQ-TFLOW.md) → [VIBE-Q-TFLOW](../../Last3Mon/68/VIBE-Q-TFLOW.md), [진행](05-VIBE-CODING.md) |
+| 8 | 17:00~17:50 | 바이브 코딩 발표 · **4단계 정리** (의미 · 효과 · 회사에서 쓰는 법) · 다음 일차 예고 | [4단계 정리](04-STAGE4-WRAPUP.md), [진행](05-VIBE-CODING.md) |
 
 ```mermaid
 flowchart LR
@@ -36,5 +36,6 @@ flowchart LR
 | `01-STAGE1-COMPOSITE-SCENARIO.md` | 복합 요청, 업무 분석 다섯 칸, 업무 관계, LLM이 할 일과 규칙이 할 일 |
 | `02-STAGE2-MULTI-AGENT-DESIGN.md` | Agent 계약, 라우터 · 파이프라인 · Fork-Join · Supervisor, 라우터 구현, Supervisor와 비교 |
 | `03-STAGE3-VERIFY-AND-SCALE.md` | Multi-Agent 테스트, 빠진 입력, 장애 격리(`neverError`, 대체 답), 측정, 수직·수평 확장 |
-| `04-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tflow), 발표, 강사 정리, 추가 바이브 코딩, 팁 |
+| `04-STAGE4-WRAPUP.md` | 8교시 35분: 오늘의 의미 · 효과 숫자 · 업계 이름 · 산업별 응용 · 면접 · 최종 프로젝트 체크리스트 |
+| `05-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tflow), 발표, 강사 정리, 추가 바이브 코딩, 팁 |
 | `CONCEPT-68.md` | 개념 정리: LLM · Tool · Agent · Agent 워크플로우 · 라우터 · Supervisor (누가 다음 갈 곳을 정하나) |

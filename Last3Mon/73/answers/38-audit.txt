@@ -1,0 +1,99 @@
+$ curl -s localhost:8800/audit; echo
+{"events": [{"t": 1793015015.752, "user": "이준호", "route": "차단", "blocked_by": "rule", "reason": "/(이전|앞의|위의|지금까지의?)\\s*(지시|지침|명령)\\S*\\s*(모두|다)?\\s*(무시|잊)/i", "masked": 0, "tools_used": []}, {"t": 1793015017.235, "user": "한지훈", "route": "차단", "blocked_by": "guard", "reason": "requests other employee's data", "masked": 0, "tools_used": []}, {"t": 1793015020.608, "user": "최유진", "route": "자동 답변", "blocked_by": "", "reason": "", "masked": 1, "tools_used": ["Get_ticket"]}, {"t": 1793015023.583, "user": "박서연", "route": "자동 답변", "blocked_by": "", "reason": "", "masked": 0, "tools_used": ["Search_FAQ"]}, {"t": 1793015027.52, "user": "최유진", "route": "자동 답변", "blocked_by": "", "reason": "", "masked": 1, "tools_used": ["Get_ticket"]}, {"t": 1793015030.93, "user": "박서연", "route": "자동 답변", "blocked_by": "", "reason": "", "masked": 0, "tools_used": ["Search_FAQ"]}, {"t": 1793015031.01, "user": "이준호", "route": "차단", "blocked_by": "rule", "reason": "/(이전|앞의|위의|지금까지의?)\\s*(지시|지침|명령)\\S*\\s*(모두|다)?\\s*(무시|잊)/i", "masked": 0, "tools_used": []}, {"t": 1793015031.952, "user": "이준호", "route": "차단", "blocked_by": "guard", "reason": "request to skip permission checks and show all tickets", "masked": 0, "tools_used": []}, {"t": 1793015034.988, "user": "최유진", "route": "자동 답변", "blocked_by": "", "reason": "", "masked": 1, "tools_used": ["Get_ticket"]}, {"t": 1793015038.519, "user": "박서연", "route": "자동 답변", "blocked_by": "", "reason": "", "masked": 0, "tools_used": ["Search_FAQ"]}]}
+
+$ uv run tools/flow.py doctor -v
+! n8n install folder /Users/[USER]/day65-n8n
+   → day 65 SETUP-N8N 5단계 (get.n8n.io 설치). 다른 곳에 설치했다면 Last3Mon/65/n8n/.env 에 N8N_HOME=<폴더>
+✔ n8n container day65-n8n-n8n-1
+✔ n8n http://localhost:5678
+    seen
+      {
+        "GET": "/healthz",
+        "status": 200,
+        "response": {
+          "status": "ok"
+        }
+      }
+✔ data API http://localhost:8800
+    seen
+      {
+        "GET": "/health",
+        "status": 200,
+        "response": {
+          "status": "ok"
+        }
+      }
+✔ employees /employees (day 73 data API)
+    seen
+      {
+        "GET": "/employees",
+        "status": 200,
+        "response": {
+          "employees": [
+            {
+              "name": "이준호",
+              "dept": "영업팀"
+            },
+            {
+              "name": "박서연",
+              "dept": "재무팀"
+            },
+            {
+              "name": "최유진",
+              "dept": "인사팀"
+            },
+            {
+              "name": "한지훈",
+              "dept": "개발팀"
+            },
+            {
+              "name": "김민지",
+              "dept": "IT팀"
+            },
+            {
+              "name": "정우성",
+              "dept": "IT팀"
+            }
+          ]
+        }
+      }
+    cache GET /cache-stats
+      {
+        "status": 200,
+        "response": {
+          "entries": 0,
+          "hits": 0,
+          "misses": 0
+        }
+      }
+    $ docker exec day65-n8n-n8n-1 node -e fetch('http://data-api:8800/health').then(r=>console.log(r.status)).catch(()=>console.l... → exit 0
+      200
+✔ n8n → http://data-api:8800
+    seen
+      {
+        "from n8n": "GET http://data-api:8800/health",
+        "status": "200"
+      }
+    $ docker exec day65-n8n-n8n-1 sh -c n8n export:credentials --all --output=/tmp/course-cred.json >/dev/null 2>&1; cat /tmp/c... → exit 0
+    credentials in n8n (id · name · type, no secrets)
+      [
+        "openAiCourse0001 · OpenAI (.env) · openAiApi",
+        "ollamaLocal0001 · Ollama local · ollamaApi",
+        "itAgentKey0001 · IT agent key · httpHeaderAuth"
+      ]
+✔ credential 'OpenAI (.env)' (openAiCourse0001)
+✔ node catalog (for check)
+    seen
+      {
+        "node types": 843,
+        "cache": "tools/.cache"
+      }
+✔ CLI coding agent: codex, claude, agy
+    seen
+      {
+        "codex": "/Users/[USER]/.local/bin/codex",
+        "claude": "/Users/[USER]/.local/bin/claude",
+        "agy": "/Users/[USER]/.local/bin/agy"
+      }
+ready
+

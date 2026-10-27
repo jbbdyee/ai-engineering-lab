@@ -39,20 +39,20 @@ source ~/.bashrc
 
 # 실습 폴더는 WSL 홈(~) 아래에 둡니다. /mnt/c 아래는 느리고 권한 문제가 생깁니다.
 cd ~
-# 수업 자료를 받는 방법은 강사가 따로 안내합니다.
-cd ~/<수업 저장소>/Last3Mon/64/workflow-lab
+git clone https://gl.isitsoft.kr/publicproj/aio-01d4-stu.git      # 수업 저장소 (공개, 계정 필요 없음)
+cd ~/aio-01d4-stu/Last3Mon/64/workflow-lab
 uv sync
 uv run pytest -q
 ```
 
-`18 passed, 1 skipped`가 나오면 됩니다. (`skipped` 1개는 선택 기능인 Anthropic 연결 테스트로, 해당 패키지를 설치하지 않으면 건너뜁니다.) 테스트는 `.env`를 읽지 않고 Mock LLM으로만 돌기 때문에 키가 없어도 통과합니다.
+`18 passed, 1 skipped`가 나오면 됩니다. 앞으로 매일 수업 전에 `cd ~/aio-01d4-stu && git pull`로 새 자료를 받습니다. 실습 파일은 원본을 고치지 말고 새 이름으로 복사해서 고쳐야 `git pull`이 막히지 않습니다. (`skipped` 1개는 선택 기능인 Anthropic 연결 테스트로, 해당 패키지를 설치하지 않으면 건너뜁니다.) 테스트는 `.env`를 읽지 않고 Mock LLM으로만 돌기 때문에 키가 없어도 통과합니다.
 
 ## 3. OpenAI API 키를 `.env`에 넣기 (3분)
 
 과정에서 받은 OpenAI API 키를 `Last3Mon/.env` 한 곳에 넣습니다. `miniflow`는 실행한 폴더에서 위로 올라가며 가장 가까운 `.env`를 읽으므로, 64일차부터 모든 일차가 이 파일 하나를 씁니다.
 
 ```bash
-cd ~/<수업 저장소>/Last3Mon
+cd ~/aio-01d4-stu/Last3Mon
 cp .env.example .env
 nano .env          # OPENAI_API_KEY= 뒤에 키를 붙여 넣고 저장 (Ctrl+O, Enter, Ctrl+X)
 ```
@@ -113,13 +113,13 @@ ollama list
 ## 6. 연결 확인 (5분)
 
 ```bash
-cd ~/<수업 저장소>/Last3Mon/64/workflow-lab
+cd ~/aio-01d4-stu/Last3Mon/64/workflow-lab
 uv run miniflow check
 ```
 
 ```text
 MINIFLOW_LLM : openai
-.env         : /home/<사용자>/<수업 저장소>/Last3Mon/.env
+.env         : /home/<사용자>/aio-01d4-stu/Last3Mon/.env
 OPENAI_MODEL : gpt-4.1-mini
 API key      : set
 OLLAMA_HOST  : http://localhost:11434
@@ -147,7 +147,7 @@ Ollama의 첫 호출은 모델을 메모리에 올리느라 10~20초 걸립니�
 
 | 상황 | 설정 |
 | --- | --- |
-| Docker Desktop으로 실행한 Ollama (`11434` 포트 공개) | 컨테이너를 켜 두면 WSL에서도 `http://localhost:11434`로 연결됩니다. 6절의 대체 경로 확인으로 점검 |
+| 9월 실습 때 Docker로 실행한 Ollama (`11434` 포트 공개) | 컨테이너를 켜 두면 WSL에서도 `http://localhost:11434`로 연결됩니다. 6절의 대체 경로 확인으로 점검 |
 | Windows용 Ollama 앱 | `.wslconfig`에 `networkingMode=mirrored`를 추가하고 `wsl --shutdown` 후 다시 열면 `localhost`로 연결됩니다 |
 
 ```ini
@@ -168,6 +168,7 @@ networkingMode=mirrored
 | `Cannot reach Ollama at http://localhost:11434` | `ollama serve` 실행, 또는 7절의 연결 설정 확인 |
 | `Model 'gemma3:4b' not found on Ollama` | `ollama pull gemma3:4b` |
 | Ollama 응답이 1분 넘게 걸림, WSL이 멈춤 | 메모리 부족. `gemma3:1b`로 바꾸거나 `.wslconfig`의 `memory` 상향 |
+| `git pull`에서 `local changes ... would be overwritten` | 저장소에 있던 파일을 직접 고침. `git stash && git pull` 후 새 이름으로 복사해서 고치기 |
 | `uv: command not found` | `source ~/.bashrc` 또는 터미널 다시 열기 |
 | 한글이 깨져 보임 | Windows Terminal 사용 (기본 UTF-8) |
 | OpenAI와 Ollama 모두 안 됨 | `export MINIFLOW_LLM=mock`으로 Mock LLM 사용 (결과는 정해진 답) |

@@ -24,7 +24,7 @@ flowchart LR
 | 5 | 14:00~14:50 | 3단계 강의 · Lab 03 예제 1 · 2 | [3단계](../../Lecture/69/03-STAGE3-VERIFY-AND-COMPARE.md), [Lab 03](LAB-03-Q-TRACE-AND-COMPARE.md) | `lab03` · `lab03-down` 통과 |
 | 6 | 15:00~15:50 | Lab 03 과제 40분 (단일 Agent 비교) · 풀이 | Lab 03 | 비교 숫자 · 보고서 |
 | 7 | 16:00~16:50 | 바이브 코딩 `tcrew`: 요청서 → 내 SPEC → 만들기 | [VIBE-REQ-TCREW](VIBE-REQ-TCREW.md) → [VIBE-Q-TCREW](VIBE-Q-TCREW.md) | `SPEC.md` · R1~R5 · `pytest` |
-| 8 | 17:00~17:50 | 발표 · 강사 정리 · 강사 바이브 코딩 · 팁 · 70일차 예고 | [진행](../../Lecture/69/04-VIBE-CODING.md) | |
+| 8 | 17:00~17:50 | 발표 · 강사 정리 · 강사 바이브 코딩 · 팁 · 70일차 예고 | [진행](../../Lecture/69/05-VIBE-CODING.md) | |
 
 ## 1. 전날 준비 (약 5분)
 

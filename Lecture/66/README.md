@@ -27,8 +27,8 @@
 | - | 13:00~14:00 | 점심 |  |
 | 5 | 14:00~14:50 | 3단계 · 반복·병렬 제어 구조와 검증, Lab 03 예제 1·2 | [3단계](03-STAGE3-ITEMS-PARALLEL-AND-VERIFY.md), [Lab 03](../../Last3Mon/66/LAB-03-Q-ITEMS-AND-PARALLEL.md) |
 | 6 | 15:00~15:50 | 3단계 · Lab 03 과제 40분 (어려운 회의록으로 완성) · 풀이 | [Lab 03](../../Last3Mon/66/LAB-03-Q-ITEMS-AND-PARALLEL.md) |
-| 7 | 16:00~16:50 | 바이브 코딩 · `turl` 만들기 (각자) | [VIBE-Q-TURL](../../Last3Mon/66/VIBE-Q-TURL.md), [진행](04-VIBE-CODING.md) |
-| 8 | 17:00~17:50 | 바이브 코딩 발표 · 정리 · 강사 바이브 코딩 · 팁 · 67일차 예고 | [진행](04-VIBE-CODING.md) |
+| 7 | 16:00~16:50 | 바이브 코딩 · `turl` 만들기 (각자) | [VIBE-Q-TURL](../../Last3Mon/66/VIBE-Q-TURL.md), [진행](05-VIBE-CODING.md) |
+| 8 | 17:00~17:50 | 바이브 코딩 발표 · **4단계 정리** (의미 · 효과 · 회사에서 쓰는 법) · 다음 일차 예고 | [4단계 정리](04-STAGE4-WRAPUP.md), [진행](05-VIBE-CODING.md) |
 
 ```mermaid
 flowchart LR
@@ -44,4 +44,5 @@ flowchart LR
 | `01-STAGE1-VIBE-N8N-AND-RESULT-FIRST.md` | 무엇이 바뀌나, 워크플로우는 JSON, AGENTS.md와 flow.py, 요청문 다섯 가지, 결과 먼저, 항목 흐름 |
 | `02-STAGE2-JSON-AND-PARSE.md` | LLM의 답은 글자, 모양 알려 주기, 코드로 읽기, 빈칸은 코드가, 하나 바꾸면 다른 것도 바뀐다 |
 | `03-STAGE3-ITEMS-PARALLEL-AND-VERIFY.md` | 1 → N → 1 (펼치기 · 항목마다 · 모으기), 빈 목록, 두 갈래와 Merge, 설계와 실행, 테스트로 완성 |
-| `04-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (turl), 발표, 강사 정리, 추가 바이브 코딩, 팁 |
+| `04-STAGE4-WRAPUP.md` | 8교시 35분: 오늘의 의미 · 효과 숫자 · 업계 이름 · 산업별 응용 · 면접 · 최종 프로젝트 체크리스트 |
+| `05-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (turl), 발표, 강사 정리, 추가 바이브 코딩, 팁 |

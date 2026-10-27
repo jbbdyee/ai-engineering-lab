@@ -1,0 +1,103 @@
+{
+  "webhook": "my-helpdesk",
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "prompts": "ok",
+        "slow_seconds": 8
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "평소 · 저장소에서",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.prompt_source": "registry"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "저장소 고장 · 기본 지시문으로 답",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "prompts": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "prompts": "ok"
+          }
+        }
+      ],
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변",
+          "version.prompt_source": "fallback"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "저장소 느림 · 오래 기다리지 않음",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "prompts": "slow",
+            "slow_seconds": 8
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "prompts": "ok",
+            "slow_seconds": 8
+          }
+        }
+      ],
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "version.prompt_source": "fallback"
+        },
+        "max_seconds": 6
+      }
+    },
+    {
+      "name": "되돌린 뒤 · 다시 저장소에서",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "version.prompt_source": "registry"
+        },
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    }
+  ]
+}

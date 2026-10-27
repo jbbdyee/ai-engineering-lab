@@ -76,7 +76,7 @@ flowchart LR
 색인을 만든 뒤 검색을 push하면 n8n이 재시작되면서 저장소가 **비워집니다.** 검색 결과가 비면 먼저 `call my-index`. 저장소가 비었을 때 검색이 멈추지 않게 하는 설정도 AGENTS.md 5절에 있습니다.
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 문서를 어디서 ② 청크를 무엇으로 나누나 ③ 청크와 함께 저장할 것 ④ 저장소 이름 ⑤ 결과 칸 이름 ⑥ 비었을 때 ⑦ 기대 결과**. 아래 `____`를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 
@@ -155,7 +155,7 @@ uv run tools/flow.py test cases/lab01.json -v
 색인을 고쳤으면 다시 색인해야 새 정보가 들어갑니다 (`before`가 해 줌). 원래 테스트 `cases/lab01.json`도 그대로 통과해야 합니다.
 </details>
 
-<details><summary>▶ 빈칸 채우기 · 요청문 뼈대</summary>
+<details><summary>▶ 빈칸 채우기 · 요청문(프롬프트) 뼈대</summary>
 
 요청문에 꼭 들어갈 것: **① 고칠 파일 둘 ② 섹션 제목을 언제 · 어디에 저장하나 ③ 결과에 더할 칸 ④ 없을 때 ⑤ `top_k`를 어디서 받나 ⑥ 두 테스트 모두 통과**. 아래 `____`를 채워 `my-work/PROMPTS.md`에 쓴 뒤 에이전트에게 보냅니다.
 

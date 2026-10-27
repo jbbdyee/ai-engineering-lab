@@ -1,0 +1,113 @@
+{
+  "webhook": "my-release-check",
+  "before": [
+    {
+      "url": "http://localhost:8800/gates/helpdesk/clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/releases/helpdesk/policy",
+      "body": {
+        "require_gate": true
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "1.2.0 점검 · 기록",
+      "body": {
+        "release": "1.2.0"
+      },
+      "expect": {
+        "equals": {
+          "verdict": "rollback",
+          "recorded": true
+        }
+      }
+    },
+    {
+      "name": "1.1.0 점검 · 기록",
+      "body": {
+        "release": "1.1.0"
+      },
+      "expect": {
+        "equals": {
+          "verdict": "promote",
+          "recorded": true
+        }
+      }
+    },
+    {
+      "name": "점검에 떨어진 1.2.0은 배포 거부 (409) · 운영은 1.0.0",
+      "webhook": "my-helpdesk",
+      "before": [
+        {
+          "url": "http://localhost:8800/releases/helpdesk",
+          "body": {
+            "active": "1.2.0"
+          },
+          "status": 409
+        }
+      ],
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0",
+          "version.channel": "stable"
+        }
+      }
+    },
+    {
+      "name": "점검을 지난 1.1.0은 배포",
+      "webhook": "my-helpdesk",
+      "before": [
+        {
+          "url": "http://localhost:8800/releases/helpdesk",
+          "body": {
+            "active": "1.1.0"
+          }
+        }
+      ],
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.1.0",
+          "version.channel": "stable"
+        }
+      }
+    },
+    {
+      "name": "점검 안 한 2.0.0은 카나리도 거부 (409)",
+      "webhook": "my-helpdesk",
+      "before": [
+        {
+          "url": "http://localhost:8800/releases/helpdesk",
+          "body": {
+            "canary": {
+              "release": "2.0.0",
+              "percent": 50
+            }
+          },
+          "status": 409
+        }
+      ],
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.1.0",
+          "version.channel": "stable"
+        }
+      }
+    }
+  ]
+}

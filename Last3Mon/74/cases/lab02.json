@@ -1,0 +1,79 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/releases/helpdesk/reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "운영 중인 릴리스 (active)",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "version.release": "1.0.0",
+          "version.channel": "stable",
+          "version.prompt_version": "p1"
+        }
+      }
+    },
+    {
+      "name": "후보 시험 · 1.1.0 고정",
+      "expect": {
+        "equals": {
+          "version.release": "1.1.0",
+          "version.channel": "pinned",
+          "version.prompt_version": "p2"
+        },
+        "contains": {
+          "answer": [
+            "[FAQ-003]"
+          ]
+        }
+      },
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "1.1.0"
+      }
+    },
+    {
+      "name": "후보 시험 · 2.0.0 (작은 모델)",
+      "expect": {
+        "equals": {
+          "version.release": "2.0.0",
+          "version.model": "gpt-5.4-nano"
+        }
+      },
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.0.0"
+      }
+    },
+    {
+      "name": "없는 릴리스",
+      "expect": {
+        "status": 400,
+        "contains": {
+          "known": [
+            "1.0.0"
+          ]
+        }
+      },
+      "body": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "9.9.9"
+      }
+    },
+    {
+      "name": "빈 질문",
+      "request": "requests/empty-question.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

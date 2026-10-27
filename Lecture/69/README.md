@@ -21,8 +21,8 @@
 | - | 13:00~14:00 | 점심 |  |
 | 5 | 14:00~14:50 | 3단계 · 협업 검증과 역할 분리의 값, Lab 03 예제 1·2 | [3단계](03-STAGE3-VERIFY-AND-COMPARE.md), [Lab 03](../../Last3Mon/69/LAB-03-Q-TRACE-AND-COMPARE.md) |
 | 6 | 15:00~15:50 | 3단계 · Lab 03 과제 40분 (어려운 테스트, 단일 Agent 비교) · 풀이 | [Lab 03](../../Last3Mon/69/LAB-03-Q-TRACE-AND-COMPARE.md) |
-| 7 | 16:00~16:50 | 바이브 코딩 · `tcrew` 만들기 (각자, 요청서 → SPEC 먼저) | [VIBE-REQ-TCREW](../../Last3Mon/69/VIBE-REQ-TCREW.md) → [VIBE-Q-TCREW](../../Last3Mon/69/VIBE-Q-TCREW.md), [진행](04-VIBE-CODING.md) |
-| 8 | 17:00~17:50 | 바이브 코딩 발표 · 정리 · 강사 바이브 코딩 · 팁 · 70일차 예고 | [진행](04-VIBE-CODING.md) |
+| 7 | 16:00~16:50 | 바이브 코딩 · `tcrew` 만들기 (각자, 요청서 → SPEC 먼저) | [VIBE-REQ-TCREW](../../Last3Mon/69/VIBE-REQ-TCREW.md) → [VIBE-Q-TCREW](../../Last3Mon/69/VIBE-Q-TCREW.md), [진행](05-VIBE-CODING.md) |
+| 8 | 17:00~17:50 | 바이브 코딩 발표 · **4단계 정리** (의미 · 효과 · 회사에서 쓰는 법) · 다음 일차 예고 | [4단계 정리](04-STAGE4-WRAPUP.md), [진행](05-VIBE-CODING.md) |
 
 ```mermaid
 flowchart LR
@@ -38,5 +38,6 @@ flowchart LR
 | `01-STAGE1-ROLE-SEPARATION.md` | 왜 역할로 나누나, 역할 카드, 하지 않는 일, 규칙 검토와 LLM 검토, LLM 검토자도 틀린다 |
 | `02-STAGE2-COLLABORATION.md` | 68일차 분배와 오늘 협업의 차이, 파이프라인, 고쳐 쓰기 1회, 넘기는 값의 출처, Fork-Join |
 | `03-STAGE3-VERIFY-AND-COMPARE.md` | 협업 기록, fail-open과 fail-closed, 어려운 테스트, 단일 Agent와 비교 (측정값) |
-| `04-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tcrew), 발표, 강사 정리, 추가 바이브 코딩, 팁 |
+| `04-STAGE4-WRAPUP.md` | 8교시 35분: 오늘의 의미 · 효과 숫자 · 업계 이름 · 산업별 응용 · 면접 · 최종 프로젝트 체크리스트 |
+| `05-VIBE-CODING.md` | 7·8교시 바이브 코딩 진행 (tcrew), 발표, 강사 정리, 추가 바이브 코딩, 팁 |
 | `CONCEPT-69.md` | 개념 정리: 분배와 협업, 역할 카드, 규칙 검토와 LLM 검토, fail-open과 fail-closed, Fork-Join, 역할 팀과 단일 Agent |

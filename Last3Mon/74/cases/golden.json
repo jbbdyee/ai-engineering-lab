@@ -1,0 +1,65 @@
+{
+  "webhook": "my-helpdesk",
+  "cases": [
+    {
+      "name": "VPN",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "비밀번호",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "프린터",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "메일함",
+      "request": "requests/faq-mail.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "접수 처리 중",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    },
+    {
+      "name": "접수 처리 완료",
+      "request": "requests/ticket-done.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        }
+      }
+    }
+  ]
+}
