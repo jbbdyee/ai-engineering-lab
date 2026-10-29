@@ -1,0 +1,54 @@
+{
+  "webhook": "my-cost",
+  "cases": [
+    {
+      "name": "FAQ · VPN",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "FAQ · 프린터",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "FAQ · 비밀번호",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "FAQ · 메일",
+      "request": "requests/faq-mail.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "접수 · T-1002",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "접수 · T-1001",
+      "request": "requests/ticket-done.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "규칙에 없는 질문",
+      "request": "requests/no-keyword.json",
+      "expect": {
+        "status": 200
+      }
+    }
+  ]
+}

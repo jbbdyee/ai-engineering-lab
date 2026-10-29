@@ -1,0 +1,31 @@
+$ uv run tools/flow.py call rel-v1 requests/faq-vpn.json -v
+HTTP 200 · 2.8s
+    → request  POST /webhook/rel-v1
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ]
+      }
+
+$ uv run tools/flow.py call rel-v2 requests/faq-vpn.json -v
+HTTP 200 · 1.0s
+    → request  POST /webhook/rel-v2
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ]
+      }

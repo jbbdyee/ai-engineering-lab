@@ -1,0 +1,53 @@
+{
+  "webhook": "my-cost",
+  "before": [
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "1번째 · VPN",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "2번째 · 프린터",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "3번째 · 비밀번호",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "4번째 · 메일",
+      "request": "requests/faq-mail.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "5번째 · 접수",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "6번째 · VPN 다시",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 200
+      }
+    }
+  ]
+}

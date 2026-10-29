@@ -1,0 +1,140 @@
+$ uv run tools/flow.py push reference/lab02-example1-release.json
+! unpublished '74 IT helpdesk + prompt fallback (answer)' (w5215c7f75644ed0): it used the same webhook path
+✔ pushed '74 IT helpdesk + release API (reference)' (id w2caac7c1a6981b8)
+   POST http://localhost:5678/webhook/my-helpdesk
+
+$ uv run tools/flow.py test cases/lab02.json -v
+✔ before: POST http://localhost:8800/releases/helpdesk/reset · HTTP 200 · 0.0s · {"name": "helpdesk", "active": "1.0.0", "canary": null, "require_gate": false, "releases": {"1.0.0": {"prompt_version": 
+    → request  POST http://localhost:8800/releases/helpdesk/reset
+      {}
+    ← response HTTP 200
+      {
+        "name": "helpdesk",
+        "active": "1.0.0",
+        "canary": null,
+        "require_gate": false,
+        "releases": {
+          "1.0.0": {
+            "prompt_version": "p1",
+            "model": "gpt-4.1-mini",
+            "note": "첫 릴리스"
+          },
+          "1.1.0": {
+            "prompt_version": "p2",
+            "model": "gpt-4.1-mini",
+            "note": "FAQ 답 끝에 출처 번호"
+          },
+          "1.2.0": {
+            "prompt_version": "p3",
+            "model": "gpt-4.1-mini",
+            "note": "답을 한 문장으로 짧게"
+          },
+          "2.0.0": {
+            "prompt_version": "p2",
+            "model": "gpt-5.4-nano",
+            "note": "더 작은 모델 (비용)"
+          },
+          "2.1.0": {
+            "prompt_version": "p9",
+            "model": "gpt-4.1-mini",
+            "note": "출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)"
+          }
+        }
+      }
+POST http://localhost:5678/webhook/my-helpdesk · 5 case(s) × 1
+✔ 운영 중인 릴리스 (active) · 2.3s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+✔ 후보 시험 · 1.1.0 고정 · 1.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "1.1.0"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.1.0",
+          "prompt_version": "p2",
+          "model": "gpt-4.1-mini",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+✔ 후보 시험 · 2.0.0 (작은 모델) · 1.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.0.0"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 접수 건은 찾지 못했습니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+✔ 없는 릴리스 · 0.1s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "9.9.9"
+      }
+    ← response HTTP 400
+      {
+        "error": "unknown release",
+        "release": "9.9.9",
+        "known": [
+          "1.0.0",
+          "1.1.0",
+          "1.2.0",
+          "2.0.0",
+          "2.1.0"
+        ]
+      }
+✔ 빈 질문 · 0.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "",
+        "user": "이준호"
+      }
+    ← response HTTP 400
+      {
+        "error": "question is required"
+      }
+Passed 5/5
+report: runs/lab02-20261027-183911.json

@@ -1,0 +1,62 @@
+{
+  "cases": "lab03.json",
+  "webhook": "my-helpdesk",
+  "passed": 2,
+  "total": 2,
+  "results": [
+    {
+      "case": "배포 · 1.1.0을 active로",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 추가 도움이 필요하면 담당자가 도와드리겠습니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.1.0",
+          "prompt_version": "p2",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "되돌리기 · 1.0.0",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+    }
+  ]
+}

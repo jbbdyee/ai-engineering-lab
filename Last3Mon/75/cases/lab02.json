@@ -1,0 +1,72 @@
+{
+  "webhook": "my-cost",
+  "cases": [
+    {
+      "name": "예제 1 · VPN · 보내는 양 줄이기",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "range": {
+          "usage.by_step.answer.prompt_tokens": [
+            1,
+            600
+          ]
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 1 · 접수 · 보내는 양 줄이기",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "range": {
+          "usage.by_step.answer.prompt_tokens": [
+            1,
+            600
+          ]
+        },
+        "contains": {
+          "answer": [
+            "처리 중",
+            "대기 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 1 · 비밀번호 · 품질 그대로",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "비밀번호 찾기",
+            "휴대폰"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 분류는 작은 모델",
+      "request": "requests/no-keyword.json",
+      "expect": {
+        "equals": {
+          "usage.by_step.classify.model": "gpt-5.4-nano"
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 프린터 · 품질 그대로",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    }
+  ]
+}

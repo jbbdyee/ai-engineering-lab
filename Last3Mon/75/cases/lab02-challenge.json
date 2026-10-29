@@ -1,0 +1,139 @@
+{
+  "webhook": "my-cost",
+  "cases": [
+    {
+      "name": "faq-vpn · LLM 한 번 · $0.0002 이하",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0002
+          ]
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "faq-password · LLM 한 번 · $0.0002 이하",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0002
+          ]
+        },
+        "contains": {
+          "answer": [
+            "비밀번호 찾기",
+            "휴대폰"
+          ]
+        }
+      }
+    },
+    {
+      "name": "faq-printer · LLM 한 번 · $0.0002 이하",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0002
+          ]
+        },
+        "contains": {
+          "answer": [
+            "대기열",
+            "전원"
+          ]
+        }
+      }
+    },
+    {
+      "name": "faq-mail · LLM 한 번 · $0.0002 이하",
+      "request": "requests/faq-mail.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0002
+          ]
+        },
+        "contains": {
+          "answer": [
+            "보관함",
+            "삭제"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ticket-own · LLM 한 번 · $0.0002 이하",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0002
+          ]
+        },
+        "contains": {
+          "answer": [
+            "처리 중",
+            "대기 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "ticket-done · LLM 한 번 · $0.0002 이하",
+      "request": "requests/ticket-done.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0002
+          ]
+        },
+        "contains": {
+          "answer": [
+            "처리 완료",
+            "완료"
+          ]
+        }
+      }
+    },
+    {
+      "name": "규칙으로 모르는 질문은 분류 + 답",
+      "request": "requests/no-keyword.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 2
+        }
+      }
+    }
+  ]
+}

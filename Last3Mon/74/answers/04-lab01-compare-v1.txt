@@ -1,0 +1,19 @@
+$ uv run tools/flow.py test cases/lab01-compare.json --webhook rel-v1 --repeat 3
+POST http://localhost:5678/webhook/rel-v1 · 5 case(s) × 3
+✔ VPN · 해결 낱말 #1 · 1.2s
+✔ VPN · 해결 낱말 #2 · 1.2s
+✔ VPN · 해결 낱말 #3 · 1.1s
+✘ VPN · 출처 번호 #1 · 1.1s · answer has none of ['[FAQ-003]']
+✘ VPN · 출처 번호 #2 · 1.2s · answer has none of ['[FAQ-003]']
+✘ VPN · 출처 번호 #3 · 1.3s · answer has none of ['[FAQ-003]']
+✔ 프린터 · 해결 낱말 #1 · 1.0s
+✔ 프린터 · 해결 낱말 #2 · 1.1s
+✔ 프린터 · 해결 낱말 #3 · 1.1s
+✘ 프린터 · 출처 번호 #1 · 1.1s · answer has none of ['[FAQ-']
+✘ 프린터 · 출처 번호 #2 · 1.2s · answer has none of ['[FAQ-']
+✘ 프린터 · 출처 번호 #3 · 1.0s · answer has none of ['[FAQ-']
+✔ 접수 현황 #1 · 0.9s
+✔ 접수 현황 #2 · 1.0s
+✔ 접수 현황 #3 · 1.1s
+Passed 9/15
+report: runs/lab01-compare-20261027-183719.json

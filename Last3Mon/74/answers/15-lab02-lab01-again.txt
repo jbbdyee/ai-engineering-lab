@@ -1,0 +1,21 @@
+$ uv run tools/flow.py test cases/lab01-challenge.json
+POST http://localhost:5678/webhook/my-helpdesk · 3 case(s) × 1
+✔ 지시문은 저장소에서 · 1.2s
+✔ p1은 출처 번호를 붙이지 않음 · 1.3s
+✔ 접수 현황 · 1.2s
+Passed 3/3
+report: runs/lab01-challenge-20261027-183915.json
+
+$ uv run tools/flow.py test cases/lab01-challenge2.json
+POST http://localhost:5678/webhook/my-helpdesk · 4 case(s) × 1
+✔ 평소 · 저장소에서 · 1.4s
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "error", "slow_seconds": 8.0}
+✔ 저장소 고장 · 기본 지시문으로 답 · 1.1s
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "slow_seconds": 8.0}
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "slow", "slow_seconds": 8.0}
+✔ 저장소 느림 · 오래 기다리지 않음 · 3.1s
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "slow_seconds": 8.0}
+✔ 되돌린 뒤 · 다시 저장소에서 · 1.3s
+Passed 4/4
+report: runs/lab01-challenge2-20261027-183922.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "slow_seconds": 8.0}

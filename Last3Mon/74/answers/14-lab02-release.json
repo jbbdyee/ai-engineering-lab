@@ -1,0 +1,132 @@
+{
+  "cases": "lab02.json",
+  "webhook": "my-helpdesk",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "case": "운영 중인 릴리스 (active)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.3,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "후보 시험 · 1.1.0 고정",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "1.1.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류가 발생하면 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.1.0",
+          "prompt_version": "p2",
+          "model": "gpt-4.1-mini",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "후보 시험 · 2.0.0 (작은 모델)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. 접수 건은 찾지 못했습니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "없는 릴리스",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 400,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "9.9.9"
+      },
+      "response": {
+        "error": "unknown release",
+        "release": "9.9.9",
+        "known": [
+          "1.0.0",
+          "1.1.0",
+          "1.2.0",
+          "2.0.0",
+          "2.1.0"
+        ]
+      }
+    },
+    {
+      "case": "빈 질문",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.2,
+      "status": 400,
+      "request": {
+        "question": "",
+        "user": "이준호"
+      },
+      "response": {
+        "error": "question is required"
+      }
+    }
+  ]
+}

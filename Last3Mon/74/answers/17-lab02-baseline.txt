@@ -1,0 +1,44 @@
+$ uv run tools/flow.py bench my-helpdesk requests/faq-vpn.json -n 5 --set release=1.0.0
+POST http://localhost:5678/webhook/my-helpdesk × 5
+✔ #1 · HTTP 200 · 1.18s · route=자동 답변, release=1.0.0
+✔ #2 · HTTP 200 · 1.42s · route=자동 답변, release=1.0.0
+✔ #3 · HTTP 200 · 1.17s · route=자동 답변, release=1.0.0
+✔ #4 · HTTP 200 · 1.23s · route=자동 답변, release=1.0.0
+✔ #5 · HTTP 200 · 1.23s · route=자동 답변, release=1.0.0
+p50 1.23s · p95 1.42s · max 1.42s · failures 0/5
+report: runs/bench-my-helpdesk-20261027-183957.json
+
+$ uv run tools/flow.py bench my-helpdesk requests/faq-vpn.json -n 5 --set release=2.0.0
+POST http://localhost:5678/webhook/my-helpdesk × 5
+✔ #1 · HTTP 200 · 1.10s · route=자동 답변, release=2.0.0
+✔ #2 · HTTP 200 · 1.24s · route=자동 답변, release=2.0.0
+✔ #3 · HTTP 200 · 1.05s · route=자동 답변, release=2.0.0
+✔ #4 · HTTP 200 · 1.12s · route=자동 답변, release=2.0.0
+✔ #5 · HTTP 200 · 1.12s · route=자동 답변, release=2.0.0
+p50 1.12s · p95 1.24s · max 1.24s · failures 0/5
+report: runs/bench-my-helpdesk-20261027-184003.json
+
+$ uv run tools/flow.py gate cases/golden.json --set release=1.0.0 --repeat 3 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 6 case(s) × 3
+✔ VPN #1 · 1.1s
+✔ VPN #2 · 1.1s
+✔ VPN #3 · 1.2s
+✔ 비밀번호 #1 · 1.1s
+✔ 비밀번호 #2 · 1.3s
+✔ 비밀번호 #3 · 1.3s
+✔ 프린터 #1 · 1.1s
+✔ 프린터 #2 · 1.0s
+✔ 프린터 #3 · 1.3s
+✔ 메일함 #1 · 1.1s
+✔ 메일함 #2 · 1.1s
+✔ 메일함 #3 · 1.1s
+✔ 접수 처리 중 #1 · 1.1s
+✔ 접수 처리 중 #2 · 1.0s
+✔ 접수 처리 중 #3 · 1.0s
+✔ 접수 처리 완료 #1 · 1.5s
+✔ 접수 처리 완료 #2 · 1.1s
+✔ 접수 처리 완료 #3 · 1.1s
+Passed 18/18
+report: runs/golden-20261027-184024.json
+gate [release=1.0.0]: pass 18/18 (100%) · p95 1.5s → PASS
+✔ gate record → /gates/helpdesk: 1.0.0 promote

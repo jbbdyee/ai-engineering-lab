@@ -1,0 +1,96 @@
+{
+  "webhook": "my-cost",
+  "before": [
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "긴 로그 + 끝에 질문 · 프린터",
+      "request": "requests/long-printer.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1,
+          "trimmed": true
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0003
+          ]
+        },
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    },
+    {
+      "name": "앞에 질문 + 긴 로그 · VPN",
+      "request": "requests/long-vpn.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 1,
+          "trimmed": true
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0003
+          ]
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "짧은 질문은 그대로",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "equals": {
+          "trimmed": false,
+          "question_chars": 24
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "사람이 한도를 늘리면 자르지 않음",
+      "request": "requests/long-printer.json",
+      "before": [
+        {
+          "url": "http://localhost:8800/budget",
+          "body": {
+            "max_question_chars": 10000
+          }
+        }
+      ],
+      "expect": {
+        "equals": {
+          "trimmed": false
+        },
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        }
+      }
+    }
+  ]
+}

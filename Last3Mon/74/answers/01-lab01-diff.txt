@@ -1,0 +1,24 @@
+$ uv run tools/flow.py diff reference/helpdesk-v1.json reference/helpdesk-v2.json
+74 IT helpdesk v1 (provided)  →  74 IT helpdesk v2 (provided)
++ node 'Review check' (code)
+~ 'Answer' parameters.options.systemMessage: changed (307 → 419 chars)
+~ 'Answer model' parameters.model.value: gpt-4.1-mini → gpt-5.4-nano
+~ 'Question webhook' parameters.path: rel-v1 → rel-v2
++ link Answer → Review check (main)
++ link Review check → Build result (main)
+- link Answer → Build result (main)
+7 change(s)
+
+$ uv run tools/flow.py diff reference/helpdesk-v1.json reference/helpdesk-v2.json --full
+74 IT helpdesk v1 (provided)  →  74 IT helpdesk v2 (provided)
++ node 'Review check' (code)
+~ 'Answer' parameters.options.systemMessage: changed (307 → 419 chars)
+    before: You are the company IT help desk. Answer in Korean in at most 3 sentences, using only the FAQ entries and the ticket record given. Never invent steps, dates or names. For a ticket, say its status and note. If the data does not answer the question, say "찾지 못했습니다" and that a staff member will help. Use 합니다체.
+    after:  You are the company IT help desk. Answer in Korean in at most 3 sentences, using only the FAQ entries and the ticket record given. Never invent steps, dates or names. For a ticket, say its status and note. If the data does not answer the question, say "찾지 못했습니다" and that a staff member will help. Use 합니다체.
+When the answer comes from a FAQ entry, end with its id in brackets, for example [FAQ-003]. Keep answers short.
+~ 'Answer model' parameters.model.value: gpt-4.1-mini → gpt-5.4-nano
+~ 'Question webhook' parameters.path: rel-v1 → rel-v2
++ link Answer → Review check (main)
++ link Review check → Build result (main)
+- link Answer → Build result (main)
+7 change(s)

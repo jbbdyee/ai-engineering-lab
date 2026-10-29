@@ -1,0 +1,93 @@
+{
+  "webhook": "my-cost",
+  "after": [
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "한도를 넘으면 · FAQ 원문",
+      "request": "requests/faq-vpn.json",
+      "before": [
+        {
+          "url": "http://localhost:8800/usage-clear",
+          "body": {}
+        },
+        {
+          "url": "http://localhost:8800/budget",
+          "body": {
+            "daily_usd": 0.001
+          }
+        },
+        {
+          "url": "http://localhost:8800/usage",
+          "body": {
+            "request_id": "seed",
+            "user": "seed",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "cost_usd": 0.002
+          }
+        }
+      ],
+      "expect": {
+        "equals": {
+          "route": "한도 초과",
+          "cost_usd": 0,
+          "llm_calls": 0
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "한도를 넘으면 · 접수 원문",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "equals": {
+          "route": "한도 초과",
+          "cost_usd": 0
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "한도 안이면 평소대로",
+      "request": "requests/faq-vpn.json",
+      "before": [
+        {
+          "url": "http://localhost:8800/budget/reset",
+          "body": {}
+        },
+        {
+          "url": "http://localhost:8800/usage-clear",
+          "body": {}
+        }
+      ],
+      "expect": {
+        "equals": {
+          "route": "자동 답변"
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.0002
+          ]
+        }
+      }
+    }
+  ]
+}

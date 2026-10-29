@@ -1,0 +1,103 @@
+{
+  "webhook": "my-helpdesk",
+  "cases": [
+    {
+      "name": "VPN",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "비밀번호",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "휴대폰",
+            "휴대전화"
+          ]
+        }
+      }
+    },
+    {
+      "name": "프린터",
+      "request": "requests/faq-printer.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        },
+        "not_contains": {
+          "answer": [
+            "포털을 확인",
+            "포털에서 확인"
+          ]
+        }
+      }
+    },
+    {
+      "name": "메일함",
+      "request": "requests/faq-mail.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "보관함"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 처리 중",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "처리 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 처리 완료",
+      "request": "requests/ticket-done.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "route": "자동 답변"
+        },
+        "contains": {
+          "answer": [
+            "처리 완료",
+            "완료"
+          ]
+        }
+      }
+    }
+  ]
+}

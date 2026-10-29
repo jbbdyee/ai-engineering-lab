@@ -1,0 +1,152 @@
+$ uv run tools/flow.py push answers/74-lab01-challenge2-fallback.json
+! unpublished '74 IT helpdesk + prompt registry (answer)' (w10c91b5c7439d37): it used the same webhook path
+✔ pushed '74 IT helpdesk + prompt fallback (answer)' (id w5215c7f75644ed0)
+   POST http://localhost:5678/webhook/my-helpdesk
+
+$ uv run tools/flow.py test cases/lab01-challenge2.json -v
+POST http://localhost:5678/webhook/my-helpdesk · 4 case(s) × 1
+✔ 평소 · 저장소에서 · 2.6s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 문의 건은 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "error", "slow_seconds": 8.0}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "prompts": "error"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "error",
+        "slow_seconds": 8.0
+      }
+✔ 저장소 고장 · 기본 지시문으로 답 · 1.3s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 문의 건은 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "fallback"
+        }
+      }
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "slow_seconds": 8.0}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "prompts": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "slow_seconds": 8.0
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "slow", "slow_seconds": 8.0}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "prompts": "slow",
+        "slow_seconds": 8
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "slow",
+        "slow_seconds": 8.0
+      }
+✔ 저장소 느림 · 오래 기다리지 않음 · 3.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "fallback"
+        }
+      }
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "slow_seconds": 8.0}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "prompts": "ok",
+        "slow_seconds": 8
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "slow_seconds": 8.0
+      }
+✔ 되돌린 뒤 · 다시 저장소에서 · 1.4s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+Passed 4/4
+report: runs/lab01-challenge2-20261027-183845.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "slow_seconds": 8.0}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "prompts": "ok",
+        "slow_seconds": 8
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "slow_seconds": 8.0
+      }

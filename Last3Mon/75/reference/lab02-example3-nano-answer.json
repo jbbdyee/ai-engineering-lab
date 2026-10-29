@@ -1,0 +1,423 @@
+{
+  "name": "75 IT helpdesk, answer on nano too (compare)",
+  "nodes": [
+    {
+      "name": "Question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nano-answer",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "5e6c96ea-4e5c-519f-856d-8c51d0aca7f1",
+      "position": [
+        0,
+        300
+      ],
+      "id": "e81c1d81-9bfa-5705-85d6-6bb9af778dac"
+    },
+    {
+      "name": "Has question?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.question }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "2a7fa1d5-b6c4-5d3c-8aa3-629ab1cee629"
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"question is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        560
+      ],
+      "id": "35acd167-b6ce-5200-98a3-a78e154f7921"
+    },
+    {
+      "name": "Get prices",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/prices",
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "d9a552b8-3be7-5d86-9f91-d54ab54eb204"
+    },
+    {
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq",
+        "options": {},
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('Question webhook').first().json.body.question }}"
+            }
+          ]
+        }
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "b7a3a1e8-444c-5de0-a606-1e185b9b9cc4"
+    },
+    {
+      "name": "Get ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/tickets/{{ (($('Question webhook').first().json.body.question.match(/T-?\\d{4}/i) || ['NONE'])[0]).toUpperCase().replace(/^T(\\d)/, 'T-$1') }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "requester",
+              "value": "={{ $('Question webhook').first().json.body.user ?? '' }}"
+            }
+          ]
+        }
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "8453f9f2-2e94-53ea-b642-3d7d4588dfaa"
+    },
+    {
+      "name": "Classify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-5.4-nano', temperature: 0, messages: [{ role: 'system', content: \"You sort one company IT help-desk question. Categories: faq (how to fix or use something), ticket (asks about the status of a ticket like T-1002), other. Return only JSON, no code fence: {\\\"category\\\": \\\"faq\\\"}\" }, { role: 'user', content: $('Question webhook').first().json.body.question }] }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "position": [
+        2420,
+        300
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "id": "f75f2a89-03b2-5b47-9727-291ca19df673"
+    },
+    {
+      "name": "Answer",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-5.4-nano', temperature: 0, max_completion_tokens: 200, messages: [{ role: 'system', content: \"You are the company IT help desk. Answer in Korean in at most 3 sentences, using only the FAQ entries and the ticket record given. Never invent steps, dates or names. For a ticket, say its status and note. If the data does not answer the question, say \\\"찾지 못했습니다\\\" and that a staff member will help. Use 합니다체.\" }, { role: 'user', content: '질문: ' + $('Question webhook').first().json.body.question + '\\nFAQ: ' + JSON.stringify(($('Search FAQ').first().json.results ?? []).map((f) => ({ id: f.id, title: f.title, answer: f.answer }))) + '\\n접수 건: ' + JSON.stringify((({ ticket_id, title, status, note, error }) => ({ ticket_id, title, status, note, error }))($('Get ticket').first().json)) }] }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "position": [
+        2640,
+        300
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "id": "5efff901-9caf-5f71-b382-247b020bccf6"
+    },
+    {
+      "name": "Review",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'gpt-5.4-nano', temperature: 0, messages: [{ role: 'system', content: \"You review a Korean IT help-desk answer before it is sent. Keep the facts exactly. Make it polite (합니다체), remove anything not supported by the data, keep at most 3 sentences. Return only the final answer text.\" }, { role: 'user', content: '초안: ' + $('Answer').first().json.choices[0].message.content }] }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "position": [
+        2860,
+        300
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "id": "a6950b06-d98e-5b8b-a9e9-36da0617802f"
+    },
+    {
+      "name": "Build result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const ran = (n) => { try { return $(n).isExecuted; } catch (e) { return false; } };\nconst steps = [{\"step\": \"classify\", \"node\": \"Classify\", \"model\": \"gpt-5.4-nano\"}, {\"step\": \"answer\", \"node\": \"Answer\", \"model\": \"gpt-5.4-nano\"}, {\"step\": \"review\", \"node\": \"Review\", \"model\": \"gpt-5.4-nano\"}];\nconst prices = $('Get prices').first().json.models;\nconst by_step = {};\nlet prompt_tokens = 0, completion_tokens = 0, llm_calls = 0, cost_usd = 0;\nfor (const s of steps) {\n  if (!ran(s.node)) continue;\n  const u = $(s.node).first().json.usage ?? {};\n  const row = { model: s.model, prompt_tokens: u.prompt_tokens ?? 0, completion_tokens: u.completion_tokens ?? 0 };\n  const p = prices[s.model] ?? { input: 0, output: 0 };\n  row.cost_usd = Math.round((row.prompt_tokens * p.input + row.completion_tokens * p.output) / 1e6 * 1e8) / 1e8;\n  by_step[s.step] = row;\n  prompt_tokens += row.prompt_tokens; completion_tokens += row.completion_tokens; cost_usd += row.cost_usd; llm_calls += 1;\n}\nconst results = $('Search FAQ').first().json.results ?? [];\nconst answer = String($('Review').first().json.choices[0].message.content ?? '').trim();\nconst result = { route: '자동 답변', answer, sources: results.map((r) => r.id), llm_calls,\n  usage: { prompt_tokens, completion_tokens, by_step }, cost_usd: Math.round(cost_usd * 1e8) / 1e8 };\nreturn [{ json: result }];"
+      },
+      "position": [
+        3520,
+        300
+      ],
+      "id": "ee78f30e-6b80-58ab-b322-f14e158b9ac1"
+    },
+    {
+      "name": "Record usage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/usage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ items: Object.entries($json.usage.by_step).map(([step, row]) => ({ request_id: $execution.id, user: $('Question webhook').first().json.body.user ?? '', step, model: row.model, prompt_tokens: row.prompt_tokens, completion_tokens: row.completion_tokens, cost_usd: row.cost_usd, route: $json.route })) }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 3000
+        }
+      },
+      "position": [
+        3740,
+        300
+      ],
+      "onError": "continueRegularOutput",
+      "id": "140f6419-d9a4-5ea2-bd75-f8590b7ce6cc"
+    },
+    {
+      "name": "Result again",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$('Build result').first().json, recorded: Number($json.stored ?? 0) > 0 } }];"
+      },
+      "position": [
+        3960,
+        300
+      ],
+      "id": "d8cf1ae5-e8ea-5254-8bbf-2ec8cb2467c6"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        4180,
+        300
+      ],
+      "id": "6e0a5ef6-c94d-5215-8dd3-c7101cd147e8"
+    }
+  ],
+  "connections": {
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "node": "Has question?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has question?": {
+      "main": [
+        [
+          {
+            "node": "Get prices",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get prices": {
+      "main": [
+        [
+          {
+            "node": "Search FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "main": [
+        [
+          {
+            "node": "Get ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get ticket": {
+      "main": [
+        [
+          {
+            "node": "Classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review": {
+      "main": [
+        [
+          {
+            "node": "Build result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build result": {
+      "main": [
+        [
+          {
+            "node": "Record usage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record usage": {
+      "main": [
+        [
+          {
+            "node": "Result again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result again": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

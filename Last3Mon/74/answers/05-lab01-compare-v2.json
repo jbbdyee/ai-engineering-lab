@@ -1,0 +1,302 @@
+{
+  "cases": "lab01-compare.json",
+  "webhook": "rel-v2",
+  "passed": 15,
+  "total": 15,
+  "results": [
+    {
+      "case": "VPN · 해결 낱말",
+      "webhook": "rel-v2",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ]
+      }
+    },
+    {
+      "case": "VPN · 해결 낱말",
+      "webhook": "rel-v2",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ]
+      }
+    },
+    {
+      "case": "VPN · 해결 낱말",
+      "webhook": "rel-v2",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ]
+      }
+    },
+    {
+      "case": "VPN · 출처 번호",
+      "webhook": "rel-v2",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ]
+      }
+    },
+    {
+      "case": "VPN · 출처 번호",
+      "webhook": "rel-v2",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ]
+      }
+    },
+    {
+      "case": "VPN · 출처 번호",
+      "webhook": "rel-v2",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ]
+      }
+    },
+    {
+      "case": "프린터 · 해결 낱말",
+      "webhook": "rel-v2",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.4,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 출력이 안 될 때는 프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. [FAQ-004]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ]
+      }
+    },
+    {
+      "case": "프린터 · 해결 낱말",
+      "webhook": "rel-v2",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 출력이 안 될 때는 프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. [FAQ-004]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ]
+      }
+    },
+    {
+      "case": "프린터 · 해결 낱말",
+      "webhook": "rel-v2",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 출력이 안 될 때는 프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. [FAQ-004]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ]
+      }
+    },
+    {
+      "case": "프린터 · 출처 번호",
+      "webhook": "rel-v2",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.4,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 출력이 안 될 때는 프린터 전원과 네트워크 연결을 확인한 뒤, 인쇄 대기열을 비우고 다시 출력해 보시기 바랍니다. [FAQ-004]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ]
+      }
+    },
+    {
+      "case": "프린터 · 출처 번호",
+      "webhook": "rel-v2",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 출력이 안 될 때는 프린터 전원과 네트워크 연결을 확인한 뒤, 인쇄 대기열을 비우고 다시 출력해 보시기 바랍니다. [FAQ-004]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ]
+      }
+    },
+    {
+      "case": "프린터 · 출처 번호",
+      "webhook": "rel-v2",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 출력이 안 될 때는 프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. [FAQ-004]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ]
+      }
+    },
+    {
+      "case": "접수 현황",
+      "webhook": "rel-v2",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "T-1002의 현재 상태는 “처리 중”입니다. 메모에 따르면 인증서 발급 승인 대기 중이며 10월 20일 완료 예정입니다.",
+        "sources": []
+      }
+    },
+    {
+      "case": "접수 현황",
+      "webhook": "rel-v2",
+      "run": 2,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "T-1002의 현재 상태는 “처리 중”입니다. 메모에 따르면 인증서 발급 승인 대기 중이며 10월 20일 완료 예정입니다.",
+        "sources": []
+      }
+    },
+    {
+      "case": "접수 현황",
+      "webhook": "rel-v2",
+      "run": 3,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "T-1002의 현재 상태는 “처리 중”입니다. 인증서 발급 승인 대기 중이며 “10월 20일 완료 예정”이라고 기록되어 있습니다.",
+        "sources": []
+      }
+    }
+  ]
+}

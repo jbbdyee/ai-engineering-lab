@@ -1,0 +1,104 @@
+{
+  "webhook": "my-cost",
+  "before": [
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "usage": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "usage": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "기록 API 고장(500) · 답은 나감",
+      "request": "requests/faq-vpn.json",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "usage": "error"
+          }
+        }
+      ],
+      "expect": {
+        "equals": {
+          "recorded": false
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "기록 API 느림(8초) · 답은 나감",
+      "request": "requests/faq-printer.json",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "usage": "slow",
+            "slow_seconds": 8
+          }
+        }
+      ],
+      "expect": {
+        "equals": {
+          "recorded": false
+        },
+        "contains": {
+          "answer": [
+            "대기열"
+          ]
+        },
+        "max_seconds": 15
+      }
+    },
+    {
+      "name": "고친 뒤 · 기록됨",
+      "request": "requests/faq-password.json",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "usage": "ok"
+          }
+        }
+      ],
+      "expect": {
+        "equals": {
+          "recorded": true
+        },
+        "contains": {
+          "answer": [
+            "비밀번호 찾기",
+            "휴대폰"
+          ]
+        }
+      }
+    },
+    {
+      "name": "요약 · 기록된 요청은 1건",
+      "url": "http://localhost:8800/usage/summary",
+      "body": {},
+      "expect": {
+        "equals": {
+          "requests": 1
+        }
+      }
+    }
+  ]
+}

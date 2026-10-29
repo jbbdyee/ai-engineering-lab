@@ -1,0 +1,254 @@
+{
+  "cases": "74-lab02-challenge-golden.json",
+  "webhook": "my-helpdesk",
+  "passed": 9,
+  "total": 9,
+  "results": [
+    {
+      "case": "VPN · 해결 방법",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]  \n접수 건은 찾지 못했습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "VPN · 순서도 (업데이트)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 끊기는 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속해 보시기 바랍니다. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "비밀번호 · 해결 방법",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "사내 포털 로그인 화면의 ‘비밀번호 찾기’에서 휴대폰 인증 후 새 비밀번호를 설정합니다. [FAQ-001]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "프린터 · 해결 방법",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 출력이 안 될 때는 프린터 전원과 네트워크 연결을 확인한 뒤, 인쇄 대기열을 비우고 다시 출력해 보시기 바랍니다. [FAQ-004]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "메일함 · 해결 방법",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "김민지",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "메일함 용량이 초과된 경우 오래된 메일과 큰 첨부 파일을 보관함으로 옮기거나 삭제해 용량을 확보하시면 됩니다. [FAQ-005]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-005"
+        ],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "접수 처리 중 · 상태와 예정일",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "T-1002의 현재 상태는 **처리 중**입니다. 메모에 따르면 **인증서 발급 승인 대기 중이며 10월 20일 완료 예정**입니다.",
+        "sources": [],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "접수 처리 중 · 예정일",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "T-1002의 현재 상태는 **처리 중**입니다. 메모에 따르면 **인증서 발급 승인 대기 중이며 10월 20일 완료 예정**입니다.",
+        "sources": [],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "접수 처리 완료",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "T-1001 어떻게 됐나요?",
+        "user": "이준호",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "T-1001은 **처리 완료** 상태이며, **새 배터리로 교체했습니다**. 추가로 확인이 필요하시면 담당자에게 문의하시기 바랍니다.",
+        "sources": [],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "포털로 떠넘기지 않기",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 출력이 안 될 때는 프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. [FAQ-004]  \n접수 건은 찾지 못했습니다. 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "2.0.0",
+          "prompt_version": "p2",
+          "model": "gpt-5.4-nano",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }
+    }
+  ]
+}

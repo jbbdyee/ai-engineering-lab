@@ -1,0 +1,174 @@
+{
+  "cases": "lab03-watch.json",
+  "webhook": "my-helpdesk",
+  "passed": 4,
+  "total": 6,
+  "results": [
+    {
+      "case": "최유진 · 프린터",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "answer has none of ['대기열']"
+      ],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "IT 포털에서 프린터 문제 해결 방법을 확인해 주세요.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.2.0",
+          "prompt_version": "p3",
+          "model": "gpt-4.1-mini",
+          "channel": "canary",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "정우성 · 프린터",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "answer has none of ['대기열']"
+      ],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "정우성"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "IT 포털에서 프린터 문제 해결 방법을 확인해 주세요.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.2.0",
+          "prompt_version": "p3",
+          "model": "gpt-4.1-mini",
+          "channel": "canary",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "한지훈 · 프린터",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "한지훈"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "이준호 · 프린터",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "박서연 · 프린터",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "김민지 · 프린터",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "김민지"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 접수된 문의 건은 없으며, 추가 도움이 필요하시면 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+    }
+  ]
+}

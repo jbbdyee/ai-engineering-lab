@@ -1,0 +1,67 @@
+{
+  "webhook": "my-cost",
+  "before": [
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/budget",
+      "body": {
+        "user_limit_per_min": 2
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "이준호 1번째",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "이준호 2번째",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "이준호"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "이준호 3번째 · 1분에 2번 넘음",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "status": 429,
+        "equals": {
+          "route": "잠시 후",
+          "cost_usd": 0
+        },
+        "max_seconds": 1
+      }
+    },
+    {
+      "name": "다른 사람은 그대로",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "status": 200
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+$ uv run tools/flow.py bench rel-v1 requests/faq-vpn.json -n 5
+POST http://localhost:5678/webhook/rel-v1 × 5
+✔ #1 · HTTP 200 · 1.26s · route=자동 답변
+✔ #2 · HTTP 200 · 1.11s · route=자동 답변
+✔ #3 · HTTP 200 · 1.23s · route=자동 답변
+✔ #4 · HTTP 200 · 1.34s · route=자동 답변
+✔ #5 · HTTP 200 · 1.18s · route=자동 답변
+p50 1.23s · p95 1.34s · max 1.34s · failures 0/5
+report: runs/bench-rel-v1-20261027-183742.json
+
+$ uv run tools/flow.py bench rel-v2 requests/faq-vpn.json -n 5
+POST http://localhost:5678/webhook/rel-v2 × 5
+✔ #1 · HTTP 200 · 1.20s · route=자동 답변
+✔ #2 · HTTP 200 · 0.97s · route=자동 답변
+✔ #3 · HTTP 200 · 0.98s · route=자동 답변
+✔ #4 · HTTP 200 · 1.02s · route=자동 답변
+✔ #5 · HTTP 200 · 0.98s · route=자동 답변
+p50 0.98s · p95 1.20s · max 1.20s · failures 0/5
+report: runs/bench-rel-v2-20261027-183747.json

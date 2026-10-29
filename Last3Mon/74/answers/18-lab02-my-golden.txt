@@ -1,0 +1,63 @@
+$ uv run tools/flow.py gate answers/74-lab02-challenge-golden.json --set release=1.0.0 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 9 case(s) × 1
+✔ VPN · 해결 방법 · 1.2s
+✔ VPN · 순서도 (업데이트) · 1.3s
+✔ 비밀번호 · 해결 방법 · 1.4s
+✔ 프린터 · 해결 방법 · 1.1s
+✔ 메일함 · 해결 방법 · 1.2s
+✔ 접수 처리 중 · 상태와 예정일 · 1.0s
+✔ 접수 처리 중 · 예정일 · 1.0s
+✔ 접수 처리 완료 · 1.1s
+✔ 포털로 떠넘기지 않기 · 1.1s
+Passed 9/9
+report: runs/74-lab02-challenge-golden-20261027-184034.json
+gate [release=1.0.0]: pass 9/9 (100%) · p95 1.4s → PASS
+✔ gate record → /gates/helpdesk: 1.0.0 promote
+
+$ uv run tools/flow.py gate answers/74-lab02-challenge-golden.json --set release=1.1.0 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 9 case(s) × 1
+✔ VPN · 해결 방법 · 1.0s
+✔ VPN · 순서도 (업데이트) · 1.7s
+✔ 비밀번호 · 해결 방법 · 1.1s
+✔ 프린터 · 해결 방법 · 1.3s
+✔ 메일함 · 해결 방법 · 1.0s
+✔ 접수 처리 중 · 상태와 예정일 · 1.0s
+✔ 접수 처리 중 · 예정일 · 1.0s
+✔ 접수 처리 완료 · 1.0s
+✔ 포털로 떠넘기지 않기 · 1.2s
+Passed 9/9
+report: runs/74-lab02-challenge-golden-20261027-184045.json
+gate [release=1.1.0]: pass 9/9 (100%) · p95 1.7s → PASS
+✔ gate record → /gates/helpdesk: 1.1.0 promote
+
+$ uv run tools/flow.py gate answers/74-lab02-challenge-golden.json --set release=1.2.0 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 9 case(s) × 1
+✘ VPN · 해결 방법 · 0.9s · answer has none of ['인증서']
+✘ VPN · 순서도 (업데이트) · 0.7s · answer has none of ['업데이트', '최신']
+✘ 비밀번호 · 해결 방법 · 0.9s · answer has none of ['비밀번호 찾기', '휴대폰']
+✘ 프린터 · 해결 방법 · 0.9s · answer has none of ['대기열', '전원']
+✘ 메일함 · 해결 방법 · 0.9s · answer has none of ['보관함', '삭제']
+✘ 접수 처리 중 · 상태와 예정일 · 1.0s · answer has none of ['처리 중']
+✘ 접수 처리 중 · 예정일 · 0.9s · answer has none of ['10월 20일', '20일']
+✘ 접수 처리 완료 · 1.3s · answer has none of ['처리 완료', '완료']
+✔ 포털로 떠넘기지 않기 · 0.7s
+Passed 1/9
+report: runs/74-lab02-challenge-golden-20261027-184053.json
+gate [release=1.2.0]: pass 1/9 (11%) · p95 1.3s → FAIL · pass rate 11% < 100%
+✔ gate record → /gates/helpdesk: 1.2.0 rollback
+
+$ uv run tools/flow.py gate answers/74-lab02-challenge-golden.json --set release=2.0.0 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 9 case(s) × 1
+✔ VPN · 해결 방법 · 1.1s
+✔ VPN · 순서도 (업데이트) · 1.3s
+✔ 비밀번호 · 해결 방법 · 1.3s
+✔ 프린터 · 해결 방법 · 1.3s
+✔ 메일함 · 해결 방법 · 1.3s
+✔ 접수 처리 중 · 상태와 예정일 · 1.0s
+✔ 접수 처리 중 · 예정일 · 1.1s
+✔ 접수 처리 완료 · 1.2s
+✔ 포털로 떠넘기지 않기 · 1.1s
+Passed 9/9
+report: runs/74-lab02-challenge-golden-20261027-184104.json
+gate [release=2.0.0]: pass 9/9 (100%) · p95 1.3s → PASS
+✔ gate record → /gates/helpdesk: 2.0.0 promote

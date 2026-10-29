@@ -1,0 +1,67 @@
+$ uv run tools/flow.py push answers/74-lab03-challenge-release-check.json
+! unpublished '74 Release check + gate record (answer)' (w9589252e9498695): it used the same webhook path
+✔ pushed '74 Release check (answer)' (id w50ae3687e1cc859)
+   POST http://localhost:5678/webhook/my-release-check
+
+$ uv run tools/flow.py test cases/lab03-challenge.json -v
+POST http://localhost:5678/webhook/my-release-check · 3 case(s) × 1
+✔ 1.1.0 · 내보내도 됨 · 3.1s
+    → request  POST /webhook/my-release-check
+      {
+        "release": "1.1.0"
+      }
+    ← response HTTP 200
+      {
+        "release": "1.1.0",
+        "passed": 6,
+        "total": 6,
+        "failed": [],
+        "seconds": 2,
+        "verdict": "promote"
+      }
+✔ 1.2.0 · 되돌림 · 1.6s
+    → request  POST /webhook/my-release-check
+      {
+        "release": "1.2.0"
+      }
+    ← response HTTP 200
+      {
+        "release": "1.2.0",
+        "passed": 0,
+        "total": 6,
+        "failed": [
+          "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+          "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+          "프린터 출력이 안 돼요",
+          "메일함 용량이 꽉 찼대요",
+          "T-1002 처리 상태 알려 주세요",
+          "T-1001 어떻게 됐나요?"
+        ],
+        "seconds": 1.6,
+        "verdict": "rollback"
+      }
+✔ 릴리스 없음 · 0.0s
+    → request  POST /webhook/my-release-check
+      {}
+    ← response HTTP 400
+      {
+        "error": "release is required"
+      }
+Passed 3/3
+report: runs/lab03-challenge-20261027-184308.json
+
+$ uv run tools/flow.py call my-release-check '{"release": "2.0.0"}' -v
+HTTP 200 · 1.9s
+    → request  POST /webhook/my-release-check
+      {
+        "release": "2.0.0"
+      }
+    ← response HTTP 200
+      {
+        "release": "2.0.0",
+        "passed": 6,
+        "total": 6,
+        "failed": [],
+        "seconds": 1.8,
+        "verdict": "promote"
+      }

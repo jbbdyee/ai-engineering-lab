@@ -1,0 +1,55 @@
+{
+  "webhook": "my-cost",
+  "cases": [
+    {
+      "name": "VPN · 비용과 단계별 사용량",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.01
+          ],
+          "usage.prompt_tokens": [
+            1,
+            20000
+          ],
+          "usage.by_step.answer.cost_usd": [
+            1e-06,
+            0.01
+          ]
+        },
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "접수 현황 · 비용",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.01
+          ]
+        },
+        "contains": {
+          "answer": [
+            "처리 중",
+            "대기 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "빈 질문은 LLM 없이",
+      "request": "requests/empty-question.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

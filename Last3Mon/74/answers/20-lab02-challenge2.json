@@ -1,0 +1,206 @@
+{
+  "cases": "74-lab02-challenge-golden.json",
+  "webhook": "my-helpdesk",
+  "passed": 0,
+  "total": 9,
+  "results": [
+    {
+      "case": "VPN · 해결 방법",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)",
+        "route = null (expected 자동 답변)",
+        "answer has none of ['인증서']"
+      ],
+      "seconds": 0.1,
+      "status": 400,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    },
+    {
+      "case": "VPN · 순서도 (업데이트)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)",
+        "answer has none of ['업데이트', '최신']"
+      ],
+      "seconds": 0.1,
+      "status": 400,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    },
+    {
+      "case": "비밀번호 · 해결 방법",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)",
+        "answer has none of ['비밀번호 찾기', '휴대폰']"
+      ],
+      "seconds": 0.1,
+      "status": 400,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    },
+    {
+      "case": "프린터 · 해결 방법",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)",
+        "answer has none of ['대기열', '전원']"
+      ],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    },
+    {
+      "case": "메일함 · 해결 방법",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)",
+        "answer has none of ['보관함', '삭제']"
+      ],
+      "seconds": 0.1,
+      "status": 400,
+      "request": {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "김민지",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    },
+    {
+      "case": "접수 처리 중 · 상태와 예정일",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)",
+        "answer has none of ['처리 중']"
+      ],
+      "seconds": 0.1,
+      "status": 400,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    },
+    {
+      "case": "접수 처리 중 · 예정일",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)",
+        "answer has none of ['10월 20일', '20일']"
+      ],
+      "seconds": 0.1,
+      "status": 400,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    },
+    {
+      "case": "접수 처리 완료",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)",
+        "answer has none of ['처리 완료', '완료']"
+      ],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "T-1001 어떻게 됐나요?",
+        "user": "이준호",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    },
+    {
+      "case": "포털로 떠넘기지 않기",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 400 (expected 200)"
+      ],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진",
+        "release": "2.1.0"
+      },
+      "response": {
+        "error": "release broken",
+        "release": "2.1.0",
+        "prompt_version": "p9"
+      }
+    }
+  ]
+}

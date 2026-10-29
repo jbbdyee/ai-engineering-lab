@@ -1,0 +1,141 @@
+{
+  "webhook": "my-cost-report",
+  "before": [
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/usage",
+      "body": {
+        "items": [
+          {
+            "request_id": "r1",
+            "user": "이준호",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 1000,
+            "completion_tokens": 100,
+            "cost_usd": 0.00056,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r1",
+            "user": "이준호",
+            "step": "classify",
+            "model": "gpt-5.4-nano",
+            "prompt_tokens": 100,
+            "completion_tokens": 20,
+            "cost_usd": 4.5e-05,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r2",
+            "user": "박서연",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 2000,
+            "completion_tokens": 200,
+            "cost_usd": 0.00112,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r3",
+            "user": "이준호",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 500,
+            "completion_tokens": 40,
+            "cost_usd": 0.000264,
+            "route": "자동 답변"
+          }
+        ]
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "모두 nano였다면",
+      "body": {
+        "requests_per_day": 100,
+        "workdays": 22,
+        "what_if_model": "gpt-5.4-nano"
+      },
+      "expect": {
+        "equals": {
+          "what_if.model": "gpt-5.4-nano",
+          "what_if.cost_usd": 0.00117,
+          "what_if.saving_usd": 0.000819,
+          "what_if.projected_month_usd": 0.858
+        }
+      }
+    },
+    {
+      "name": "원래 숫자는 그대로",
+      "body": {
+        "requests_per_day": 100,
+        "workdays": 22,
+        "what_if_model": "gpt-5.4-nano"
+      },
+      "expect": {
+        "equals": {
+          "cost_usd": 0.001989,
+          "projected_month_usd": 1.4586
+        }
+      }
+    },
+    {
+      "name": "모두 mini였다면 · 아끼는 돈이 음수",
+      "body": {
+        "what_if_model": "gpt-4.1-mini"
+      },
+      "expect": {
+        "equals": {
+          "what_if.cost_usd": 0.002016,
+          "what_if.saving_usd": -2.7e-05
+        }
+      }
+    },
+    {
+      "name": "없는 모델은 400",
+      "body": {
+        "what_if_model": "gpt-9"
+      },
+      "expect": {
+        "status": 400,
+        "equals": {
+          "error": "unknown model"
+        },
+        "contains": {
+          "known": [
+            "gpt-5.4-nano"
+          ]
+        }
+      }
+    },
+    {
+      "name": "what_if 없이 부르면 과제 1과 같음",
+      "body": {},
+      "expect": {
+        "equals": {
+          "what_if": null,
+          "requests": 3
+        }
+      }
+    }
+  ]
+}

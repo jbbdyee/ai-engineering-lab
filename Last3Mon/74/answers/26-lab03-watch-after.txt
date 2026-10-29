@@ -1,0 +1,146 @@
+$ uv run tools/flow.py release helpdesk --no-canary
+✔ helpdesk: active 1.0.0 · no canary
+  * 1.0.0  prompt p1  model gpt-4.1-mini  첫 릴리스  gate promote 9/9
+    1.1.0  prompt p2  model gpt-4.1-mini  FAQ 답 끝에 출처 번호  gate promote 9/9
+    1.2.0  prompt p3  model gpt-4.1-mini  답을 한 문장으로 짧게  gate rollback 1/9
+    2.0.0  prompt p2  model gpt-5.4-nano  더 작은 모델 (비용)  gate promote 9/9
+    2.1.0  prompt p9  model gpt-4.1-mini  출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)  gate rollback 0/9
+
+$ uv run tools/flow.py test cases/lab03-watch.json --no-before -v
+POST http://localhost:5678/webhook/my-helpdesk · 6 case(s) × 1
+✔ 최유진 · 프린터 · 1.3s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+✔ 정우성 · 프린터 · 1.4s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "정우성"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 접수된 문의 건은 없으며, 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+✔ 한지훈 · 프린터 · 1.0s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "한지훈"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+✔ 이준호 · 프린터 · 1.3s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+✔ 박서연 · 프린터 · 1.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+✔ 김민지 · 프린터 · 1.4s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "김민지"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+Passed 6/6
+report: runs/lab03-watch-20261027-184249.json
+
+$ uv run tools/flow.py release helpdesk --reset
+✔ helpdesk: active 1.0.0 · no canary
+  * 1.0.0  prompt p1  model gpt-4.1-mini  첫 릴리스  gate promote 9/9
+    1.1.0  prompt p2  model gpt-4.1-mini  FAQ 답 끝에 출처 번호  gate promote 9/9
+    1.2.0  prompt p3  model gpt-4.1-mini  답을 한 문장으로 짧게  gate rollback 1/9
+    2.0.0  prompt p2  model gpt-5.4-nano  더 작은 모델 (비용)  gate promote 9/9
+    2.1.0  prompt p9  model gpt-4.1-mini  출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)  gate rollback 0/9

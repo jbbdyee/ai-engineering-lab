@@ -1,0 +1,62 @@
+$ uv run tools/flow.py test cases/lab01-challenge.json -v
+POST http://localhost:5678/webhook/my-helpdesk · 3 case(s) × 1
+✔ 지시문은 저장소에서 · 1.2s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 문의 건이 없어 추가 지원이 필요하시면 IT 담당자에게 문의해 주세요.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+✔ p1은 출처 번호를 붙이지 않음 · 1.1s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+✔ 접수 현황 · 1.1s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "T-1002 티켓은 현재 처리 중이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의가 있으시면 연락 주시기 바랍니다.",
+        "sources": [],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+Passed 3/3
+report: runs/lab01-challenge-20261027-183849.json

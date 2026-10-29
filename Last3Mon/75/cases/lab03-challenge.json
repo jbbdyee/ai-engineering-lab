@@ -1,0 +1,144 @@
+{
+  "webhook": "my-cost-report",
+  "before": [
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/usage",
+      "body": {
+        "items": [
+          {
+            "request_id": "r1",
+            "user": "이준호",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 1000,
+            "completion_tokens": 100,
+            "cost_usd": 0.00056,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r1",
+            "user": "이준호",
+            "step": "classify",
+            "model": "gpt-5.4-nano",
+            "prompt_tokens": 100,
+            "completion_tokens": 20,
+            "cost_usd": 4.5e-05,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r2",
+            "user": "박서연",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 2000,
+            "completion_tokens": 200,
+            "cost_usd": 0.00112,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r3",
+            "user": "이준호",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 500,
+            "completion_tokens": 40,
+            "cost_usd": 0.000264,
+            "route": "자동 답변"
+          }
+        ]
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/budget/reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "요약 숫자",
+      "body": {
+        "requests_per_day": 100,
+        "workdays": 22
+      },
+      "expect": {
+        "equals": {
+          "requests": 3,
+          "calls": 4,
+          "cost_usd": 0.001989,
+          "avg_usd": 0.000663,
+          "top_user": "박서연"
+        }
+      }
+    },
+    {
+      "name": "모델별 · 한 달 예상",
+      "body": {
+        "requests_per_day": 100,
+        "workdays": 22
+      },
+      "expect": {
+        "equals": {
+          "projected_month_usd": 1.4586
+        },
+        "contains": {
+          "by_model": [
+            "\"gpt-4.1-mini\": 0.001944"
+          ]
+        }
+      }
+    },
+    {
+      "name": "작은 모델 몫",
+      "body": {},
+      "expect": {
+        "contains": {
+          "by_model": [
+            "\"gpt-5.4-nano\": 4.5e-05"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예산 남은 금액",
+      "body": {},
+      "expect": {
+        "equals": {
+          "daily_budget_usd": 1.0,
+          "remaining_usd": 0.998011,
+          "over_budget": false
+        }
+      }
+    },
+    {
+      "name": "예산을 넘으면",
+      "body": {},
+      "before": [
+        {
+          "url": "http://localhost:8800/budget",
+          "body": {
+            "daily_usd": 0.001
+          }
+        }
+      ],
+      "expect": {
+        "equals": {
+          "over_budget": true
+        }
+      }
+    }
+  ]
+}

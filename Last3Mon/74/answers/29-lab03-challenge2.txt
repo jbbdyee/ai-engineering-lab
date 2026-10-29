@@ -1,0 +1,317 @@
+$ uv run tools/flow.py push answers/74-lab03-challenge2-gated.json
+! unpublished '74 Release check (answer)' (w50ae3687e1cc859): it used the same webhook path
+✔ pushed '74 Release check + gate record (answer)' (id w9589252e9498695)
+   POST http://localhost:5678/webhook/my-release-check
+
+$ uv run tools/flow.py test cases/lab03-challenge2.json -v
+✔ before: POST http://localhost:8800/gates/helpdesk/clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/gates/helpdesk/clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/releases/helpdesk/reset · HTTP 200 · 0.0s · {"name": "helpdesk", "active": "1.0.0", "canary": null, "require_gate": false, "releases": {"1.0.0": {"prompt_version": 
+    → request  POST http://localhost:8800/releases/helpdesk/reset
+      {}
+    ← response HTTP 200
+      {
+        "name": "helpdesk",
+        "active": "1.0.0",
+        "canary": null,
+        "require_gate": false,
+        "releases": {
+          "1.0.0": {
+            "prompt_version": "p1",
+            "model": "gpt-4.1-mini",
+            "note": "첫 릴리스"
+          },
+          "1.1.0": {
+            "prompt_version": "p2",
+            "model": "gpt-4.1-mini",
+            "note": "FAQ 답 끝에 출처 번호"
+          },
+          "1.2.0": {
+            "prompt_version": "p3",
+            "model": "gpt-4.1-mini",
+            "note": "답을 한 문장으로 짧게"
+          },
+          "2.0.0": {
+            "prompt_version": "p2",
+            "model": "gpt-5.4-nano",
+            "note": "더 작은 모델 (비용)"
+          },
+          "2.1.0": {
+            "prompt_version": "p9",
+            "model": "gpt-4.1-mini",
+            "note": "출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)"
+          }
+        }
+      }
+✔ before: POST http://localhost:8800/releases/helpdesk/policy · HTTP 200 · 0.0s · {"name": "helpdesk", "active": "1.0.0", "canary": null, "require_gate": true, "releases": {"1.0.0": {"prompt_version": "
+    → request  POST http://localhost:8800/releases/helpdesk/policy
+      {
+        "require_gate": true
+      }
+    ← response HTTP 200
+      {
+        "name": "helpdesk",
+        "active": "1.0.0",
+        "canary": null,
+        "require_gate": true,
+        "releases": {
+          "1.0.0": {
+            "prompt_version": "p1",
+            "model": "gpt-4.1-mini",
+            "note": "첫 릴리스"
+          },
+          "1.1.0": {
+            "prompt_version": "p2",
+            "model": "gpt-4.1-mini",
+            "note": "FAQ 답 끝에 출처 번호"
+          },
+          "1.2.0": {
+            "prompt_version": "p3",
+            "model": "gpt-4.1-mini",
+            "note": "답을 한 문장으로 짧게"
+          },
+          "2.0.0": {
+            "prompt_version": "p2",
+            "model": "gpt-5.4-nano",
+            "note": "더 작은 모델 (비용)"
+          },
+          "2.1.0": {
+            "prompt_version": "p9",
+            "model": "gpt-4.1-mini",
+            "note": "출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)"
+          }
+        }
+      }
+POST http://localhost:5678/webhook/my-release-check · 5 case(s) × 1
+✔ 1.2.0 점검 · 기록 · 10.6s
+    → request  POST /webhook/my-release-check
+      {
+        "release": "1.2.0"
+      }
+    ← response HTTP 200
+      {
+        "release": "1.2.0",
+        "passed": 0,
+        "total": 6,
+        "failed": [
+          "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+          "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+          "프린터 출력이 안 돼요",
+          "메일함 용량이 꽉 찼대요",
+          "T-1002 처리 상태 알려 주세요",
+          "T-1001 어떻게 됐나요?"
+        ],
+        "seconds": 9.5,
+        "verdict": "rollback",
+        "recorded": true
+      }
+✔ 1.1.0 점검 · 기록 · 1.9s
+    → request  POST /webhook/my-release-check
+      {
+        "release": "1.1.0"
+      }
+    ← response HTTP 200
+      {
+        "release": "1.1.0",
+        "passed": 6,
+        "total": 6,
+        "failed": [],
+        "seconds": 1.7,
+        "verdict": "promote",
+        "recorded": true
+      }
+✔ before: POST http://localhost:8800/releases/helpdesk · HTTP 409 · 0.0s · {"error": "not gated", "release": "1.2.0", "last_gate": {"t": 1793094252.829, "release": "1.2.0", "verdict": "rollback",
+    → request  POST http://localhost:8800/releases/helpdesk
+      {
+        "active": "1.2.0"
+      }
+    ← response HTTP 409
+      {
+        "error": "not gated",
+        "release": "1.2.0",
+        "last_gate": {
+          "t": 1793094252.829,
+          "release": "1.2.0",
+          "verdict": "rollback",
+          "passed": 0,
+          "total": 6,
+          "failed": [
+            "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+            "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+            "프린터 출력이 안 돼요",
+            "메일함 용량이 꽉 찼대요",
+            "T-1002 처리 상태 알려 주세요",
+            "T-1001 어떻게 됐나요?"
+          ],
+          "seconds": 9.5,
+          "source": "my-release-check"
+        }
+      }
+✔ 점검에 떨어진 1.2.0은 배포 거부 (409) · 운영은 1.0.0 · 7.7s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 문의 건이 없어 추가 지원이 필요하시면 IT 담당자에게 문의해 주십시오.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+✔ before: POST http://localhost:8800/releases/helpdesk · HTTP 200 · 0.0s · {"name": "helpdesk", "active": "1.1.0", "canary": null, "require_gate": true, "releases": {"1.0.0": {"prompt_version": "
+    → request  POST http://localhost:8800/releases/helpdesk
+      {
+        "active": "1.1.0"
+      }
+    ← response HTTP 200
+      {
+        "name": "helpdesk",
+        "active": "1.1.0",
+        "canary": null,
+        "require_gate": true,
+        "releases": {
+          "1.0.0": {
+            "prompt_version": "p1",
+            "model": "gpt-4.1-mini",
+            "note": "첫 릴리스"
+          },
+          "1.1.0": {
+            "prompt_version": "p2",
+            "model": "gpt-4.1-mini",
+            "note": "FAQ 답 끝에 출처 번호"
+          },
+          "1.2.0": {
+            "prompt_version": "p3",
+            "model": "gpt-4.1-mini",
+            "note": "답을 한 문장으로 짧게"
+          },
+          "2.0.0": {
+            "prompt_version": "p2",
+            "model": "gpt-5.4-nano",
+            "note": "더 작은 모델 (비용)"
+          },
+          "2.1.0": {
+            "prompt_version": "p9",
+            "model": "gpt-4.1-mini",
+            "note": "출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)"
+          }
+        }
+      }
+✔ 점검을 지난 1.1.0은 배포 · 1.3s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 추가 도움이 필요하시면 문의해 주세요. [FAQ-003]",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.1.0",
+          "prompt_version": "p2",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+✔ before: POST http://localhost:8800/releases/helpdesk · HTTP 409 · 0.0s · {"error": "not gated", "release": "2.0.0", "last_gate": null}
+    → request  POST http://localhost:8800/releases/helpdesk
+      {
+        "canary": {
+          "release": "2.0.0",
+          "percent": 50
+        }
+      }
+    ← response HTTP 409
+      {
+        "error": "not gated",
+        "release": "2.0.0",
+        "last_gate": null
+      }
+✔ 점검 안 한 2.0.0은 카나리도 거부 (409) · 1.3s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 추가 도움이 필요하면 담당 직원이 도와드리겠습니다. [FAQ-004]",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.1.0",
+          "prompt_version": "p2",
+          "model": "gpt-4.1-mini",
+          "channel": "stable",
+          "prompt_source": "registry"
+        }
+      }
+Passed 5/5
+report: runs/lab03-challenge2-20261027-184425.json
+✔ after: POST http://localhost:8800/releases/helpdesk/reset · HTTP 200 · 0.0s · {"name": "helpdesk", "active": "1.0.0", "canary": null, "require_gate": false, "releases": {"1.0.0": {"prompt_version": 
+    → request  POST http://localhost:8800/releases/helpdesk/reset
+      {}
+    ← response HTTP 200
+      {
+        "name": "helpdesk",
+        "active": "1.0.0",
+        "canary": null,
+        "require_gate": false,
+        "releases": {
+          "1.0.0": {
+            "prompt_version": "p1",
+            "model": "gpt-4.1-mini",
+            "note": "첫 릴리스"
+          },
+          "1.1.0": {
+            "prompt_version": "p2",
+            "model": "gpt-4.1-mini",
+            "note": "FAQ 답 끝에 출처 번호"
+          },
+          "1.2.0": {
+            "prompt_version": "p3",
+            "model": "gpt-4.1-mini",
+            "note": "답을 한 문장으로 짧게"
+          },
+          "2.0.0": {
+            "prompt_version": "p2",
+            "model": "gpt-5.4-nano",
+            "note": "더 작은 모델 (비용)"
+          },
+          "2.1.0": {
+            "prompt_version": "p9",
+            "model": "gpt-4.1-mini",
+            "note": "출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)"
+          }
+        }
+      }
+
+$ uv run tools/flow.py release helpdesk
+✔ helpdesk: active 1.0.0 · no canary
+  * 1.0.0  prompt p1  model gpt-4.1-mini  첫 릴리스
+    1.1.0  prompt p2  model gpt-4.1-mini  FAQ 답 끝에 출처 번호  gate promote 6/6
+    1.2.0  prompt p3  model gpt-4.1-mini  답을 한 문장으로 짧게  gate rollback 0/6
+    2.0.0  prompt p2  model gpt-5.4-nano  더 작은 모델 (비용)
+    2.1.0  prompt p9  model gpt-4.1-mini  출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)

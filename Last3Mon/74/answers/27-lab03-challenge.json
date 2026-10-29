@@ -1,0 +1,68 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-release-check",
+  "passed": 3,
+  "total": 3,
+  "results": [
+    {
+      "case": "1.1.0 · 내보내도 됨",
+      "webhook": "my-release-check",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.1,
+      "status": 200,
+      "request": {
+        "release": "1.1.0"
+      },
+      "response": {
+        "release": "1.1.0",
+        "passed": 6,
+        "total": 6,
+        "failed": [],
+        "seconds": 2,
+        "verdict": "promote"
+      }
+    },
+    {
+      "case": "1.2.0 · 되돌림",
+      "webhook": "my-release-check",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "release": "1.2.0"
+      },
+      "response": {
+        "release": "1.2.0",
+        "passed": 0,
+        "total": 6,
+        "failed": [
+          "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+          "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+          "프린터 출력이 안 돼요",
+          "메일함 용량이 꽉 찼대요",
+          "T-1002 처리 상태 알려 주세요",
+          "T-1001 어떻게 됐나요?"
+        ],
+        "seconds": 1.6,
+        "verdict": "rollback"
+      }
+    },
+    {
+      "case": "릴리스 없음",
+      "webhook": "my-release-check",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {},
+      "response": {
+        "error": "release is required"
+      }
+    }
+  ]
+}

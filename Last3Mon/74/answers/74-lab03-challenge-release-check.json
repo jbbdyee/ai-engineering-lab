@@ -1,0 +1,206 @@
+{
+  "name": "74 Release check (answer)",
+  "nodes": [
+    {
+      "name": "Check webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-release-check",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "32c84fbc-d108-5979-a1bf-a11fb0028d96",
+      "position": [
+        0,
+        300
+      ],
+      "id": "cf6ae2a5-a340-50d9-8826-86dcde970c8a"
+    },
+    {
+      "name": "Has release?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.body.release }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "07285064-a3b8-5605-a6ee-580e64e38fbc"
+    },
+    {
+      "name": "Reject empty",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"release is required\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        560
+      ],
+      "id": "34e77f24-bb35-5cf2-80e3-457681e2bd0e"
+    },
+    {
+      "name": "Golden questions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const release = String($('Check webhook').first().json.body.release);\nconst golden = [\n  { question: 'VPN 접속이 자꾸 끊겨요. 어떻게 하나요?', user: '이준호', expect: ['인증서'] },\n  { question: '비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?', user: '한지훈', expect: ['비밀번호 찾기', '휴대폰'] },\n  { question: '프린터 출력이 안 돼요', user: '최유진', expect: ['대기열', '전원'] },\n  { question: '메일함 용량이 꽉 찼대요', user: '김민지', expect: ['보관함', '삭제'] },\n  { question: 'T-1002 처리 상태 알려 주세요', user: '박서연', expect: ['처리 중'] },\n  { question: 'T-1001 어떻게 됐나요?', user: '이준호', expect: ['처리 완료', '완료'] },\n];\nreturn golden.map((g) => ({ json: { ...g, release, t0: Date.now() } }));"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "9f9a1078-aab9-55d5-ac81-4292f7d22e73"
+    },
+    {
+      "name": "Ask helpdesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://localhost:5678/webhook/my-helpdesk",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ question: $json.question, user: $json.user, release: $json.release }) }}"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "30940a89-e2b9-5153-bb09-9eca37792e8a"
+    },
+    {
+      "name": "Judge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const golden = $('Golden questions').all().map((item) => item.json);\nconst answers = $input.all().map((item) => item.json);\nconst rows = golden.map((g, i) => {\n  const a = answers[i] ?? {};\n  const text = String(a.answer ?? '');\n  const ok = !a.error && g.expect.some((word) => text.includes(word)) && (a.version?.release === g.release);\n  return { question: g.question, ok, release_seen: a.version?.release ?? null };\n});\nconst passed = rows.filter((row) => row.ok).length;\nconst failed = rows.filter((row) => !row.ok).map((row) => row.question);\nconst seconds = Math.round((Date.now() - golden[0].t0) / 100) / 10;\nreturn [{ json: { release: golden[0].release, passed, total: rows.length, failed, seconds,\n  verdict: passed === rows.length ? 'promote' : 'rollback' } }];"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "5cbfc582-550a-5e91-aab4-bf3df3e17fcf"
+    },
+    {
+      "name": "Send verdict",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "f93d3e49-5d3d-5a46-afb6-c694f03e65ee"
+    }
+  ],
+  "connections": {
+    "Check webhook": {
+      "main": [
+        [
+          {
+            "node": "Has release?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has release?": {
+      "main": [
+        [
+          {
+            "node": "Golden questions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Golden questions": {
+      "main": [
+        [
+          {
+            "node": "Ask helpdesk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask helpdesk": {
+      "main": [
+        [
+          {
+            "node": "Judge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Judge": {
+      "main": [
+        [
+          {
+            "node": "Send verdict",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

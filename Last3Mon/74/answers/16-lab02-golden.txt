@@ -1,0 +1,75 @@
+$ uv run tools/flow.py gate cases/golden.json --set release=1.0.0 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 6 case(s) × 1
+✔ VPN · 1.2s
+✔ 비밀번호 · 1.2s
+✔ 프린터 · 1.1s
+✔ 메일함 · 1.3s
+✔ 접수 처리 중 · 1.0s
+✔ 접수 처리 완료 · 1.6s
+Passed 6/6
+report: runs/golden-20261027-183929.json
+gate [release=1.0.0]: pass 6/6 (100%) · p95 1.6s → PASS
+✔ gate record → /gates/helpdesk: 1.0.0 promote
+
+$ uv run tools/flow.py gate cases/golden.json --set release=1.1.0 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 6 case(s) × 1
+✔ VPN · 1.1s
+✔ 비밀번호 · 1.0s
+✔ 프린터 · 1.1s
+✔ 메일함 · 1.1s
+✔ 접수 처리 중 · 1.1s
+✔ 접수 처리 완료 · 1.1s
+Passed 6/6
+report: runs/golden-20261027-183936.json
+gate [release=1.1.0]: pass 6/6 (100%) · p95 1.1s → PASS
+✔ gate record → /gates/helpdesk: 1.1.0 promote
+
+$ uv run tools/flow.py gate cases/golden.json --set release=1.2.0 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 6 case(s) × 1
+✔ VPN · 0.8s
+✔ 비밀번호 · 0.9s
+✔ 프린터 · 0.8s
+✔ 메일함 · 1.0s
+✔ 접수 처리 중 · 1.2s
+✔ 접수 처리 완료 · 1.5s
+Passed 6/6
+report: runs/golden-20261027-183942.json
+gate [release=1.2.0]: pass 6/6 (100%) · p95 1.5s → PASS
+✔ gate record → /gates/helpdesk: 1.2.0 promote
+
+$ uv run tools/flow.py gate cases/golden.json --set release=2.0.0 --max-p95 3
+POST http://localhost:5678/webhook/my-helpdesk · 6 case(s) × 1
+✔ VPN · 1.1s
+✔ 비밀번호 · 1.1s
+✔ 프린터 · 2.0s
+✔ 메일함 · 1.2s
+✔ 접수 처리 중 · 1.0s
+✔ 접수 처리 완료 · 1.2s
+Passed 6/6
+report: runs/golden-20261027-183950.json
+gate [release=2.0.0]: pass 6/6 (100%) · p95 2.0s → PASS
+✔ gate record → /gates/helpdesk: 2.0.0 promote
+
+$ uv run tools/flow.py call my-helpdesk '{"question": "프린터 출력이 안 돼요", "user": "최유진", "release": "1.2.0"}' -v
+HTTP 200 · 0.9s
+    → request  POST /webhook/my-helpdesk
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진",
+        "release": "1.2.0"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "IT 포털에서 프린터 문제 해결 방법을 확인해 주세요.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "version": {
+          "release": "1.2.0",
+          "prompt_version": "p3",
+          "model": "gpt-4.1-mini",
+          "channel": "pinned",
+          "prompt_source": "registry"
+        }
+      }

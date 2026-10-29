@@ -1,0 +1,144 @@
+{
+  "cases": "lab02.json",
+  "webhook": "my-helpdesk",
+  "passed": 1,
+  "total": 5,
+  "results": [
+    {
+      "case": "운영 중인 릴리스 (active)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "version.channel = null (expected stable)"
+      ],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 문의 건은 없습니다만, 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "후보 시험 · 1.1.0 고정",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "version.release = 1.0.0 (expected 1.1.0)",
+        "version.channel = null (expected pinned)",
+        "version.prompt_version = p1 (expected p2)",
+        "answer has none of ['[FAQ-003]']"
+      ],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "1.1.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 문의 건은 없습니다만, 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "후보 시험 · 2.0.0 (작은 모델)",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "version.release = 1.0.0 (expected 2.0.0)",
+        "version.model = gpt-4.1-mini (expected gpt-5.4-nano)"
+      ],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "2.0.0"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "없는 릴리스",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 200 (expected 400)",
+        "known has none of ['1.0.0']"
+      ],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호",
+        "release": "9.9.9"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "version": {
+          "release": "1.0.0",
+          "prompt_version": "p1",
+          "model": "gpt-4.1-mini",
+          "prompt_source": "registry"
+        }
+      }
+    },
+    {
+      "case": "빈 질문",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "question": "",
+        "user": "이준호"
+      },
+      "response": {
+        "error": "question is required"
+      }
+    }
+  ]
+}

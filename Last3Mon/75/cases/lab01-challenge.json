@@ -1,0 +1,72 @@
+{
+  "webhook": "my-cost",
+  "before": [
+    {
+      "url": "http://localhost:8800/usage-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "기록 1 · VPN",
+      "request": "requests/faq-vpn.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "인증서"
+          ]
+        }
+      }
+    },
+    {
+      "name": "기록 2 · 접수",
+      "request": "requests/ticket-own.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "처리 중",
+            "대기 중"
+          ]
+        }
+      }
+    },
+    {
+      "name": "기록 3 · 다른 사람",
+      "request": "requests/faq-password.json",
+      "expect": {
+        "contains": {
+          "answer": [
+            "비밀번호 찾기",
+            "휴대폰"
+          ]
+        }
+      }
+    },
+    {
+      "name": "사용량 요약 · 요청 3건",
+      "url": "http://localhost:8800/usage/summary",
+      "body": {},
+      "expect": {
+        "equals": {
+          "requests": 3
+        },
+        "range": {
+          "cost_usd": [
+            1e-06,
+            0.05
+          ]
+        },
+        "contains": {
+          "by_user": [
+            "이준호",
+            "박서연",
+            "한지훈"
+          ],
+          "by_model": [
+            "gpt-4.1-mini"
+          ]
+        }
+      }
+    }
+  ]
+}
