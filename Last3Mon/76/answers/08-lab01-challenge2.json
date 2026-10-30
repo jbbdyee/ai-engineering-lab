@@ -1,0 +1,231 @@
+{
+  "cases": "lab01-challenge2.json",
+  "webhook": "my-intake",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "같은 id가 두 번이면 두 번째는 거절",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.4,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-401",
+            "user": "김민지",
+            "text": "회의실 화면 공유가 안 돼요"
+          },
+          {
+            "id": "R-401",
+            "user": "김민지",
+            "text": "회의실 화면 공유가 안 돼요"
+          },
+          {
+            "id": "R-402",
+            "user": "최유진",
+            "text": "비밀번호를 바꾸라는 창이 계속 떠요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 2,
+        "failed": 0,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-401",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-402",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "계정",
+            "priority": "보통"
+          },
+          {
+            "id": "R-401",
+            "status": "rejected",
+            "reason": "duplicate id in this request"
+          }
+        ]
+      }
+    },
+    {
+      "case": "11건은 400 (한 번에 10건까지)",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.2,
+      "status": 400,
+      "request": {
+        "requests": [
+          {
+            "id": "R-501",
+            "user": "박서연",
+            "text": "모니터 1번이 켜지지 않아요"
+          },
+          {
+            "id": "R-502",
+            "user": "최유진",
+            "text": "모니터 2번이 켜지지 않아요"
+          },
+          {
+            "id": "R-503",
+            "user": "정우성",
+            "text": "모니터 3번이 켜지지 않아요"
+          },
+          {
+            "id": "R-504",
+            "user": "한지훈",
+            "text": "모니터 4번이 켜지지 않아요"
+          },
+          {
+            "id": "R-505",
+            "user": "김민지",
+            "text": "모니터 5번이 켜지지 않아요"
+          },
+          {
+            "id": "R-506",
+            "user": "이준호",
+            "text": "모니터 6번이 켜지지 않아요"
+          },
+          {
+            "id": "R-507",
+            "user": "박서연",
+            "text": "모니터 7번이 켜지지 않아요"
+          },
+          {
+            "id": "R-508",
+            "user": "최유진",
+            "text": "모니터 8번이 켜지지 않아요"
+          },
+          {
+            "id": "R-509",
+            "user": "정우성",
+            "text": "모니터 9번이 켜지지 않아요"
+          },
+          {
+            "id": "R-510",
+            "user": "한지훈",
+            "text": "모니터 10번이 켜지지 않아요"
+          },
+          {
+            "id": "R-511",
+            "user": "김민지",
+            "text": "모니터 11번이 켜지지 않아요"
+          }
+        ]
+      },
+      "response": {
+        "error": "too many requests (max 10)"
+      }
+    },
+    {
+      "case": "400이면 하나도 만들지 않음",
+      "webhook": "http://localhost:8800/tickets-created/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 2,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-401",
+            "title": "회의실 화면 공유가 안 돼요",
+            "requester": "김민지",
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-402",
+            "title": "비밀번호를 바꾸라는 창이 계속 떠요",
+            "requester": "최유진",
+            "category": "계정",
+            "priority": "보통"
+          }
+        ]
+      }
+    },
+    {
+      "case": "평소 요청은 그대로",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.7,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2004",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2005",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "1 · 평소",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "created": 3
+        }
+      }
+    },
+    {
+      "name": "2 · 장애 시작 · API 오류",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "failed": 2,
+          "created": 0
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 · DLQ 확인",
+      "url": "http://localhost:8800/dlq/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 2
+        }
+      }
+    },
+    {
+      "name": "4 · 보고서 작업도 실패",
+      "webhook": "nightly-report",
+      "body": {},
+      "expect": {
+        "status": 500
+      }
+    },
+    {
+      "name": "5 · 알림 확인",
+      "url": "http://localhost:8800/alerts/latest",
+      "body": {},
+      "expect": {
+        "equals": {
+          "severity": "critical"
+        }
+      },
+      "before": [
+        {
+          "sleep": 3
+        }
+      ]
+    },
+    {
+      "name": "6 · 고친 뒤 재처리",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "ok": 2
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7 · 결과 확인 · 중복 없이 5건",
+      "url": "http://localhost:8800/tickets-created/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 5
+        }
+      }
+    }
+  ]
+}

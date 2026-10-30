@@ -1,0 +1,146 @@
+{
+  "webhook": "my-ops-status",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "1 · 아무 일 없음 → ok",
+      "body": {},
+      "expect": {
+        "equals": {
+          "status": "ok",
+          "dlq": 0
+        }
+      }
+    },
+    {
+      "name": "2 · (접수 실패 2건)",
+      "webhook": "my-intake",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "failed": 2
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 · DLQ가 있으면 warn",
+      "body": {},
+      "expect": {
+        "equals": {
+          "status": "warn",
+          "dlq": 2
+        },
+        "contains": {
+          "reasons": [
+            "재처리"
+          ]
+        }
+      }
+    },
+    {
+      "name": "4 · (보고서 버그)",
+      "webhook": "nightly-report",
+      "body": {},
+      "expect": {
+        "status": 500
+      }
+    },
+    {
+      "name": "5 · critical 알림이 있으면 critical",
+      "body": {},
+      "expect": {
+        "equals": {
+          "status": "critical",
+          "alerts.critical": 1
+        }
+      },
+      "before": [
+        {
+          "sleep": 3
+        }
+      ]
+    },
+    {
+      "name": "6 · (재처리 · 알림 확인 뒤 비움)",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "ok": 2
+        }
+      },
+      "after": [
+        {
+          "url": "http://localhost:8800/alerts-clear",
+          "body": {}
+        }
+      ]
+    },
+    {
+      "name": "7 · 고친 뒤 → ok",
+      "body": {},
+      "expect": {
+        "equals": {
+          "status": "ok",
+          "dlq": 0,
+          "created": 2
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "같은 id가 두 번이면 두 번째는 거절",
+      "request": "requests/batch-dup-id.json",
+      "expect": {
+        "equals": {
+          "created": 2,
+          "rejected": 1,
+          "duplicates": 0
+        },
+        "contains": {
+          "results": [
+            "duplicate id"
+          ]
+        }
+      }
+    },
+    {
+      "name": "11건은 400 (한 번에 10건까지)",
+      "request": "requests/batch-eleven.json",
+      "expect": {
+        "status": 400,
+        "contains": {
+          "error": [
+            "too many"
+          ]
+        }
+      }
+    },
+    {
+      "name": "400이면 하나도 만들지 않음",
+      "url": "http://localhost:8800/tickets-created/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "평소 요청은 그대로",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "created": 3,
+          "rejected": 0
+        }
+      }
+    }
+  ]
+}

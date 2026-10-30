@@ -1,0 +1,405 @@
+$ uv run tools/flow.py test cases/lab02-challenge2.json -v
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/tickets-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 2}
+    → request  POST http://localhost:8800/dlq-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 2
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 2}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 2
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-intake · 6 case(s) × 1
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "tickets": "error"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "error",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ 첫 실패 → 알림 보냄 · 2.9s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+✘ 10분 안에 또 실패 → 보내지 않음 · 3.7s · alert = sent (expected suppressed)
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 0,
+        "failed": 3,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-102",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-103",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+✘ dlq 알림은 1개 · 0.0s · count = 2 (expected 1)
+    → request  POST http://localhost:8800/alerts/list
+      {
+        "reason": "dlq"
+      }
+    ← response HTTP 200
+      {
+        "count": 2,
+        "alerts": [
+          {
+            "workflow": "intake",
+            "node": "Send to DLQ",
+            "severity": "high",
+            "reason": "dlq",
+            "count": 2,
+            "message": "2 request(s) could not be created and wait in the DLQ",
+            "execution_id": "10131",
+            "at": 1793250991.527381
+          },
+          {
+            "workflow": "intake",
+            "node": "Send to DLQ",
+            "severity": "high",
+            "reason": "dlq",
+            "count": 3,
+            "message": "3 request(s) could not be created and wait in the DLQ",
+            "execution_id": "10132",
+            "at": 1793250995.206434
+          }
+        ]
+      }
+✔ 그래도 DLQ에는 5건 모두 · 0.0s
+    → request  POST http://localhost:8800/dlq/list
+      {}
+    ← response HTTP 200
+      {
+        "size": 5,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250991.5196192
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250991.5196211
+          },
+          {
+            "dlq_id": "D-3",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-101",
+              "user": "이준호",
+              "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250995.1972318
+          },
+          {
+            "dlq_id": "D-4",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-102",
+              "user": "박서연",
+              "text": "새 모니터를 하나 더 받을 수 있을까요?"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250995.1972342
+          },
+          {
+            "dlq_id": "D-5",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-103",
+              "user": "최유진",
+              "text": "엑셀 라이선스가 만료됐다고 나와요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250995.1972353
+          }
+        ]
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "error", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "tickets": "error",
+        "dlq": "error"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "error",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "error",
+        "slow_seconds": 8
+      }
+✔ DLQ가 멈춘 것은 늘 보냄 (critical) · 2.5s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-201",
+            "user": "한지훈",
+            "text": "프린터 용지가 걸려요"
+          },
+          {
+            "id": "R-202",
+            "user": "한지훈",
+            "text": ""
+          },
+          {
+            "id": "R-203",
+            "user": "김민지",
+            "text": "메일 첨부가 안 열려요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 0,
+        "failed": 2,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-201",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-203",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-202",
+            "status": "rejected",
+            "reason": "text is required"
+          }
+        ],
+        "dlq_saved": false,
+        "alert": "sent"
+      }
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ 고친 뒤 · 실패 없음 · 알림 없음 · 2.0s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-401",
+            "user": "김민지",
+            "text": "회의실 화면 공유가 안 돼요"
+          },
+          {
+            "id": "R-401",
+            "user": "김민지",
+            "text": "회의실 화면 공유가 안 돼요"
+          },
+          {
+            "id": "R-402",
+            "user": "최유진",
+            "text": "비밀번호를 바꾸라는 창이 계속 떠요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 2,
+        "failed": 0,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-401",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-402",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "계정",
+            "priority": "보통"
+          },
+          {
+            "id": "R-401",
+            "status": "rejected",
+            "reason": "duplicate id in this request"
+          }
+        ],
+        "alert": "none"
+      }
+Passed 4/6
+report: runs/lab02-challenge2-20261029-141639.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }

@@ -1,0 +1,244 @@
+$ uv run tools/flow.py push answers/76-lab01-challenge-fallback.json
+! unpublished '76 Intake · retry and idempotency key (reference, Lab 01 example 2)' (w8399f905b79a073): it used the same webhook path
+✔ pushed '76 Intake · LLM fallback (answer, Lab 01 task 1)' (id w0f5e1ef11aa4c14)
+   POST http://localhost:5678/webhook/my-intake
+
+$ uv run tools/flow.py test cases/lab01-challenge.json -v
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 2}
+    → request  POST http://localhost:8800/tickets-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 2
+      }
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/dlq-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-intake · 3 case(s) × 1
+✔ 평소에는 분류됨 · 3.5s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 2,
+        "created": 2,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "계정",
+            "priority": "높음"
+          },
+          {
+            "id": "R-302",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          }
+        ]
+      }
+    $ bash 65/n8n/register-credentials.sh → exit 0
+      Successfully imported 2 credentials.
+      Registered 'OpenAI (.env)' and 'Ollama local' from /Users/[USER]/work/AIO-01D4/Last3Mon/.env
+✔ OpenAI credential: broken key (drill). Restore with: uv run tools/flow.py llm up
+✔ LLM이 멈추면 미분류로 접수 · 0.9s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 3,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": false,
+            "category": "미분류",
+            "priority": "보통"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2005",
+            "duplicate": false,
+            "category": "미분류",
+            "priority": "보통"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2004",
+            "duplicate": false,
+            "category": "미분류",
+            "priority": "보통"
+          }
+        ]
+      }
+    $ bash 65/n8n/register-credentials.sh → exit 0
+      Successfully imported 2 credentials.
+      Registered 'OpenAI (.env)' and 'Ollama local' from /Users/[USER]/work/AIO-01D4/Last3Mon/.env
+✔ OpenAI credential: real key from .env restored
+✔ 미분류도 접수 건으로 · 0.0s
+    → request  POST http://localhost:8800/tickets-created/list
+      {}
+    ← response HTTP 200
+      {
+        "count": 5,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-301",
+            "title": "사내 위키 로그인이 안 돼요",
+            "requester": "정우성",
+            "category": "계정",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-302",
+            "title": "노트북 배터리가 금방 닳아요",
+            "requester": "이준호",
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2003",
+            "key": "R-101",
+            "title": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요",
+            "requester": "이준호",
+            "category": "미분류",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2004",
+            "key": "R-103",
+            "title": "엑셀 라이선스가 만료됐다고 나와요",
+            "requester": "최유진",
+            "category": "미분류",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2005",
+            "key": "R-102",
+            "title": "새 모니터를 하나 더 받을 수 있을까요?",
+            "requester": "박서연",
+            "category": "미분류",
+            "priority": "보통"
+          }
+        ]
+      }
+Passed 3/3
+report: runs/lab01-challenge-20261029-141310.json
+    $ bash 65/n8n/register-credentials.sh → exit 0
+      Successfully imported 2 credentials.
+      Registered 'OpenAI (.env)' and 'Ollama local' from /Users/[USER]/work/AIO-01D4/Last3Mon/.env
+✔ OpenAI credential: real key from .env restored
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+
+$ uv run tools/flow.py test cases/lab01.json
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 5}
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 0}
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+POST http://localhost:5678/webhook/my-intake · 6 case(s) × 1
+✔ 정상 3건 · 3.1s
+✔ 같은 요청을 다시 보내도 중복 없음 · 3.1s
+✔ 만들어진 접수 건은 3개 · 0.0s
+✔ 잘못된 항목은 그 항목만 거절 · 1.8s
+✔ 목록이 아니면 400 · 0.0s
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "flaky", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+✔ 가끔 실패하는 API · 다시 해 보기로 성공 · 2.4s
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+Passed 6/6
+report: runs/lab01-20261029-141323.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}

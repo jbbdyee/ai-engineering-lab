@@ -1,0 +1,221 @@
+{
+  "name": "76 Intake baseline (provided)",
+  "nodes": [
+    {
+      "name": "Intake webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "base-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "edb7dfdf-1a51-539f-8d5c-3c4020d1591e",
+      "position": [
+        0,
+        300
+      ],
+      "id": "6d720b12-5983-53de-b5bb-adccbf9de50e"
+    },
+    {
+      "name": "One item per request",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "parameters": {
+        "fieldToSplitOut": "body.requests",
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "38e4b8e8-57ef-58c3-970c-1db6fbb0945a"
+    },
+    {
+      "name": "Classify",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You sort one employee IT request. Return only JSON, no code fence: {\"category\": \"계정\" | \"네트워크\" | \"장비\" | \"소프트웨어\" | \"기타\", \"priority\": \"높음\" | \"보통\" | \"낮음\"}. 높음 only when work is blocked now.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "e4773f33-6534-57b1-b8a1-c18cab698b48"
+    },
+    {
+      "name": "Classify model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        440,
+        520
+      ],
+      "id": "c568219f-c8be-59b4-a28c-c4689db2ab9e"
+    },
+    {
+      "name": "Parse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return $input.all().map((item, i) => {\n  const req = $('One item per request').all()[i].json;\n  let c = {};\n  try { c = JSON.parse(String(item.json.output ?? '').replace(/^```(json)?\\s*|```$/g, '')); } catch (e) { c = {}; }\n  return { json: { ...req, category: c.category ?? '기타', priority: c.priority ?? '보통' } };\n});"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "5ee2e1dc-dc92-5494-a906-04dbeae4e76b"
+    },
+    {
+      "name": "Create ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/tickets",
+        "options": {},
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ key: $execution.id + '-' + $itemIndex, title: $json.text, requester: $json.user, category: $json.category, priority: $json.priority }) }}"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "9bd6683a-c105-52e2-902a-3d1e8c09bd4a"
+    },
+    {
+      "name": "Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const tickets = $input.all().map((item) => item.json.ticket_id);\nreturn [{ json: { processed: tickets.length, tickets } }];"
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "d43029f1-3966-577d-87d6-b5152e764748"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "f423ab4b-e044-53bf-90d2-d7158256525e"
+    }
+  ],
+  "connections": {
+    "Classify model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intake webhook": {
+      "main": [
+        [
+          {
+            "node": "One item per request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per request": {
+      "main": [
+        [
+          {
+            "node": "Classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify": {
+      "main": [
+        [
+          {
+            "node": "Parse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse": {
+      "main": [
+        [
+          {
+            "node": "Create ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create ticket": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

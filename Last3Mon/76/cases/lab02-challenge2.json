@@ -1,0 +1,132 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "첫 실패 → 알림 보냄",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "failed": 2,
+          "alert": "sent"
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10분 안에 또 실패 → 보내지 않음",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "failed": 3,
+          "alert": "suppressed"
+        }
+      }
+    },
+    {
+      "name": "dlq 알림은 1개",
+      "url": "http://localhost:8800/alerts/list",
+      "body": {
+        "reason": "dlq"
+      },
+      "expect": {
+        "equals": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "그래도 DLQ에는 5건 모두",
+      "url": "http://localhost:8800/dlq/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 5
+        }
+      }
+    },
+    {
+      "name": "DLQ가 멈춘 것은 늘 보냄 (critical)",
+      "request": "requests/batch-bad-item.json",
+      "expect": {
+        "equals": {
+          "dlq_saved": false,
+          "alert": "sent"
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error",
+            "dlq": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "고친 뒤 · 실패 없음 · 알림 없음",
+      "request": "requests/batch-dup-id.json",
+      "expect": {
+        "equals": {
+          "failed": 0,
+          "alert": "none"
+        }
+      }
+    }
+  ]
+}

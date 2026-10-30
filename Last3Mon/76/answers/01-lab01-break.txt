@@ -1,0 +1,64 @@
+$ uv run tools/flow.py ops --reset
+✔ created tickets, DLQ and alerts emptied, fault switch all ok
+
+$ uv run tools/flow.py call base-intake requests/batch-ok.json
+HTTP 200 · 5.2s
+{
+  "processed": 3,
+  "tickets": [
+    "T-2001",
+    "T-2002",
+    "T-2003"
+  ]
+}
+
+$ uv run tools/flow.py call base-intake requests/batch-bad-item.json
+HTTP 500 · 3.2s
+{
+  "message": "Error in workflow"
+}
+
+$ uv run tools/flow.py ops
+fault switch: all ok
+created tickets: 5
+  T-2001  key 10057-0  네트워크/높음  VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있
+  T-2002  key 10057-1  장비/낮음  새 모니터를 하나 더 받을 수 있을까요?
+  T-2003  key 10057-2  소프트웨어/높음  엑셀 라이선스가 만료됐다고 나와요
+  T-2004  key 10058-0  장비/보통  프린터 용지가 걸려요
+  T-2005  key 10058-2  소프트웨어/보통  메일 첨부가 안 열려요
+DLQ: 0 (parked 0)
+alerts: 0
+
+$ uv run tools/flow.py fault tickets flaky
+✔ fault switch: {"faq": "ok", "tickets": "flaky", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+
+$ uv run tools/flow.py call base-intake requests/batch-two.json
+HTTP 500 · 2.5s
+{
+  "message": "Error in workflow"
+}
+
+$ uv run tools/flow.py fault tickets ok
+✔ fault switch: {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+
+$ uv run tools/flow.py call base-intake requests/batch-ok.json
+HTTP 200 · 3.0s
+{
+  "processed": 3,
+  "tickets": [
+    "T-2006",
+    "T-2008",
+    "T-2007"
+  ]
+}
+
+$ uv run tools/flow.py ops
+fault switch: all ok
+created tickets: 8
+  T-2004  key 10058-0  장비/보통  프린터 용지가 걸려요
+  T-2005  key 10058-2  소프트웨어/보통  메일 첨부가 안 열려요
+  T-2006  key 10060-0  네트워크/높음  VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있
+  T-2007  key 10060-2  소프트웨어/높음  엑셀 라이선스가 만료됐다고 나와요
+  T-2008  key 10060-1  장비/낮음  새 모니터를 하나 더 받을 수 있을까요?
+DLQ: 0 (parked 0)
+alerts: 0

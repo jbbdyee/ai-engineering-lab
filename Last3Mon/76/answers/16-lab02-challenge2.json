@@ -1,0 +1,331 @@
+{
+  "cases": "lab02-challenge2.json",
+  "webhook": "my-intake",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "case": "첫 실패 → 알림 보냄",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.5,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "10분 안에 또 실패 → 보내지 않음",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.7,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 0,
+        "failed": 3,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-102",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-103",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "suppressed"
+      }
+    },
+    {
+      "case": "dlq 알림은 1개",
+      "webhook": "http://localhost:8800/alerts/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "reason": "dlq"
+      },
+      "response": {
+        "count": 1,
+        "alerts": [
+          {
+            "workflow": "intake",
+            "node": "Send to DLQ",
+            "severity": "high",
+            "reason": "dlq",
+            "count": 2,
+            "message": "2 request(s) could not be created and wait in the DLQ",
+            "execution_id": "10135",
+            "at": 1793251017.2530532
+          }
+        ]
+      }
+    },
+    {
+      "case": "그래도 DLQ에는 5건 모두",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 5,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251017.2315063
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251017.2315085
+          },
+          {
+            "dlq_id": "D-3",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-101",
+              "user": "이준호",
+              "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251020.9757996
+          },
+          {
+            "dlq_id": "D-4",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-102",
+              "user": "박서연",
+              "text": "새 모니터를 하나 더 받을 수 있을까요?"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251020.9758017
+          },
+          {
+            "dlq_id": "D-5",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-103",
+              "user": "최유진",
+              "text": "엑셀 라이선스가 만료됐다고 나와요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251020.975803
+          }
+        ]
+      }
+    },
+    {
+      "case": "DLQ가 멈춘 것은 늘 보냄 (critical)",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.4,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-201",
+            "user": "한지훈",
+            "text": "프린터 용지가 걸려요"
+          },
+          {
+            "id": "R-202",
+            "user": "한지훈",
+            "text": ""
+          },
+          {
+            "id": "R-203",
+            "user": "김민지",
+            "text": "메일 첨부가 안 열려요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 0,
+        "failed": 2,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-201",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-203",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-202",
+            "status": "rejected",
+            "reason": "text is required"
+          }
+        ],
+        "dlq_saved": false,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "고친 뒤 · 실패 없음 · 알림 없음",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.8,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-401",
+            "user": "김민지",
+            "text": "회의실 화면 공유가 안 돼요"
+          },
+          {
+            "id": "R-401",
+            "user": "김민지",
+            "text": "회의실 화면 공유가 안 돼요"
+          },
+          {
+            "id": "R-402",
+            "user": "최유진",
+            "text": "비밀번호를 바꾸라는 창이 계속 떠요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 2,
+        "failed": 0,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-401",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "보통"
+          },
+          {
+            "id": "R-402",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "계정",
+            "priority": "보통"
+          },
+          {
+            "id": "R-401",
+            "status": "rejected",
+            "reason": "duplicate id in this request"
+          }
+        ],
+        "alert": "none"
+      }
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "cases": "lab02-challenge2.json",
+  "webhook": "my-cost",
+  "passed": 0,
+  "total": 4,
+  "results": [
+    {
+      "case": "긴 로그 + 끝에 질문 · 프린터",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "trimmed = null (expected true)",
+        "cost_usd = 0.001196 (expected 1e-06..0.0003)"
+      ],
+      "seconds": 1.3,
+      "status": 200,
+      "request": {
+        "question": "아래는 프린터 로그를 그대로 붙인 것입니다.\n2026-10-29 09:10:05 spooler[2231]: job 4100 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:10:35 spooler[2231]: job 4101 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:11:05 spooler[2231]: job 4102 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:11:35 spooler[2231]: job 4103 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:12:05 spooler[2231]: job 4104 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:12:35 spooler[2231]: job 4105 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:13:05 spooler[2231]: job 4106 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:13:35 spooler[2231]: job 4107 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:14:05 spooler[2231]: job 4108 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:14:35 spooler[2231]: job 4109 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:15:05 spooler[2231]: job 4110 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:15:35 spooler[2231]: job 4111 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:16:05 spooler[2231]: job 4112 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:16:35 spooler[2231]: job 4113 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:17:05 spooler[2231]: job 4114 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:17:35 spooler[2231]: job 4115 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:18:05 spooler[2231]: job 4116 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:18:35 spooler[2231]: job 4117 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:19:05 spooler[2231]: job 4118 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:19:35 spooler[2231]: job 4119 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:20:05 spooler[2231]: job 4120 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:20:35 spooler[2231]: job 4121 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:21:05 spooler[2231]: job 4122 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:21:35 spooler[2231]: job 4123 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:22:05 spooler[2231]: job 4124 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:22:35 spooler[2231]: job 4125 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:23:05 spooler[2231]: job 4126 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:23:35 spooler[2231]: job 4127 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:24:05 spooler[2231]: job 4128 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:24:35 spooler[2231]: job 4129 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:25:05 spooler[2231]: job 4130 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:25:35 spooler[2231]: job 4131 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:26:05 spooler[2231]: job 4132 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:26:35 spooler[2231]: job 4133 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:27:05 spooler[2231]: job 4134 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:27:35 spooler[2231]: job 4135 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:28:05 spooler[2231]: job 4136 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:28:35 spooler[2231]: job 4137 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:29:05 spooler[2231]: job 4138 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:29:35 spooler[2231]: job 4139 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:30:05 spooler[2231]: job 4140 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:30:35 spooler[2231]: job 4141 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:31:05 spooler[2231]: job 4142 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:31:35 spooler[2231]: job 4143 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:32:05 spooler[2231]: job 4144 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:32:35 spooler[2231]: job 4145 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:33:05 spooler[2231]: job 4146 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:33:35 spooler[2231]: job 4147 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:34:05 spooler[2231]: job 4148 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:34:35 spooler[2231]: job 4149 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:35:05 spooler[2231]: job 4150 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:35:35 spooler[2231]: job 4151 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:36:05 spooler[2231]: job 4152 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:36:35 spooler[2231]: job 4153 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:37:05 spooler[2231]: job 4154 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:37:35 spooler[2231]: job 4155 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:38:05 spooler[2231]: job 4156 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:38:35 spooler[2231]: job 4157 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:39:05 spooler[2231]: job 4158 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:39:35 spooler[2231]: job 4159 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n로그는 이렇습니다. 프린터 출력이 안 돼요. 어떻게 하나요?",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 먼저 확인하시고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 현재 접수된 티켓은 없으며, 추가 도움이 필요하시면 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 2766,
+          "completion_tokens": 56,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 2766,
+              "completion_tokens": 56,
+              "cost_usd": 0.001196
+            }
+          }
+        },
+        "cost_usd": 0.001196,
+        "recorded": true
+      }
+    },
+    {
+      "case": "앞에 질문 + 긴 로그 · VPN",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "trimmed = null (expected true)",
+        "cost_usd = 0.0010992 (expected 1e-06..0.0003)"
+      ],
+      "seconds": 1.4,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요? 아래는 접속 프로그램 로그입니다.\n2026-10-29 08:10:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=40 state=reconnecting\n2026-10-29 08:10:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=41 state=reconnecting\n2026-10-29 08:11:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=42 state=reconnecting\n2026-10-29 08:11:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=43 state=reconnecting\n2026-10-29 08:12:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=44 state=reconnecting\n2026-10-29 08:12:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=45 state=reconnecting\n2026-10-29 08:13:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=46 state=reconnecting\n2026-10-29 08:13:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=47 state=reconnecting\n2026-10-29 08:14:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=48 state=reconnecting\n2026-10-29 08:14:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=49 state=reconnecting\n2026-10-29 08:15:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=50 state=reconnecting\n2026-10-29 08:15:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=51 state=reconnecting\n2026-10-29 08:16:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=52 state=reconnecting\n2026-10-29 08:16:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=53 state=reconnecting\n2026-10-29 08:17:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=54 state=reconnecting\n2026-10-29 08:17:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=55 state=reconnecting\n2026-10-29 08:18:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=56 state=reconnecting\n2026-10-29 08:18:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=57 state=reconnecting\n2026-10-29 08:19:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=58 state=reconnecting\n2026-10-29 08:19:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=59 state=reconnecting\n2026-10-29 08:20:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=60 state=reconnecting\n2026-10-29 08:20:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=61 state=reconnecting\n2026-10-29 08:21:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=62 state=reconnecting\n2026-10-29 08:21:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=63 state=reconnecting\n2026-10-29 08:22:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=64 state=reconnecting\n2026-10-29 08:22:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=65 state=reconnecting\n2026-10-29 08:23:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=66 state=reconnecting\n2026-10-29 08:23:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=67 state=reconnecting\n2026-10-29 08:24:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=68 state=reconnecting\n2026-10-29 08:24:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=69 state=reconnecting\n2026-10-29 08:25:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=40 state=reconnecting\n2026-10-29 08:25:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=41 state=reconnecting\n2026-10-29 08:26:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=42 state=reconnecting\n2026-10-29 08:26:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=43 state=reconnecting\n2026-10-29 08:27:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=44 state=reconnecting\n2026-10-29 08:27:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=45 state=reconnecting\n2026-10-29 08:28:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=46 state=reconnecting\n2026-10-29 08:28:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=47 state=reconnecting\n2026-10-29 08:29:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=48 state=reconnecting\n2026-10-29 08:29:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=49 state=reconnecting\n2026-10-29 08:30:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=50 state=reconnecting\n2026-10-29 08:30:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=51 state=reconnecting\n2026-10-29 08:31:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=52 state=reconnecting\n2026-10-29 08:31:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=53 state=reconnecting\n2026-10-29 08:32:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=54 state=reconnecting\n2026-10-29 08:32:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=55 state=reconnecting\n2026-10-29 08:33:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=56 state=reconnecting\n2026-10-29 08:33:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=57 state=reconnecting\n2026-10-29 08:34:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=58 state=reconnecting\n2026-10-29 08:34:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=59 state=reconnecting\n2026-10-29 08:35:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=60 state=reconnecting\n2026-10-29 08:35:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=61 state=reconnecting\n2026-10-29 08:36:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=62 state=reconnecting\n2026-10-29 08:36:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=63 state=reconnecting\n2026-10-29 08:37:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=64 state=reconnecting\n2026-10-29 08:37:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=0 rtt_ms=65 state=reconnecting\n2026-10-29 08:38:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=1 rtt_ms=66 state=reconnecting\n2026-10-29 08:38:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=2 rtt_ms=67 state=reconnecting\n2026-10-29 08:39:10 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=3 rtt_ms=68 state=reconnecting\n2026-10-29 08:39:40 vpnclient[812]: tunnel=corp-gw-2 keepalive missed=4 rtt_ms=69 state=reconnecting",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 티켓이 없어 별도의 상태 안내는 어렵습니다. 추가 도움이 필요하시면 IT 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003",
+          "FAQ-006"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 2496,
+          "completion_tokens": 63,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 2496,
+              "completion_tokens": 63,
+              "cost_usd": 0.0010992
+            }
+          }
+        },
+        "cost_usd": 0.0010992,
+        "recorded": true
+      }
+    },
+    {
+      "case": "짧은 질문은 그대로",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "trimmed = null (expected false)",
+        "question_chars = null (expected 24)"
+      ],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 티켓은 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 165,
+          "completion_tokens": 56,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 165,
+              "completion_tokens": 56,
+              "cost_usd": 0.0001556
+            }
+          }
+        },
+        "cost_usd": 0.0001556,
+        "recorded": true
+      }
+    },
+    {
+      "case": "사람이 한도를 늘리면 자르지 않음",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "trimmed = null (expected false)"
+      ],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "아래는 프린터 로그를 그대로 붙인 것입니다.\n2026-10-29 09:10:05 spooler[2231]: job 4100 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:10:35 spooler[2231]: job 4101 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:11:05 spooler[2231]: job 4102 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:11:35 spooler[2231]: job 4103 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:12:05 spooler[2231]: job 4104 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:12:35 spooler[2231]: job 4105 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:13:05 spooler[2231]: job 4106 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:13:35 spooler[2231]: job 4107 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:14:05 spooler[2231]: job 4108 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:14:35 spooler[2231]: job 4109 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:15:05 spooler[2231]: job 4110 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:15:35 spooler[2231]: job 4111 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:16:05 spooler[2231]: job 4112 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:16:35 spooler[2231]: job 4113 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:17:05 spooler[2231]: job 4114 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:17:35 spooler[2231]: job 4115 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:18:05 spooler[2231]: job 4116 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:18:35 spooler[2231]: job 4117 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:19:05 spooler[2231]: job 4118 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:19:35 spooler[2231]: job 4119 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:20:05 spooler[2231]: job 4120 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:20:35 spooler[2231]: job 4121 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:21:05 spooler[2231]: job 4122 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:21:35 spooler[2231]: job 4123 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:22:05 spooler[2231]: job 4124 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:22:35 spooler[2231]: job 4125 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:23:05 spooler[2231]: job 4126 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:23:35 spooler[2231]: job 4127 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:24:05 spooler[2231]: job 4128 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:24:35 spooler[2231]: job 4129 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:25:05 spooler[2231]: job 4130 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:25:35 spooler[2231]: job 4131 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:26:05 spooler[2231]: job 4132 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:26:35 spooler[2231]: job 4133 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:27:05 spooler[2231]: job 4134 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:27:35 spooler[2231]: job 4135 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:28:05 spooler[2231]: job 4136 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:28:35 spooler[2231]: job 4137 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:29:05 spooler[2231]: job 4138 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:29:35 spooler[2231]: job 4139 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:30:05 spooler[2231]: job 4140 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:30:35 spooler[2231]: job 4141 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:31:05 spooler[2231]: job 4142 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:31:35 spooler[2231]: job 4143 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:32:05 spooler[2231]: job 4144 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:32:35 spooler[2231]: job 4145 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:33:05 spooler[2231]: job 4146 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:33:35 spooler[2231]: job 4147 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:34:05 spooler[2231]: job 4148 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:34:35 spooler[2231]: job 4149 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:35:05 spooler[2231]: job 4150 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:35:35 spooler[2231]: job 4151 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:36:05 spooler[2231]: job 4152 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:36:35 spooler[2231]: job 4153 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:37:05 spooler[2231]: job 4154 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:37:35 spooler[2231]: job 4155 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n2026-10-29 09:38:05 spooler[2231]: job 4156 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=0\n2026-10-29 09:38:35 spooler[2231]: job 4157 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=1\n2026-10-29 09:39:05 spooler[2231]: job 4158 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=2\n2026-10-29 09:39:35 spooler[2231]: job 4159 state=held queue=FL3-PRN-01 reason=paused-by-driver retry=3\n로그는 이렇습니다. 프린터 출력이 안 돼요. 어떻게 하나요?",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 먼저 확인하시고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 현재 접수된 티켓은 없으며, 추가 도움이 필요하시면 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 2766,
+          "completion_tokens": 56,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 2766,
+              "completion_tokens": 56,
+              "cost_usd": 0.001196
+            }
+          }
+        },
+        "cost_usd": 0.001196,
+        "recorded": true
+      }
+    }
+  ]
+}

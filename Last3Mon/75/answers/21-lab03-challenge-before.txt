@@ -1,0 +1,162 @@
+$ uv run tools/flow.py off my-cost-report
+✔ unpublished my-cost-report (id wc7211a27bb523f0)
+✔ n8n restarted. Turn it back on with: uv run tools/flow.py push <the workflow file>
+
+$ uv run tools/flow.py test cases/lab03-challenge.json -v
+✔ before: POST http://localhost:8800/usage-clear · HTTP 200 · 0.0s · {"cleared": 8}
+    → request  POST http://localhost:8800/usage-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 8
+      }
+✔ before: POST http://localhost:8800/budget/reset · HTTP 200 · 0.0s · {"daily_usd": 1.0, "user_limit_per_min": 20, "max_question_chars": 500, "used_usd": 0, "remaining_usd": 1.0, "over": fal
+    → request  POST http://localhost:8800/budget/reset
+      {}
+    ← response HTTP 200
+      {
+        "daily_usd": 1.0,
+        "user_limit_per_min": 20,
+        "max_question_chars": 500,
+        "used_usd": 0,
+        "remaining_usd": 1.0,
+        "over": false
+      }
+✔ before: POST http://localhost:8800/usage · HTTP 200 · 0.0s · {"stored": 4, "total": 4}
+    → request  POST http://localhost:8800/usage
+      {
+        "items": [
+          {
+            "request_id": "r1",
+            "user": "이준호",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 1000,
+            "completion_tokens": 100,
+            "cost_usd": 0.00056,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r1",
+            "user": "이준호",
+            "step": "classify",
+            "model": "gpt-5.4-nano",
+            "prompt_tokens": 100,
+            "completion_tokens": 20,
+            "cost_usd": 4.5e-05,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r2",
+            "user": "박서연",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 2000,
+            "completion_tokens": 200,
+            "cost_usd": 0.00112,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r3",
+            "user": "이준호",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 500,
+            "completion_tokens": 40,
+            "cost_usd": 0.000264,
+            "route": "자동 답변"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "stored": 4,
+        "total": 4
+      }
+POST http://localhost:5678/webhook/my-cost-report · 5 case(s) × 1
+✘ 요약 숫자 · 0.0s · status 404 (expected 200); requests = null (expected 3); calls = null (expected 4); cost_usd = null (expected 0.001989); avg_usd = null (expected 0.000663); top_user = null (expected 박서연)
+    → request  POST /webhook/my-cost-report
+      {
+        "requests_per_day": 100,
+        "workdays": 22
+      }
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+✘ 모델별 · 한 달 예상 · 0.0s · status 404 (expected 200); projected_month_usd = null (expected 1.4586); by_model has none of ['"gpt-4.1-mini": 0.001944']
+    → request  POST /webhook/my-cost-report
+      {
+        "requests_per_day": 100,
+        "workdays": 22
+      }
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+✘ 작은 모델 몫 · 0.0s · status 404 (expected 200); by_model has none of ['"gpt-5.4-nano": 4.5e-05']
+    → request  POST /webhook/my-cost-report
+      {}
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+✘ 예산 남은 금액 · 0.0s · status 404 (expected 200); daily_budget_usd = null (expected 1.0); remaining_usd = null (expected 0.998011); over_budget = null (expected false)
+    → request  POST /webhook/my-cost-report
+      {}
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+✔ before: POST http://localhost:8800/budget · HTTP 200 · 0.0s · {"daily_usd": 0.001, "user_limit_per_min": 20, "max_question_chars": 500, "used_usd": 0.001989, "remaining_usd": -0.0009
+    → request  POST http://localhost:8800/budget
+      {
+        "daily_usd": 0.001
+      }
+    ← response HTTP 200
+      {
+        "daily_usd": 0.001,
+        "user_limit_per_min": 20,
+        "max_question_chars": 500,
+        "used_usd": 0.001989,
+        "remaining_usd": -0.000989,
+        "over": true
+      }
+✘ 예산을 넘으면 · 0.0s · status 404 (expected 200); over_budget = null (expected true)
+    → request  POST /webhook/my-cost-report
+      {}
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+Passed 0/5
+report: runs/lab03-challenge-20261028-211157.json
+✔ after: POST http://localhost:8800/budget/reset · HTTP 200 · 0.0s · {"daily_usd": 1.0, "user_limit_per_min": 20, "max_question_chars": 500, "used_usd": 0.001989, "remaining_usd": 0.998011,
+    → request  POST http://localhost:8800/budget/reset
+      {}
+    ← response HTTP 200
+      {
+        "daily_usd": 1.0,
+        "user_limit_per_min": 20,
+        "max_question_chars": 500,
+        "used_usd": 0.001989,
+        "remaining_usd": 0.998011,
+        "over": false
+      }
+✔ after: POST http://localhost:8800/usage-clear · HTTP 200 · 0.0s · {"cleared": 4}
+    → request  POST http://localhost:8800/usage-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 4
+      }

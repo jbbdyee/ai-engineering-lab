@@ -1,0 +1,196 @@
+$ uv run tools/flow.py ops --reset
+✔ created tickets, DLQ and alerts emptied, fault switch all ok
+
+$ uv run tools/flow.py fault tickets error
+✔ fault switch: {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+
+$ uv run tools/flow.py call my-intake requests/batch-two.json
+HTTP 200 · 2.8s
+{
+  "total": 2,
+  "created": 0,
+  "failed": 2,
+  "rejected": 0,
+  "duplicates": 0,
+  "unclassified": 0,
+  "results": [
+    {
+      "id": "R-301",
+      "status": "failed",
+      "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+    },
+    {
+      "id": "R-302",
+      "status": "failed",
+      "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+    }
+  ]
+}
+
+$ uv run tools/flow.py fault tickets ok
+✔ fault switch: {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+
+$ uv run tools/flow.py ops
+fault switch: all ok
+created tickets: 0
+DLQ: 0 (parked 0)
+alerts: 0
+
+$ uv run tools/flow.py call nightly-report
+HTTP 500 · 0.1s
+{
+  "message": "Error in workflow"
+}
+
+$ uv run tools/flow.py test cases/lab02.json -v
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/tickets-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/dlq-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-intake · 4 case(s) × 1
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "tickets": "error"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "error",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ 예제 1 · API가 멈추면 실패로 표시 · 200 · 2.8s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ]
+      }
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✘ 예제 1 · 실패한 2건은 DLQ에 · 0.0s · size = 0 (expected 2); items has none of ['R-301', 'R-302']
+    → request  POST http://localhost:8800/dlq/list
+      {}
+    ← response HTTP 200
+      {
+        "size": 0,
+        "parked": 0,
+        "items": []
+      }
+✔ 예제 2 · 예상 못 한 오류 (nightly-report) · 0.0s
+    → request  POST /webhook/nightly-report
+      {}
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+… before: wait 3s
+✘ 예제 2 · Error Workflow가 알림을 남김 · 0.0s · severity = null (expected critical); reason = null (expected unexpected); workflow = null (expected 76 Nightly report (provided, has a bug)); node has none of ['Count by category']
+    → request  POST http://localhost:8800/alerts/latest
+      {}
+    ← response HTTP 200
+      {}
+Passed 2/4
+report: runs/lab02-20261029-141433.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }

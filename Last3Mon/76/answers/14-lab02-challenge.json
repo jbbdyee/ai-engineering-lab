@@ -1,0 +1,240 @@
+{
+  "cases": "lab02-challenge.json",
+  "webhook": "my-intake",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "case": "API가 멈춤 → DLQ",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.3,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "처리한 실패도 알림 (high · 개수)",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "workflow": "intake",
+        "node": "Send to DLQ",
+        "severity": "high",
+        "reason": "dlq",
+        "count": 2,
+        "message": "2 request(s) could not be created and wait in the DLQ",
+        "execution_id": "10120",
+        "at": 1793250965.2341518
+      }
+    },
+    {
+      "case": "실패가 없으면 알림 없음",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.9,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ],
+        "alert": "none"
+      }
+    },
+    {
+      "case": "알림은 그대로 1개",
+      "webhook": "http://localhost:8800/alerts/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 1,
+        "alerts": [
+          {
+            "workflow": "intake",
+            "node": "Send to DLQ",
+            "severity": "high",
+            "reason": "dlq",
+            "count": 2,
+            "message": "2 request(s) could not be created and wait in the DLQ",
+            "execution_id": "10120",
+            "at": 1793250965.2341518
+          }
+        ]
+      }
+    },
+    {
+      "case": "DLQ도 멈추면 critical",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.4,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-201",
+            "user": "한지훈",
+            "text": "프린터 용지가 걸려요"
+          },
+          {
+            "id": "R-202",
+            "user": "한지훈",
+            "text": ""
+          },
+          {
+            "id": "R-203",
+            "user": "김민지",
+            "text": "메일 첨부가 안 열려요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 0,
+        "failed": 2,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-201",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-203",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-202",
+            "status": "rejected",
+            "reason": "text is required"
+          }
+        ],
+        "dlq_saved": false,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "잃어버린 id를 알림에",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "workflow": "intake",
+        "node": "Send to DLQ",
+        "severity": "critical",
+        "reason": "dlq_down",
+        "count": 2,
+        "message": "DLQ save failed: dlq service is failing (fault switch) · lost ids R-201, R-203",
+        "execution_id": "10122",
+        "ids": [
+          "R-201",
+          "R-203"
+        ],
+        "at": 1793250970.5394928
+      }
+    }
+  ]
+}

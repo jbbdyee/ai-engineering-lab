@@ -1,0 +1,9 @@
+{"cases": "lab02-challenge.json", "webhook": "my-cost", "passed": 2, "total": 3, "results": [
+ {"case": "vpn", "request": {"question": "VPN", "user": "이준호"}, "status": 200,
+  "response": {"llm_calls": 1, "cost_usd": 0.00056, "usage": {"by_step": {"answer": {"model": "gpt-4.1-mini", "prompt_tokens": 1000, "completion_tokens": 100, "cost_usd": 0.00056}}}}},
+ {"case": "other", "request": {"question": "회의실", "user": "박서연"}, "status": 200,
+  "response": {"llm_calls": 2, "cost_usd": 0.0001845, "usage": {"by_step": {
+    "classify": {"model": "gpt-5.4-nano", "prompt_tokens": 100, "completion_tokens": 20, "cost_usd": 0.000045},
+    "answer": {"model": "gpt-4.1-mini", "prompt_tokens": 200, "completion_tokens": 37, "cost_usd": 0.0001392}}}}},
+ {"case": "empty", "request": {"question": ""}, "status": 400, "response": {"error": "question is required"}}
+]}

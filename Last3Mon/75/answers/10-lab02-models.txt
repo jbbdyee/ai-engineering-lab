@@ -1,0 +1,218 @@
+$ uv run tools/flow.py push reference/lab02-example2-models.json
+! unpublished '75 IT helpdesk + lean prompt (reference)' (wd453c4a61b08d35): it used the same webhook path
+✔ pushed '75 IT helpdesk + small models (reference)' (id w5619722541404a5)
+   POST http://localhost:5678/webhook/my-cost
+
+$ uv run tools/flow.py test cases/lab02.json -v
+POST http://localhost:5678/webhook/my-cost · 5 case(s) × 1
+✔ 예제 1 · VPN · 보내는 양 줄이기 · 4.3s · 자동 답변 · 3 calls · $0.000278
+    → request  POST /webhook/my-cost
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 티켓은 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 359,
+          "completion_tokens": 123,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 77,
+              "completion_tokens": 8,
+              "cost_usd": 2.54e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 165,
+              "completion_tokens": 56,
+              "cost_usd": 0.0001556
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 117,
+              "completion_tokens": 59,
+              "cost_usd": 9.715e-05
+            }
+          }
+        },
+        "cost_usd": 0.00027815,
+        "recorded": true
+      }
+✔ 예제 1 · 접수 · 보내는 양 줄이기 · 3.1s · 자동 답변 · 3 calls · $0.000204
+    → request  POST /webhook/my-cost
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "T-1002 티켓은 현재 처리 중이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 317,
+          "completion_tokens": 79,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 70,
+              "completion_tokens": 8,
+              "cost_usd": 2.4e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 152,
+              "completion_tokens": 34,
+              "cost_usd": 0.0001152
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 95,
+              "completion_tokens": 37,
+              "cost_usd": 6.525e-05
+            }
+          }
+        },
+        "cost_usd": 0.00020445,
+        "recorded": true
+      }
+✔ 예제 1 · 비밀번호 · 품질 그대로 · 3.6s · 자동 답변 · 3 calls · $0.000244
+    → request  POST /webhook/my-cost
+      {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "비밀번호 재설정은 사내 포털 로그인 화면의 ‘비밀번호 찾기’에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 도움이 필요하시면 언제든 문의해 주세요.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 354,
+          "completion_tokens": 99,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 80,
+              "completion_tokens": 8,
+              "cost_usd": 2.6e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 169,
+              "completion_tokens": 44,
+              "cost_usd": 0.000138
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 105,
+              "completion_tokens": 47,
+              "cost_usd": 7.975e-05
+            }
+          }
+        },
+        "cost_usd": 0.00024375,
+        "recorded": true
+      }
+✔ 예제 2 · 분류는 작은 모델 · 2.7s · 자동 답변 · 3 calls · $0.000144
+    → request  POST /webhook/my-cost
+      {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "죄송합니다. 요청하신 내용을 찾지 못했습니다. 담당 직원이 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 276,
+          "completion_tokens": 47,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 77,
+              "completion_tokens": 8,
+              "cost_usd": 2.54e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 124,
+              "completion_tokens": 14,
+              "cost_usd": 7.2e-05
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 75,
+              "completion_tokens": 25,
+              "cost_usd": 4.625e-05
+            }
+          }
+        },
+        "cost_usd": 0.00014365,
+        "recorded": true
+      }
+✔ 예제 2 · 프린터 · 품질 그대로 · 3.7s · 자동 답변 · 3 calls · $0.000270
+    → request  POST /webhook/my-cost
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인한 뒤 인쇄 대기열을 비우고 다시 출력해 보시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 350,
+          "completion_tokens": 119,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 71,
+              "completion_tokens": 8,
+              "cost_usd": 2.42e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 164,
+              "completion_tokens": 54,
+              "cost_usd": 0.000152
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 115,
+              "completion_tokens": 57,
+              "cost_usd": 9.425e-05
+            }
+          }
+        },
+        "cost_usd": 0.00027045,
+        "recorded": true
+      }
+Passed 5/5
+report: runs/lab02-20261028-210408.json
+
+$ uv run tools/flow.py test cases/lab01.json
+POST http://localhost:5678/webhook/my-cost · 3 case(s) × 1
+✔ VPN · 비용과 단계별 사용량 · 3.3s · 자동 답변 · 3 calls · $0.000278
+✔ 접수 현황 · 비용 · 3.5s · 자동 답변 · 3 calls · $0.000204
+✔ 빈 질문은 LLM 없이 · 0.0s
+Passed 3/3
+report: runs/lab01-20261028-210415.json

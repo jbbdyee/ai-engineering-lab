@@ -1,0 +1,358 @@
+$ uv run tools/flow.py push reference/lab01-example2-intake.json
+✔ pushed '76 Intake · retry and idempotency key (reference, Lab 01 example 2)' (id w8399f905b79a073)
+   POST http://localhost:5678/webhook/my-intake
+
+$ uv run tools/flow.py test cases/lab01.json -v
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 8}
+    → request  POST http://localhost:8800/tickets-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 8
+      }
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/dlq-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-intake · 6 case(s) × 1
+✔ 정상 3건 · 3.9s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ]
+      }
+✔ 같은 요청을 다시 보내도 중복 없음 · 3.1s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 3,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": true,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": true,
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": true,
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ]
+      }
+✔ 만들어진 접수 건은 3개 · 0.0s
+    → request  POST http://localhost:8800/tickets-created/list
+      {}
+    ← response HTTP 200
+      {
+        "count": 3,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-101",
+            "title": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요",
+            "requester": "이준호",
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-102",
+            "title": "새 모니터를 하나 더 받을 수 있을까요?",
+            "requester": "박서연",
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "ticket_id": "T-2003",
+            "key": "R-103",
+            "title": "엑셀 라이선스가 만료됐다고 나와요",
+            "requester": "최유진",
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ]
+      }
+✔ 잘못된 항목은 그 항목만 거절 · 1.7s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-201",
+            "user": "한지훈",
+            "text": "프린터 용지가 걸려요"
+          },
+          {
+            "id": "R-202",
+            "user": "한지훈",
+            "text": ""
+          },
+          {
+            "id": "R-203",
+            "user": "김민지",
+            "text": "메일 첨부가 안 열려요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 2,
+        "failed": 0,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-201",
+            "status": "created",
+            "ticket_id": "T-2004",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "id": "R-203",
+            "status": "created",
+            "ticket_id": "T-2005",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "보통"
+          },
+          {
+            "id": "R-202",
+            "status": "rejected",
+            "reason": "text is required"
+          }
+        ]
+      }
+✔ 목록이 아니면 400 · 0.0s
+    → request  POST /webhook/my-intake
+      {
+        "requests": "VPN이 끊겨요"
+      }
+    ← response HTTP 400
+      {
+        "error": "requests must be a list"
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "flaky", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "tickets": "flaky"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "flaky",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ 가끔 실패하는 API · 다시 해 보기로 성공 · 2.4s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 2,
+        "created": 2,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "created",
+            "ticket_id": "T-2006",
+            "duplicate": false,
+            "category": "계정",
+            "priority": "높음"
+          },
+          {
+            "id": "R-302",
+            "status": "created",
+            "ticket_id": "T-2007",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          }
+        ]
+      }
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+Passed 6/6
+report: runs/lab01-20261029-141207.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+
+$ uv run tools/flow.py ops
+fault switch: all ok
+created tickets: 7
+  T-2003  key R-103  소프트웨어/높음  엑셀 라이선스가 만료됐다고 나와요
+  T-2004  key R-201  장비/보통  프린터 용지가 걸려요
+  T-2005  key R-203  소프트웨어/보통  메일 첨부가 안 열려요
+  T-2006  key R-301  계정/높음  사내 위키 로그인이 안 돼요
+  T-2007  key R-302  장비/보통  노트북 배터리가 금방 닳아요
+DLQ: 0 (parked 0)
+alerts: 0

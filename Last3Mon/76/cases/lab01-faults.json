@@ -1,0 +1,129 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "flaky · 다시 해 보면 됨",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "created": 2,
+          "failed": 0
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "flaky"
+          }
+        }
+      ]
+    },
+    {
+      "name": "error · 세 번 해도 실패",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "created": 0,
+          "failed": 3
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ]
+    },
+    {
+      "name": "slow · 3초씩 세 번 기다리다 실패",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "failed": 3
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "slow"
+          }
+        }
+      ]
+    },
+    {
+      "name": "실패라던 3건이 늦게 만들어짐 (2 + 3)",
+      "url": "http://localhost:8800/tickets-created/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 5
+        }
+      },
+      "before": [
+        {
+          "sleep": 8
+        },
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "같은 요청을 다시 · 멱등 키로 중복 없음",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "created": 3,
+          "duplicates": 3
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "정상 3건",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "created": 3,
+          "failed": 0,
+          "rejected": 0
+        }
+      }
+    },
+    {
+      "name": "같은 요청을 다시 보내도 중복 없음",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "created": 3,
+          "duplicates": 3
+        }
+      }
+    },
+    {
+      "name": "만들어진 접수 건은 3개",
+      "url": "http://localhost:8800/tickets-created/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 3
+        }
+      }
+    },
+    {
+      "name": "잘못된 항목은 그 항목만 거절",
+      "request": "requests/batch-bad-item.json",
+      "expect": {
+        "equals": {
+          "created": 2,
+          "rejected": 1,
+          "failed": 0
+        },
+        "contains": {
+          "results": [
+            "text is required"
+          ]
+        }
+      }
+    },
+    {
+      "name": "목록이 아니면 400",
+      "request": "requests/not-a-list.json",
+      "expect": {
+        "status": 400
+      }
+    },
+    {
+      "name": "가끔 실패하는 API · 다시 해 보기로 성공",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "created": 2,
+          "failed": 0
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "flaky"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    }
+  ]
+}

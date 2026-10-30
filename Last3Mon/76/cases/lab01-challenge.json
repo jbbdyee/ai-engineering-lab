@@ -1,0 +1,87 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "llm": "up"
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "평소에는 분류됨",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "created": 2,
+          "unclassified": 0
+        }
+      }
+    },
+    {
+      "name": "LLM이 멈추면 미분류로 접수",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "created": 3,
+          "unclassified": 3,
+          "failed": 0
+        }
+      },
+      "before": [
+        {
+          "llm": "down"
+        }
+      ],
+      "after": [
+        {
+          "llm": "up"
+        }
+      ]
+    },
+    {
+      "name": "미분류도 접수 건으로",
+      "url": "http://localhost:8800/tickets-created/list",
+      "body": {},
+      "expect": {
+        "contains": {
+          "tickets": [
+            "미분류"
+          ]
+        }
+      }
+    }
+  ]
+}

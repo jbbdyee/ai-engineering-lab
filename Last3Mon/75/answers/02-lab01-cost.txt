@@ -1,0 +1,97 @@
+$ uv run tools/flow.py push reference/lab01-example2-cost.json
+! unpublished '75 IT helpdesk + user limit (reference)' (w885dc4a9b362094): it used the same webhook path
+✔ pushed '75 IT helpdesk + cost (reference)' (id w7aad5ed3acdb113)
+   POST http://localhost:5678/webhook/my-cost
+
+$ uv run tools/flow.py test cases/lab01.json -v
+POST http://localhost:5678/webhook/my-cost · 3 case(s) × 1
+✔ VPN · 비용과 단계별 사용량 · 5.1s · 자동 답변 · 3 calls · $0.001040
+    → request  POST /webhook/my-cost
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 자주 끊길 경우, VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 IT 포털에서 확인하시기 바랍니다. 인증서는 만료 30일 전부터 재발급 신청이 가능합니다. 추가 도움이 필요하시면 IT 문의로 연락해 주십시오.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1999,
+          "completion_tokens": 150,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 78,
+              "completion_tokens": 6,
+              "cost_usd": 4.08e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1781,
+              "completion_tokens": 78,
+              "cost_usd": 0.0008372
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 140,
+              "completion_tokens": 66,
+              "cost_usd": 0.0001616
+            }
+          }
+        },
+        "cost_usd": 0.0010396
+      }
+✔ 접수 현황 · 비용 · 3.3s · 자동 답변 · 3 calls · $0.000946
+    → request  POST /webhook/my-cost
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "티켓 T-1002는 현재 인증서 발급 승인 대기 중이며, 10월 20일에 완료될 예정입니다. 추가 문의 사항이 있으시면 연락해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1973,
+          "completion_tokens": 98,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 71,
+              "completion_tokens": 6,
+              "cost_usd": 3.8e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1791,
+              "completion_tokens": 49,
+              "cost_usd": 0.0007948
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 111,
+              "completion_tokens": 43,
+              "cost_usd": 0.0001132
+            }
+          }
+        },
+        "cost_usd": 0.000946
+      }
+✔ 빈 질문은 LLM 없이 · 0.0s
+    → request  POST /webhook/my-cost
+      {
+        "question": "",
+        "user": "이준호"
+      }
+    ← response HTTP 400
+      {
+        "error": "question is required"
+      }
+Passed 3/3
+report: runs/lab01-20261028-210102.json

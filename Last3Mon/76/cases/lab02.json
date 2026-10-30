@@ -1,0 +1,118 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "예제 1 · API가 멈추면 실패로 표시 · 200",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "status": 200,
+        "equals": {
+          "created": 0,
+          "failed": 2
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "예제 1 · 실패한 2건은 DLQ에",
+      "url": "http://localhost:8800/dlq/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 2
+        },
+        "contains": {
+          "items": [
+            "R-301",
+            "R-302"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 예상 못 한 오류 (nightly-report)",
+      "webhook": "nightly-report",
+      "body": {},
+      "expect": {
+        "status": 500
+      }
+    },
+    {
+      "name": "예제 2 · Error Workflow가 알림을 남김",
+      "url": "http://localhost:8800/alerts/latest",
+      "body": {},
+      "expect": {
+        "equals": {
+          "severity": "critical",
+          "reason": "unexpected",
+          "workflow": "76 Nightly report (provided, has a bug)"
+        },
+        "contains": {
+          "node": [
+            "Count by category"
+          ]
+        }
+      },
+      "before": [
+        {
+          "sleep": 3
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "API가 오래 멈춤 · 처음 실패",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "failed": 2
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ]
+    },
+    {
+      "name": "재처리 1 · 또 실패",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "replayed": 2,
+          "still_failed": 2,
+          "parked": 0
+        }
+      }
+    },
+    {
+      "name": "재처리 2 · 또 실패",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "replayed": 2,
+          "still_failed": 2,
+          "parked": 0
+        }
+      }
+    },
+    {
+      "name": "재처리 3 · 세 번 실패한 것은 멈춤 (parked)",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "replayed": 0,
+          "parked": 2
+        }
+      }
+    },
+    {
+      "name": "parked로 남음",
+      "url": "http://localhost:8800/dlq/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 2,
+          "parked": 2
+        }
+      }
+    },
+    {
+      "name": "멈춘 것은 알림",
+      "url": "http://localhost:8800/alerts/latest",
+      "body": {},
+      "expect": {
+        "equals": {
+          "reason": "parked",
+          "severity": "high"
+        }
+      }
+    },
+    {
+      "name": "고친 뒤에도 parked는 자동으로 돌리지 않음",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "replayed": 0
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    }
+  ]
+}

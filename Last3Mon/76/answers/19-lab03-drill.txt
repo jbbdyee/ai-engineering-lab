@@ -1,0 +1,377 @@
+$ uv run tools/flow.py ops --reset
+✔ created tickets, DLQ and alerts emptied, fault switch all ok
+
+$ uv run tools/flow.py fault tickets error
+✔ fault switch: {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+
+$ uv run tools/flow.py call my-intake requests/batch-two.json
+HTTP 200 · 2.8s
+{
+  "total": 2,
+  "created": 0,
+  "failed": 2,
+  "rejected": 0,
+  "duplicates": 0,
+  "unclassified": 0,
+  "results": [
+    {
+      "id": "R-301",
+      "status": "failed",
+      "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+    },
+    {
+      "id": "R-302",
+      "status": "failed",
+      "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+    }
+  ],
+  "dlq_saved": true,
+  "alert": "sent"
+}
+
+$ uv run tools/flow.py call nightly-report
+HTTP 500 · 0.1s
+{
+  "message": "Error in workflow"
+}
+
+$ uv run tools/flow.py ops
+fault switch: {"tickets": "error"}
+created tickets: 0
+DLQ: 2 (parked 0)
+  D-1  R-301  attempts 1  parked False  500 - "{\"error\": \"tickets service is failing (f
+  D-2  R-302  attempts 1  parked False  500 - "{\"error\": \"tickets service is failing (f
+alerts: 2
+  [high] intake · dlq · Send to DLQ · count 2 · 2 request(s) could not be created and wait in the DLQ
+  [critical] 76 Nightly report (provided, has a bug) · unexpected · Count by category · rows is not iterable [line 4]
+
+$ uv run tools/flow.py fault tickets ok
+✔ fault switch: {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+
+$ uv run tools/flow.py call my-replay
+HTTP 200 · 1.4s
+{
+  "replayed": 2,
+  "ok": 2,
+  "still_failed": 0,
+  "parked": 0,
+  "duplicates": 0
+}
+
+$ uv run tools/flow.py ops
+fault switch: all ok
+created tickets: 2
+  T-2001  key R-302  장비/보통  노트북 배터리가 금방 닳아요
+  T-2002  key R-301  계정/높음  사내 위키 로그인이 안 돼요
+DLQ: 0 (parked 0)
+alerts: 2
+  [high] intake · dlq · Send to DLQ · count 2 · 2 request(s) could not be created and wait in the DLQ
+  [critical] 76 Nightly report (provided, has a bug) · unexpected · Count by category · rows is not iterable [line 4]
+
+$ uv run tools/flow.py test cases/lab03-drill.json -v
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 2}
+    → request  POST http://localhost:8800/tickets-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 2
+      }
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/dlq-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 2}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 2
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-intake · 7 case(s) × 1
+✔ 1 · 평소 · 2.6s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ],
+        "alert": "none"
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "tickets": "error"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "error",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ 2 · 장애 시작 · API 오류 · 3.0s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+✔ 3 · DLQ 확인 · 0.0s
+    → request  POST http://localhost:8800/dlq/list
+      {}
+    ← response HTTP 200
+      {
+        "size": 2,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251069.7296107
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251069.7296135
+          }
+        ]
+      }
+✔ 4 · 보고서 작업도 실패 · 0.0s
+    → request  POST /webhook/nightly-report
+      {}
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+… before: wait 3s
+✔ 5 · 알림 확인 · 0.0s
+    → request  POST http://localhost:8800/alerts/latest
+      {}
+    ← response HTTP 200
+      {
+        "workflow": "76 Nightly report (provided, has a bug)",
+        "workflow_id": "wb9ce32c18d7df56",
+        "node": "Count by category",
+        "message": "rows is not iterable [line 4]",
+        "execution_id": "10159",
+        "severity": "critical",
+        "reason": "unexpected",
+        "at": 1793251069.8482687
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ 6 · 고친 뒤 재처리 · 1.4s
+    → request  POST /webhook/my-replay
+      {}
+    ← response HTTP 200
+      {
+        "replayed": 2,
+        "ok": 2,
+        "still_failed": 0,
+        "parked": 0,
+        "duplicates": 0
+      }
+✔ 7 · 결과 확인 · 중복 없이 5건 · 0.0s
+    → request  POST http://localhost:8800/tickets-created/list
+      {}
+    ← response HTTP 200
+      {
+        "count": 5,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-101",
+            "title": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요",
+            "requester": "이준호",
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-102",
+            "title": "새 모니터를 하나 더 받을 수 있을까요?",
+            "requester": "박서연",
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2003",
+            "key": "R-103",
+            "title": "엑셀 라이선스가 만료됐다고 나와요",
+            "requester": "최유진",
+            "category": "소프트웨어",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2004",
+            "key": "R-302",
+            "title": "노트북 배터리가 금방 닳아요",
+            "requester": "이준호",
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2005",
+            "key": "R-301",
+            "title": "사내 위키 로그인이 안 돼요",
+            "requester": "정우성",
+            "category": "계정",
+            "priority": "높음"
+          }
+        ]
+      }
+Passed 7/7
+report: runs/lab03-drill-20261029-141754.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }

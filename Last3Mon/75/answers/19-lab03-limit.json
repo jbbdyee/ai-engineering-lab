@@ -1,0 +1,139 @@
+{
+  "cases": "lab03-limit.json",
+  "webhook": "my-cost",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "이준호 1번째",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 165,
+          "completion_tokens": 47,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 165,
+              "completion_tokens": 47,
+              "cost_usd": 0.0001412
+            }
+          }
+        },
+        "cost_usd": 0.0001412,
+        "trimmed": false,
+        "question_chars": 24,
+        "recorded": true
+      }
+    },
+    {
+      "case": "이준호 2번째",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 164,
+          "completion_tokens": 53,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 164,
+              "completion_tokens": 53,
+              "cost_usd": 0.0001504
+            }
+          }
+        },
+        "cost_usd": 0.0001504,
+        "trimmed": false,
+        "question_chars": 12,
+        "recorded": true
+      }
+    },
+    {
+      "case": "이준호 3번째 · 1분에 2번 넘음",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 429,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "잠시 후",
+        "answer": "요청이 많아 잠시 뒤에 다시 물어봐 주세요.",
+        "retry_after": 60,
+        "llm_calls": 0,
+        "cost_usd": 0
+      }
+    },
+    {
+      "case": "다른 사람은 그대로",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.9,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "비밀번호 재설정은 사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 추가 도움이 필요하시면 문의해 주세요.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 169,
+          "completion_tokens": 43,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 169,
+              "completion_tokens": 43,
+              "cost_usd": 0.0001364
+            }
+          }
+        },
+        "cost_usd": 0.0001364,
+        "trimmed": false,
+        "question_chars": 27,
+        "recorded": true
+      }
+    }
+  ]
+}

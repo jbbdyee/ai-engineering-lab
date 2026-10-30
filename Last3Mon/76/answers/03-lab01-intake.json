@@ -1,0 +1,294 @@
+{
+  "cases": "lab01.json",
+  "webhook": "my-intake",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "case": "정상 3건",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.9,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ]
+      }
+    },
+    {
+      "case": "같은 요청을 다시 보내도 중복 없음",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.1,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 3,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": true,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": true,
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": true,
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ]
+      }
+    },
+    {
+      "case": "만들어진 접수 건은 3개",
+      "webhook": "http://localhost:8800/tickets-created/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 3,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-101",
+            "title": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요",
+            "requester": "이준호",
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-102",
+            "title": "새 모니터를 하나 더 받을 수 있을까요?",
+            "requester": "박서연",
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "ticket_id": "T-2003",
+            "key": "R-103",
+            "title": "엑셀 라이선스가 만료됐다고 나와요",
+            "requester": "최유진",
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ]
+      }
+    },
+    {
+      "case": "잘못된 항목은 그 항목만 거절",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.7,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-201",
+            "user": "한지훈",
+            "text": "프린터 용지가 걸려요"
+          },
+          {
+            "id": "R-202",
+            "user": "한지훈",
+            "text": ""
+          },
+          {
+            "id": "R-203",
+            "user": "김민지",
+            "text": "메일 첨부가 안 열려요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 2,
+        "failed": 0,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-201",
+            "status": "created",
+            "ticket_id": "T-2004",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "id": "R-203",
+            "status": "created",
+            "ticket_id": "T-2005",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "보통"
+          },
+          {
+            "id": "R-202",
+            "status": "rejected",
+            "reason": "text is required"
+          }
+        ]
+      }
+    },
+    {
+      "case": "목록이 아니면 400",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 400,
+      "request": {
+        "requests": "VPN이 끊겨요"
+      },
+      "response": {
+        "error": "requests must be a list"
+      }
+    },
+    {
+      "case": "가끔 실패하는 API · 다시 해 보기로 성공",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.4,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 2,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "created",
+            "ticket_id": "T-2006",
+            "duplicate": false,
+            "category": "계정",
+            "priority": "높음"
+          },
+          {
+            "id": "R-302",
+            "status": "created",
+            "ticket_id": "T-2007",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+$ uv run tools/flow.py test cases/lab03-challenge.json -v
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 2}
+    → request  POST http://localhost:8800/tickets-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 2
+      }
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/dlq-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 1}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 1
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-intake · 7 case(s) × 1
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "tickets": "error"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "error",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ API가 오래 멈춤 · 처음 실패 · 3.4s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+✔ 재처리 1 · 또 실패 · 2.2s
+    → request  POST /webhook/my-replay
+      {}
+    ← response HTTP 200
+      {
+        "replayed": 2,
+        "ok": 0,
+        "still_failed": 2,
+        "parked": 0,
+        "duplicates": 0
+      }
+✔ 재처리 2 · 또 실패 · 2.4s
+    → request  POST /webhook/my-replay
+      {}
+    ← response HTTP 200
+      {
+        "replayed": 2,
+        "ok": 0,
+        "still_failed": 2,
+        "parked": 0,
+        "duplicates": 0
+      }
+✘ 재처리 3 · 세 번 실패한 것은 멈춤 (parked) · 2.0s · replayed = 2 (expected 0); parked = 0 (expected 2)
+    → request  POST /webhook/my-replay
+      {}
+    ← response HTTP 200
+      {
+        "replayed": 2,
+        "ok": 0,
+        "still_failed": 2,
+        "parked": 0,
+        "duplicates": 0
+      }
+✘ parked로 남음 · 0.0s · parked = 0 (expected 2)
+    → request  POST http://localhost:8800/dlq/list
+      {}
+    ← response HTTP 200
+      {
+        "size": 2,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 4,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251105.2922482
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 4,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251105.5231082
+          }
+        ]
+      }
+✘ 멈춘 것은 알림 · 0.0s · reason = dlq (expected parked)
+    → request  POST http://localhost:8800/alerts/latest
+      {}
+    ← response HTTP 200
+      {
+        "workflow": "intake",
+        "node": "Send to DLQ",
+        "severity": "high",
+        "reason": "dlq",
+        "count": 2,
+        "message": "2 request(s) could not be created and wait in the DLQ",
+        "execution_id": "10168",
+        "at": 1793251099.0033967
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✘ 고친 뒤에도 parked는 자동으로 돌리지 않음 · 1.6s · replayed = 2 (expected 0)
+    → request  POST /webhook/my-replay
+      {}
+    ← response HTTP 200
+      {
+        "replayed": 2,
+        "ok": 2,
+        "still_failed": 0,
+        "parked": 0,
+        "duplicates": 0
+      }
+Passed 3/7
+report: runs/lab03-challenge-20261029-141827.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }

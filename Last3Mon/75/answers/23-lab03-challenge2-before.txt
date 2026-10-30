@@ -1,0 +1,200 @@
+$ uv run tools/flow.py test cases/lab03-challenge2.json -v
+✔ before: POST http://localhost:8800/usage-clear · HTTP 200 · 0.0s · {"cleared": 8}
+    → request  POST http://localhost:8800/usage-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 8
+      }
+✔ before: POST http://localhost:8800/budget/reset · HTTP 200 · 0.0s · {"daily_usd": 1.0, "user_limit_per_min": 20, "max_question_chars": 500, "used_usd": 0, "remaining_usd": 1.0, "over": fal
+    → request  POST http://localhost:8800/budget/reset
+      {}
+    ← response HTTP 200
+      {
+        "daily_usd": 1.0,
+        "user_limit_per_min": 20,
+        "max_question_chars": 500,
+        "used_usd": 0,
+        "remaining_usd": 1.0,
+        "over": false
+      }
+✔ before: POST http://localhost:8800/usage · HTTP 200 · 0.0s · {"stored": 4, "total": 4}
+    → request  POST http://localhost:8800/usage
+      {
+        "items": [
+          {
+            "request_id": "r1",
+            "user": "이준호",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 1000,
+            "completion_tokens": 100,
+            "cost_usd": 0.00056,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r1",
+            "user": "이준호",
+            "step": "classify",
+            "model": "gpt-5.4-nano",
+            "prompt_tokens": 100,
+            "completion_tokens": 20,
+            "cost_usd": 4.5e-05,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r2",
+            "user": "박서연",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 2000,
+            "completion_tokens": 200,
+            "cost_usd": 0.00112,
+            "route": "자동 답변"
+          },
+          {
+            "request_id": "r3",
+            "user": "이준호",
+            "step": "answer",
+            "model": "gpt-4.1-mini",
+            "prompt_tokens": 500,
+            "completion_tokens": 40,
+            "cost_usd": 0.000264,
+            "route": "자동 답변"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "stored": 4,
+        "total": 4
+      }
+POST http://localhost:5678/webhook/my-cost-report · 5 case(s) × 1
+✘ 모두 nano였다면 · 0.0s · $0.001989 · what_if.model = null (expected gpt-5.4-nano); what_if.cost_usd = null (expected 0.00117); what_if.saving_usd = null (expected 0.000819); what_if.projected_month_usd = null (expected 0.858)
+    → request  POST /webhook/my-cost-report
+      {
+        "requests_per_day": 100,
+        "workdays": 22,
+        "what_if_model": "gpt-5.4-nano"
+      }
+    ← response HTTP 200
+      {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 1.4586,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+✔ 원래 숫자는 그대로 · 0.1s · $0.001989
+    → request  POST /webhook/my-cost-report
+      {
+        "requests_per_day": 100,
+        "workdays": 22,
+        "what_if_model": "gpt-5.4-nano"
+      }
+    ← response HTTP 200
+      {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 1.4586,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+✘ 모두 mini였다면 · 아끼는 돈이 음수 · 0.0s · $0.001989 · what_if.cost_usd = null (expected 0.002016); what_if.saving_usd = null (expected -2.7e-05)
+    → request  POST /webhook/my-cost-report
+      {
+        "what_if_model": "gpt-4.1-mini"
+      }
+    ← response HTTP 200
+      {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 0.043758,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+✘ 없는 모델은 400 · 0.0s · $0.001989 · status 200 (expected 400); error = null (expected unknown model); known has none of ['gpt-5.4-nano']
+    → request  POST /webhook/my-cost-report
+      {
+        "what_if_model": "gpt-9"
+      }
+    ← response HTTP 200
+      {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 0.043758,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+✔ what_if 없이 부르면 과제 1과 같음 · 0.0s · $0.001989
+    → request  POST /webhook/my-cost-report
+      {}
+    ← response HTTP 200
+      {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 0.043758,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+Passed 2/5
+report: runs/lab03-challenge2-20261028-211219.json
+✔ after: POST http://localhost:8800/budget/reset · HTTP 200 · 0.0s · {"daily_usd": 1.0, "user_limit_per_min": 20, "max_question_chars": 500, "used_usd": 0.001989, "remaining_usd": 0.998011,
+    → request  POST http://localhost:8800/budget/reset
+      {}
+    ← response HTTP 200
+      {
+        "daily_usd": 1.0,
+        "user_limit_per_min": 20,
+        "max_question_chars": 500,
+        "used_usd": 0.001989,
+        "remaining_usd": 0.998011,
+        "over": false
+      }
+✔ after: POST http://localhost:8800/usage-clear · HTTP 200 · 0.0s · {"cleared": 4}
+    → request  POST http://localhost:8800/usage-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 4
+      }

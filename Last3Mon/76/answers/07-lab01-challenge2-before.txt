@@ -1,0 +1,446 @@
+$ uv run tools/flow.py test cases/lab01-challenge2.json -v
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 7}
+    → request  POST http://localhost:8800/tickets-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 7
+      }
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/dlq-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-intake · 4 case(s) × 1
+✘ 같은 id가 두 번이면 두 번째는 거절 · 2.8s · created = 3 (expected 2); rejected = 0 (expected 1); duplicates = 1 (expected 0); results has none of ['duplicate id']
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-401",
+            "user": "김민지",
+            "text": "회의실 화면 공유가 안 돼요"
+          },
+          {
+            "id": "R-401",
+            "user": "김민지",
+            "text": "회의실 화면 공유가 안 돼요"
+          },
+          {
+            "id": "R-402",
+            "user": "최유진",
+            "text": "비밀번호를 바꾸라는 창이 계속 떠요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 1,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-401",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-401",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": true,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-402",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "계정",
+            "priority": "보통"
+          }
+        ]
+      }
+✘ 11건은 400 (한 번에 10건까지) · 11.0s · status 200 (expected 400); error has none of ['too many']
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-501",
+            "user": "박서연",
+            "text": "모니터 1번이 켜지지 않아요"
+          },
+          {
+            "id": "R-502",
+            "user": "최유진",
+            "text": "모니터 2번이 켜지지 않아요"
+          },
+          {
+            "id": "R-503",
+            "user": "정우성",
+            "text": "모니터 3번이 켜지지 않아요"
+          },
+          {
+            "id": "R-504",
+            "user": "한지훈",
+            "text": "모니터 4번이 켜지지 않아요"
+          },
+          {
+            "id": "R-505",
+            "user": "김민지",
+            "text": "모니터 5번이 켜지지 않아요"
+          },
+          {
+            "id": "R-506",
+            "user": "이준호",
+            "text": "모니터 6번이 켜지지 않아요"
+          },
+          {
+            "id": "R-507",
+            "user": "박서연",
+            "text": "모니터 7번이 켜지지 않아요"
+          },
+          {
+            "id": "R-508",
+            "user": "최유진",
+            "text": "모니터 8번이 켜지지 않아요"
+          },
+          {
+            "id": "R-509",
+            "user": "정우성",
+            "text": "모니터 9번이 켜지지 않아요"
+          },
+          {
+            "id": "R-510",
+            "user": "한지훈",
+            "text": "모니터 10번이 켜지지 않아요"
+          },
+          {
+            "id": "R-511",
+            "user": "김민지",
+            "text": "모니터 11번이 켜지지 않아요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 11,
+        "created": 11,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-501",
+            "status": "created",
+            "ticket_id": "T-2004",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-502",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-503",
+            "status": "created",
+            "ticket_id": "T-2005",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "id": "R-504",
+            "status": "created",
+            "ticket_id": "T-2006",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-505",
+            "status": "created",
+            "ticket_id": "T-2007",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-506",
+            "status": "created",
+            "ticket_id": "T-2008",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-507",
+            "status": "created",
+            "ticket_id": "T-2013",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-508",
+            "status": "created",
+            "ticket_id": "T-2012",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-509",
+            "status": "created",
+            "ticket_id": "T-2010",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-510",
+            "status": "created",
+            "ticket_id": "T-2011",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "id": "R-511",
+            "status": "created",
+            "ticket_id": "T-2009",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "높음"
+          }
+        ]
+      }
+✘ 400이면 하나도 만들지 않음 · 0.0s · count = 13 (expected 2)
+    → request  POST http://localhost:8800/tickets-created/list
+      {}
+    ← response HTTP 200
+      {
+        "count": 13,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-401",
+            "title": "회의실 화면 공유가 안 돼요",
+            "requester": "김민지",
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-402",
+            "title": "비밀번호를 바꾸라는 창이 계속 떠요",
+            "requester": "최유진",
+            "category": "계정",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2003",
+            "key": "R-502",
+            "title": "모니터 2번이 켜지지 않아요",
+            "requester": "최유진",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2004",
+            "key": "R-501",
+            "title": "모니터 1번이 켜지지 않아요",
+            "requester": "박서연",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2005",
+            "key": "R-503",
+            "title": "모니터 3번이 켜지지 않아요",
+            "requester": "정우성",
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2006",
+            "key": "R-504",
+            "title": "모니터 4번이 켜지지 않아요",
+            "requester": "한지훈",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2007",
+            "key": "R-505",
+            "title": "모니터 5번이 켜지지 않아요",
+            "requester": "김민지",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2008",
+            "key": "R-506",
+            "title": "모니터 6번이 켜지지 않아요",
+            "requester": "이준호",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2009",
+            "key": "R-511",
+            "title": "모니터 11번이 켜지지 않아요",
+            "requester": "김민지",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2010",
+            "key": "R-509",
+            "title": "모니터 9번이 켜지지 않아요",
+            "requester": "정우성",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2011",
+            "key": "R-510",
+            "title": "모니터 10번이 켜지지 않아요",
+            "requester": "한지훈",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2012",
+            "key": "R-508",
+            "title": "모니터 8번이 켜지지 않아요",
+            "requester": "최유진",
+            "category": "장비",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2013",
+            "key": "R-507",
+            "title": "모니터 7번이 켜지지 않아요",
+            "requester": "박서연",
+            "category": "장비",
+            "priority": "높음"
+          }
+        ]
+      }
+✔ 평소 요청은 그대로 · 3.2s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2014",
+            "duplicate": false,
+            "category": "네트워크",
+            "priority": "높음"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2015",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "낮음"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2016",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "높음"
+          }
+        ]
+      }
+Passed 1/4
+report: runs/lab01-challenge2-20261029-141341.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }

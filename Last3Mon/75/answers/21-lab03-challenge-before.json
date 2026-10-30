@@ -1,0 +1,111 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-cost-report",
+  "passed": 0,
+  "total": 5,
+  "results": [
+    {
+      "case": "요약 숫자",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "requests = null (expected 3)",
+        "calls = null (expected 4)",
+        "cost_usd = null (expected 0.001989)",
+        "avg_usd = null (expected 0.000663)",
+        "top_user = null (expected 박서연)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "requests_per_day": 100,
+        "workdays": 22
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "모델별 · 한 달 예상",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "projected_month_usd = null (expected 1.4586)",
+        "by_model has none of ['\"gpt-4.1-mini\": 0.001944']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "requests_per_day": 100,
+        "workdays": 22
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "작은 모델 몫",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "by_model has none of ['\"gpt-5.4-nano\": 4.5e-05']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "예산 남은 금액",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "daily_budget_usd = null (expected 1.0)",
+        "remaining_usd = null (expected 0.998011)",
+        "over_budget = null (expected false)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "예산을 넘으면",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "over_budget = null (expected true)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-cost-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}

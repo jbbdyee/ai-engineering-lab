@@ -1,0 +1,174 @@
+{
+  "cases": "lab01-challenge.json",
+  "webhook": "my-intake",
+  "passed": 3,
+  "total": 3,
+  "results": [
+    {
+      "case": "평소에는 분류됨",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.5,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 2,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "계정",
+            "priority": "높음"
+          },
+          {
+            "id": "R-302",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          }
+        ]
+      }
+    },
+    {
+      "case": "LLM이 멈추면 미분류로 접수",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 3,
+        "failed": 0,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 3,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "created",
+            "ticket_id": "T-2003",
+            "duplicate": false,
+            "category": "미분류",
+            "priority": "보통"
+          },
+          {
+            "id": "R-102",
+            "status": "created",
+            "ticket_id": "T-2005",
+            "duplicate": false,
+            "category": "미분류",
+            "priority": "보통"
+          },
+          {
+            "id": "R-103",
+            "status": "created",
+            "ticket_id": "T-2004",
+            "duplicate": false,
+            "category": "미분류",
+            "priority": "보통"
+          }
+        ]
+      }
+    },
+    {
+      "case": "미분류도 접수 건으로",
+      "webhook": "http://localhost:8800/tickets-created/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 5,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-301",
+            "title": "사내 위키 로그인이 안 돼요",
+            "requester": "정우성",
+            "category": "계정",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-302",
+            "title": "노트북 배터리가 금방 닳아요",
+            "requester": "이준호",
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2003",
+            "key": "R-101",
+            "title": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요",
+            "requester": "이준호",
+            "category": "미분류",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2004",
+            "key": "R-103",
+            "title": "엑셀 라이선스가 만료됐다고 나와요",
+            "requester": "최유진",
+            "category": "미분류",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2005",
+            "key": "R-102",
+            "title": "새 모니터를 하나 더 받을 수 있을까요?",
+            "requester": "박서연",
+            "category": "미분류",
+            "priority": "보통"
+          }
+        ]
+      }
+    }
+  ]
+}

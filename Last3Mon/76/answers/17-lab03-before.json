@@ -1,0 +1,151 @@
+{
+  "cases": "lab03.json",
+  "webhook": "my-intake",
+  "passed": 1,
+  "total": 5,
+  "results": [
+    {
+      "case": "API가 멈춘 동안 2건 → DLQ",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.9,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "고친 뒤 다시 돌리기",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "replayed = null (expected 2)",
+        "ok = null (expected 2)",
+        "still_failed = null (expected 0)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-replay\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "DLQ가 비었음",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "size = 2 (expected 0)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 2,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251042.6309726
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251042.630976
+          }
+        ]
+      }
+    },
+    {
+      "case": "접수 건은 2개 (중복 없음)",
+      "webhook": "http://localhost:8800/tickets-created/list",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "count = 0 (expected 2)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 0,
+        "tickets": []
+      }
+    },
+    {
+      "case": "한 번 더 돌려도 할 일 없음",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "replayed = null (expected 0)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-replay\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}

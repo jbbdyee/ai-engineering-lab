@@ -1,0 +1,139 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-cost-report",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "case": "요약 숫자",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.8,
+      "status": 200,
+      "request": {
+        "requests_per_day": 100,
+        "workdays": 22
+      },
+      "response": {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 1.4586,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+    },
+    {
+      "case": "모델별 · 한 달 예상",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "requests_per_day": 100,
+        "workdays": 22
+      },
+      "response": {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 1.4586,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+    },
+    {
+      "case": "작은 모델 몫",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 0.043758,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+    },
+    {
+      "case": "예산 남은 금액",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 0.043758,
+        "daily_budget_usd": 1,
+        "remaining_usd": 0.998011,
+        "over_budget": false
+      }
+    },
+    {
+      "case": "예산을 넘으면",
+      "webhook": "my-cost-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "requests": 3,
+        "calls": 4,
+        "cost_usd": 0.001989,
+        "avg_usd": 0.000663,
+        "by_model": {
+          "gpt-4.1-mini": 0.001944,
+          "gpt-5.4-nano": 4.5e-05
+        },
+        "top_user": "박서연",
+        "projected_month_usd": 0.043758,
+        "daily_budget_usd": 0.001,
+        "remaining_usd": -0.000989,
+        "over_budget": true
+      }
+    }
+  ]
+}

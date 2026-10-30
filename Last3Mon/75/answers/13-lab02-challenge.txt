@@ -1,0 +1,240 @@
+$ uv run tools/flow.py push answers/75-lab02-challenge-one-call.json
+! unpublished '75 IT helpdesk + small models (reference)' (w5619722541404a5): it used the same webhook path
+✔ pushed '75 IT helpdesk + one LLM call (answer)' (id wbf73b5f2c309119)
+   POST http://localhost:5678/webhook/my-cost
+
+$ uv run tools/flow.py test cases/lab02-challenge.json -v
+POST http://localhost:5678/webhook/my-cost · 7 case(s) × 1
+✔ faq-vpn · LLM 한 번 · $0.0002 이하 · 2.8s · 자동 답변 · 1 call · $0.000156
+    → request  POST /webhook/my-cost
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 티켓은 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 165,
+          "completion_tokens": 56,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 165,
+              "completion_tokens": 56,
+              "cost_usd": 0.0001556
+            }
+          }
+        },
+        "cost_usd": 0.0001556,
+        "recorded": true
+      }
+✔ faq-password · LLM 한 번 · $0.0002 이하 · 1.2s · 자동 답변 · 1 call · $0.000138
+    → request  POST /webhook/my-cost
+      {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "비밀번호 재설정은 사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 도움이 필요하시면 언제든 문의해 주세요.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 169,
+          "completion_tokens": 44,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 169,
+              "completion_tokens": 44,
+              "cost_usd": 0.000138
+            }
+          }
+        },
+        "cost_usd": 0.000138,
+        "recorded": true
+      }
+✔ faq-printer · LLM 한 번 · $0.0002 이하 · 1.2s · 자동 답변 · 1 call · $0.000150
+    → request  POST /webhook/my-cost
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력해 보시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 164,
+          "completion_tokens": 53,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 164,
+              "completion_tokens": 53,
+              "cost_usd": 0.0001504
+            }
+          }
+        },
+        "cost_usd": 0.0001504,
+        "recorded": true
+      }
+✔ faq-mail · LLM 한 번 · $0.0002 이하 · 1.5s · 자동 답변 · 1 call · $0.000166
+    → request  POST /webhook/my-cost
+      {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "김민지"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "메일함 용량이 초과된 경우, 오래된 메일과 큰 첨부 파일을 보관함으로 옮기거나 삭제하여 용량을 확보하시기 바랍니다. 현재 접수된 관련 티켓은 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-005"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 167,
+          "completion_tokens": 62,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 167,
+              "completion_tokens": 62,
+              "cost_usd": 0.000166
+            }
+          }
+        },
+        "cost_usd": 0.000166,
+        "recorded": true
+      }
+✔ ticket-own · LLM 한 번 · $0.0002 이하 · 1.4s · 자동 답변 · 1 call · $0.000115
+    → request  POST /webhook/my-cost
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "T-1002 티켓은 현재 처리 중이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다.",
+        "sources": [],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 152,
+          "completion_tokens": 34,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 152,
+              "completion_tokens": 34,
+              "cost_usd": 0.0001152
+            }
+          }
+        },
+        "cost_usd": 0.0001152,
+        "recorded": true
+      }
+✔ ticket-done · LLM 한 번 · $0.0002 이하 · 0.9s · 자동 답변 · 1 call · $0.000108
+    → request  POST /webhook/my-cost
+      {
+        "question": "T-1001 어떻게 됐나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "티켓 T-1001은 처리 완료되었으며, 새 배터리로 교체했습니다. 추가 문의 사항이 있으시면 말씀해 주세요.",
+        "sources": [],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 143,
+          "completion_tokens": 32,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 143,
+              "completion_tokens": 32,
+              "cost_usd": 0.0001084
+            }
+          }
+        },
+        "cost_usd": 0.0001084,
+        "recorded": true
+      }
+✔ 규칙으로 모르는 질문은 분류 + 답 · 1.5s · 자동 답변 · 2 calls · $0.000097
+    → request  POST /webhook/my-cost
+      {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "찾지 못했습니다. 담당 직원이 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 2,
+        "usage": {
+          "prompt_tokens": 201,
+          "completion_tokens": 22,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 77,
+              "completion_tokens": 8,
+              "cost_usd": 2.54e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 124,
+              "completion_tokens": 14,
+              "cost_usd": 7.2e-05
+            }
+          }
+        },
+        "cost_usd": 9.74e-05,
+        "recorded": true
+      }
+Passed 7/7
+report: runs/lab02-challenge-20261028-210617.json
+
+$ uv run tools/flow.py test cases/lab02.json
+POST http://localhost:5678/webhook/my-cost · 5 case(s) × 1
+✔ 예제 1 · VPN · 보내는 양 줄이기 · 1.2s · 자동 답변 · 1 call · $0.000156
+✔ 예제 1 · 접수 · 보내는 양 줄이기 · 1.0s · 자동 답변 · 1 call · $0.000115
+✔ 예제 1 · 비밀번호 · 품질 그대로 · 1.5s · 자동 답변 · 1 call · $0.000136
+✔ 예제 2 · 분류는 작은 모델 · 2.1s · 자동 답변 · 2 calls · $0.000097
+✔ 예제 2 · 프린터 · 품질 그대로 · 1.2s · 자동 답변 · 1 call · $0.000152
+Passed 5/5
+report: runs/lab02-20261028-210624.json
+
+$ uv run tools/flow.py test cases/lab01.json
+POST http://localhost:5678/webhook/my-cost · 3 case(s) × 1
+✔ VPN · 비용과 단계별 사용량 · 1.4s · 자동 답변 · 1 call · $0.000156
+✔ 접수 현황 · 비용 · 1.2s · 자동 답변 · 1 call · $0.000115
+✔ 빈 질문은 LLM 없이 · 0.0s
+Passed 3/3
+report: runs/lab01-20261028-210627.json
+
+$ uv run tools/flow.py test cases/lab01-challenge.json
+✔ before: POST http://localhost:8800/usage-clear · HTTP 200 · 0.0s · {"cleared": 157}
+POST http://localhost:5678/webhook/my-cost · 4 case(s) × 1
+✔ 기록 1 · VPN · 1.2s · 자동 답변 · 1 call · $0.000156
+✔ 기록 2 · 접수 · 1.0s · 자동 답변 · 1 call · $0.000115
+✔ 기록 3 · 다른 사람 · 1.4s · 자동 답변 · 1 call · $0.000138
+✔ 사용량 요약 · 요청 3건 · 0.0s · $0.000409
+Passed 4/4
+report: runs/lab01-challenge-20261028-210630.json

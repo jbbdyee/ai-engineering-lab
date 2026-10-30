@@ -1,0 +1,419 @@
+{
+  "name": "76 Replay · park after 3 attempts (answer, Lab 03 task 1)",
+  "nodes": [
+    {
+      "name": "Replay webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-replay",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "Get DLQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/dlq",
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Pick items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const max = Number($('Replay webhook').first().json.body?.max_attempts ?? 3);\nconst items = ($json.items ?? []).filter((e) => !e.parked);\nconst ready = items.filter((e) => e.attempts < max);\nconst tooMany = items.filter((e) => e.attempts >= max);\nreturn [...ready.map((e) => ({ json: { ...e, action: 'replay' } })), ...tooMany.map((e) => ({ json: { ...e, action: 'park' } }))];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "name": "Has items?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.dlq_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "name": "Nothing to do",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ replayed: 0, ok: 0, still_failed: 0, parked: 0 }) }}",
+        "options": {}
+      },
+      "position": [
+        880,
+        520
+      ]
+    },
+    {
+      "name": "Run intake again",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-intake",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ requests: [$json.item] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 60000
+        }
+      },
+      "position": [
+        1100,
+        200
+      ]
+    },
+    {
+      "name": "Outcome",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const picked = $('Replay it?').all().filter((item) => item.json.action === 'replay');\nreturn $input.all().map((item, i) => ({ json: { dlq_id: picked[i].json.dlq_id, id: picked[i].json.item?.id, ok: item.json.created === 1, duplicate: item.json.duplicates === 1 } }));"
+      },
+      "position": [
+        1320,
+        200
+      ]
+    },
+    {
+      "name": "Remove done",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/dlq/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ dlq_id: $json.dlq_id, remove: $json.ok }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        1540,
+        200
+      ]
+    },
+    {
+      "name": "Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const ran = (n) => { try { return $(n).isExecuted; } catch (e) { return false; } };\nconst outcomes = ran('Outcome') ? $('Outcome').all().map((i) => i.json) : [];\nconst parked = ran('Park it') ? $('Park it').all().length : 0;\nconst ok = outcomes.filter((o) => o.ok).length;\nreturn [{ json: { replayed: outcomes.length, ok, still_failed: outcomes.length - ok, parked, duplicates: outcomes.filter((o) => o.duplicate).length } }];"
+      },
+      "position": [
+        2200,
+        300
+      ]
+    },
+    {
+      "name": "Send summary",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        2420,
+        300
+      ]
+    },
+    {
+      "name": "Replay it?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "replay",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "name": "Park it",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/dlq/update",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ dlq_id: $json.dlq_id, parked: true, reason: 'gave up after ' + $json.attempts + ' attempts: ' + $json.reason }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        1100,
+        420
+      ]
+    },
+    {
+      "name": "Alert parked",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/alerts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ workflow: 'replay', node: 'Park it', severity: 'high', reason: 'parked', dlq_id: $json.entry?.dlq_id, message: $json.entry?.dlq_id + ' (' + $json.entry?.item?.id + ') parked after ' + $json.entry?.attempts + ' attempts' }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        1320,
+        420
+      ]
+    },
+    {
+      "name": "Collect",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "parameters": {
+        "numberInputs": 2
+      },
+      "position": [
+        1980,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Replay webhook": {
+      "main": [
+        [
+          {
+            "node": "Get DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get DLQ": {
+      "main": [
+        [
+          {
+            "node": "Pick items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick items": {
+      "main": [
+        [
+          {
+            "node": "Has items?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has items?": {
+      "main": [
+        [
+          {
+            "node": "Replay it?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nothing to do",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run intake again": {
+      "main": [
+        [
+          {
+            "node": "Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outcome": {
+      "main": [
+        [
+          {
+            "node": "Remove done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replay it?": {
+      "main": [
+        [
+          {
+            "node": "Run intake again",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Park it",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Park it": {
+      "main": [
+        [
+          {
+            "node": "Alert parked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove done": {
+      "main": [
+        [
+          {
+            "node": "Collect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert parked": {
+      "main": [
+        [
+          {
+            "node": "Collect",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Collect": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

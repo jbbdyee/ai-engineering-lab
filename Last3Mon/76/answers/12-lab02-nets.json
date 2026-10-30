@@ -1,0 +1,262 @@
+{
+  "cases": "lab02-nets.json",
+  "webhook": "my-intake",
+  "passed": 5,
+  "total": 7,
+  "results": [
+    {
+      "case": "1 · 잘못된 항목 → 결과에만 (rejected)",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.7,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-201",
+            "user": "한지훈",
+            "text": "프린터 용지가 걸려요"
+          },
+          {
+            "id": "R-202",
+            "user": "한지훈",
+            "text": ""
+          },
+          {
+            "id": "R-203",
+            "user": "김민지",
+            "text": "메일 첨부가 안 열려요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 2,
+        "failed": 0,
+        "rejected": 1,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-201",
+            "status": "created",
+            "ticket_id": "T-2001",
+            "duplicate": false,
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "id": "R-203",
+            "status": "created",
+            "ticket_id": "T-2002",
+            "duplicate": false,
+            "category": "소프트웨어",
+            "priority": "보통"
+          },
+          {
+            "id": "R-202",
+            "status": "rejected",
+            "reason": "text is required"
+          }
+        ]
+      }
+    },
+    {
+      "case": "2 · API 오류 → failed",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.8,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ]
+      }
+    },
+    {
+      "case": "3 · failed는 DLQ에",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 2,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250932.1935513
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250932.1935537
+          }
+        ]
+      }
+    },
+    {
+      "case": "4 · 버그 → 500",
+      "webhook": "nightly-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 500,
+      "request": {},
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "5 · Error Workflow → critical 알림",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "workflow": "76 Nightly report (provided, has a bug)",
+        "workflow_id": "wb9ce32c18d7df56",
+        "node": "Count by category",
+        "message": "rows is not iterable [line 4]",
+        "execution_id": "10114",
+        "severity": "critical",
+        "reason": "unexpected",
+        "at": 1793250932.293378
+      }
+    },
+    {
+      "case": "6 · DLQ마저 멈추면 결과가 알려야",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "dlq_saved = null (expected false)"
+      ],
+      "seconds": 4.1,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-101",
+            "user": "이준호",
+            "text": "VPN이 아침부터 계속 끊겨서 고객 미팅을 못 하고 있어요"
+          },
+          {
+            "id": "R-102",
+            "user": "박서연",
+            "text": "새 모니터를 하나 더 받을 수 있을까요?"
+          },
+          {
+            "id": "R-103",
+            "user": "최유진",
+            "text": "엑셀 라이선스가 만료됐다고 나와요"
+          }
+        ]
+      },
+      "response": {
+        "total": 3,
+        "created": 0,
+        "failed": 3,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-101",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-102",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-103",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ]
+      }
+    },
+    {
+      "case": "7 · DLQ가 멈춘 것을 누가 아나 (critical · dlq_down)",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "reason = unexpected (expected dlq_down)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "workflow": "76 Nightly report (provided, has a bug)",
+        "workflow_id": "wb9ce32c18d7df56",
+        "node": "Count by category",
+        "message": "rows is not iterable [line 4]",
+        "execution_id": "10114",
+        "severity": "critical",
+        "reason": "unexpected",
+        "at": 1793250932.293378
+      }
+    }
+  ]
+}

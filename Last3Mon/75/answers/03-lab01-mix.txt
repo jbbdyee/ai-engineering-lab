@@ -1,0 +1,11 @@
+$ uv run tools/flow.py test cases/lab01-mix.json
+POST http://localhost:5678/webhook/my-cost · 7 case(s) × 1
+✔ FAQ · VPN · 3.2s · 자동 답변 · 3 calls · $0.001040
+✔ FAQ · 프린터 · 3.9s · 자동 답변 · 3 calls · $0.000960
+✔ FAQ · 비밀번호 · 3.5s · 자동 답변 · 3 calls · $0.000953
+✔ FAQ · 메일 · 3.4s · 자동 답변 · 3 calls · $0.000965
+✔ 접수 · T-1002 · 3.0s · 자동 답변 · 3 calls · $0.000946
+✔ 접수 · T-1001 · 3.2s · 자동 답변 · 3 calls · $0.000890
+✔ 규칙에 없는 질문 · 2.6s · 자동 답변 · 3 calls · $0.000830
+Passed 7/7
+report: runs/lab01-mix-20261028-210125.json

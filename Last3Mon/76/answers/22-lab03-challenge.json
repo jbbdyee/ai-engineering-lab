@@ -1,0 +1,181 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-intake",
+  "passed": 7,
+  "total": 7,
+  "results": [
+    {
+      "case": "API가 오래 멈춤 · 처음 실패",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.3,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "재처리 1 · 또 실패",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.9,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 0,
+        "still_failed": 2,
+        "parked": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "case": "재처리 2 · 또 실패",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 0,
+        "still_failed": 2,
+        "parked": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "case": "재처리 3 · 세 번 실패한 것은 멈춤 (parked)",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 0,
+        "ok": 0,
+        "still_failed": 0,
+        "parked": 2,
+        "duplicates": 0
+      }
+    },
+    {
+      "case": "parked로 남음",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 2,
+        "parked": 2,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 3,
+            "parked": true,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "gave up after 3 attempts: 500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251128.6803358
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 3,
+            "parked": true,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "gave up after 3 attempts: 500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251128.9017823
+          }
+        ]
+      }
+    },
+    {
+      "case": "멈춘 것은 알림",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "workflow": "replay",
+        "node": "Park it",
+        "severity": "high",
+        "reason": "parked",
+        "dlq_id": "D-2",
+        "message": "D-2 (R-302) parked after 3 attempts",
+        "at": 1793251129.0694785
+      }
+    },
+    {
+      "case": "고친 뒤에도 parked는 자동으로 돌리지 않음",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 0,
+        "ok": 0,
+        "still_failed": 0,
+        "parked": 0
+      }
+    }
+  ]
+}

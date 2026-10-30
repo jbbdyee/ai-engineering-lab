@@ -1,0 +1,285 @@
+$ uv run tools/flow.py test cases/lab02-challenge.json -v
+POST http://localhost:5678/webhook/my-cost · 7 case(s) × 1
+✘ faq-vpn · LLM 한 번 · $0.0002 이하 · 3.0s · 자동 답변 · 3 calls · $0.000278 · llm_calls = 3 (expected 1); cost_usd = 0.00027815 (expected 1e-06..0.0002)
+    → request  POST /webhook/my-cost
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 티켓은 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 359,
+          "completion_tokens": 123,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 77,
+              "completion_tokens": 8,
+              "cost_usd": 2.54e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 165,
+              "completion_tokens": 56,
+              "cost_usd": 0.0001556
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 117,
+              "completion_tokens": 59,
+              "cost_usd": 9.715e-05
+            }
+          }
+        },
+        "cost_usd": 0.00027815,
+        "recorded": true
+      }
+✘ faq-password · LLM 한 번 · $0.0002 이하 · 3.6s · 자동 답변 · 3 calls · $0.000241 · llm_calls = 3 (expected 1); cost_usd = 0.0002407 (expected 1e-06..0.0002)
+    → request  POST /webhook/my-cost
+      {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "비밀번호 재설정은 사내 포털 로그인 화면의 ‘비밀번호 찾기’에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 추가 도움이 필요하시면 문의해 주세요.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 353,
+          "completion_tokens": 97,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 80,
+              "completion_tokens": 8,
+              "cost_usd": 2.6e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 169,
+              "completion_tokens": 43,
+              "cost_usd": 0.0001364
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 104,
+              "completion_tokens": 46,
+              "cost_usd": 7.83e-05
+            }
+          }
+        },
+        "cost_usd": 0.0002407,
+        "recorded": true
+      }
+✘ faq-printer · LLM 한 번 · $0.0002 이하 · 3.5s · 자동 답변 · 3 calls · $0.000267 · llm_calls = 3 (expected 1); cost_usd = 0.0002674 (expected 1e-06..0.0002)
+    → request  POST /webhook/my-cost
+      {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인한 뒤 인쇄 대기열을 비우고 다시 출력해 보시기 바랍니다. 현재 접수된 관련 문의는 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 349,
+          "completion_tokens": 117,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 71,
+              "completion_tokens": 8,
+              "cost_usd": 2.42e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 164,
+              "completion_tokens": 53,
+              "cost_usd": 0.0001504
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 114,
+              "completion_tokens": 56,
+              "cost_usd": 9.28e-05
+            }
+          }
+        },
+        "cost_usd": 0.0002674,
+        "recorded": true
+      }
+✘ faq-mail · LLM 한 번 · $0.0002 이하 · 3.5s · 자동 답변 · 3 calls · $0.000297 · llm_calls = 3 (expected 1); cost_usd = 0.00029665 (expected 1e-06..0.0002)
+    → request  POST /webhook/my-cost
+      {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "김민지"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "메일함 용량이 초과된 경우, 오래된 메일과 큰 첨부 파일을 보관함으로 옮기거나 삭제하여 용량을 확보하시기 바랍니다. 현재 접수된 관련 티켓은 없습니다. 추가 도움이 필요하시면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-005"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 364,
+          "completion_tokens": 135,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 73,
+              "completion_tokens": 8,
+              "cost_usd": 2.46e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 167,
+              "completion_tokens": 62,
+              "cost_usd": 0.000166
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 124,
+              "completion_tokens": 65,
+              "cost_usd": 0.00010605
+            }
+          }
+        },
+        "cost_usd": 0.00029665,
+        "recorded": true
+      }
+✘ ticket-own · LLM 한 번 · $0.0002 이하 · 4.0s · 자동 답변 · 3 calls · $0.000238 · llm_calls = 3 (expected 1); cost_usd = 0.000238 (expected 1e-06..0.0002)
+    → request  POST /webhook/my-cost
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "T-1002 티켓은 현재 처리 중이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다. 추가 문의 사항이 있으시면 알려주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 328,
+          "completion_tokens": 101,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 70,
+              "completion_tokens": 8,
+              "cost_usd": 2.4e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 152,
+              "completion_tokens": 45,
+              "cost_usd": 0.0001328
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 106,
+              "completion_tokens": 48,
+              "cost_usd": 8.12e-05
+            }
+          }
+        },
+        "cost_usd": 0.000238,
+        "recorded": true
+      }
+✘ ticket-done · LLM 한 번 · $0.0002 이하 · 3.2s · 자동 답변 · 3 calls · $0.000164 · llm_calls = 3 (expected 1)
+    → request  POST /webhook/my-cost
+      {
+        "question": "T-1001 어떻게 됐나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "티켓 T-1001은 처리 완료되었으며, 새 배터리로 교체했습니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 297,
+          "completion_tokens": 55,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 71,
+              "completion_tokens": 8,
+              "cost_usd": 2.42e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 143,
+              "completion_tokens": 22,
+              "cost_usd": 9.24e-05
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 83,
+              "completion_tokens": 25,
+              "cost_usd": 4.785e-05
+            }
+          }
+        },
+        "cost_usd": 0.00016445,
+        "recorded": true
+      }
+✘ 규칙으로 모르는 질문은 분류 + 답 · 3.1s · 자동 답변 · 3 calls · $0.000144 · llm_calls = 3 (expected 2)
+    → request  POST /webhook/my-cost
+      {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "죄송합니다. 요청하신 내용을 찾지 못했습니다. 담당 직원이 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 276,
+          "completion_tokens": 47,
+          "by_step": {
+            "classify": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 77,
+              "completion_tokens": 8,
+              "cost_usd": 2.54e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 124,
+              "completion_tokens": 14,
+              "cost_usd": 7.2e-05
+            },
+            "review": {
+              "model": "gpt-5.4-nano",
+              "prompt_tokens": 75,
+              "completion_tokens": 25,
+              "cost_usd": 4.625e-05
+            }
+          }
+        },
+        "cost_usd": 0.00014365,
+        "recorded": true
+      }
+Passed 0/7
+report: runs/lab02-challenge-20261028-210554.json

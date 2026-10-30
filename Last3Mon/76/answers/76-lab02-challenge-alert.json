@@ -1,0 +1,571 @@
+{
+  "name": "76 Intake · alert on handled failures (answer, Lab 02 task 1)",
+  "nodes": [
+    {
+      "name": "Intake webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "Is a list?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ Array.isArray($json.body.requests) && $json.body.requests.length <= 10 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Reject body",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: Array.isArray($json.body.requests) ? 'too many requests (max 10)' : 'requests must be a list' }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        600
+      ]
+    },
+    {
+      "name": "Check items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const requests = $('Intake webhook').first().json.body.requests;\nconst seen = new Set();\nreturn requests.map((r, index) => {\n  const problems = [];\n  if (!r || typeof r !== 'object') return { json: { index, valid: false, reason: 'not an object', id: null } };\n  if (!String(r.id ?? '').trim()) problems.push('id is required');\n  if (typeof r.text !== 'string' || !r.text.trim()) problems.push('text is required');\n  if (!String(r.user ?? '').trim()) problems.push('user is required');\n  const id = String(r.id ?? '').trim();\n  if (id && seen.has(id)) problems.push('duplicate id in this request');\n  if (id) seen.add(id);\n  return { json: { index, valid: problems.length === 0, reason: problems.join(', '), id: r.id ?? null, user: r.user ?? '', text: typeof r.text === 'string' ? r.text.trim() : '' } };\n});"
+      },
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "name": "Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "name": "Classify",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You sort one employee IT request. Return only JSON, no code fence: {\"category\": \"계정\" | \"네트워크\" | \"장비\" | \"소프트웨어\" | \"기타\", \"priority\": \"높음\" | \"보통\" | \"낮음\"}. 높음 only when work is blocked now.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        880,
+        200
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "name": "Classify model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "position": [
+        880,
+        420
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      }
+    },
+    {
+      "name": "Parse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const inputs = $('Valid?').all().filter((item) => item.json.valid);\nreturn $input.all().map((item, i) => {\n  const req = inputs[i].json;\n  let c = {}, fallback = false;\n  if (item.json.error || item.json.output === undefined) { fallback = true; }\n  else { try { c = JSON.parse(String(item.json.output).replace(/^```(json)?\\s*|```$/g, '')); } catch (e) { fallback = true; } }\n  return { json: { ...req, category: fallback ? '미분류' : (c.category ?? '기타'), priority: fallback ? '보통' : (c.priority ?? '보통'), classified: !fallback } };\n});"
+      },
+      "position": [
+        1100,
+        200
+      ]
+    },
+    {
+      "name": "Create ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/tickets",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ key: $json.id, title: $json.text, requester: $json.user, category: $json.category, priority: $json.priority }) }}",
+        "options": {
+          "timeout": 3000
+        }
+      },
+      "position": [
+        1320,
+        200
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 300,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "name": "Mark results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const inputs = $('Parse').all();\nreturn $input.all().map((item, i) => {\n  const req = inputs[i].json;\n  if (item.json.ticket_id) return { json: { id: req.id, status: 'created', ticket_id: item.json.ticket_id, duplicate: item.json.duplicate === true, category: req.category, priority: req.priority } };\n  const message = item.json.error?.message ?? item.json.error ?? 'create failed';\n  return { json: { id: req.id, status: 'failed', reason: String(message).slice(0, 200), request: { id: req.id, user: req.user, text: req.text } } };\n});"
+      },
+      "position": [
+        1540,
+        200
+      ]
+    },
+    {
+      "name": "Mark rejected",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return $input.all().map((item) => ({ json: { id: item.json.id, status: 'rejected', reason: item.json.reason } }));"
+      },
+      "position": [
+        880,
+        640
+      ]
+    },
+    {
+      "name": "Collect",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "parameters": {
+        "numberInputs": 2
+      },
+      "position": [
+        1760,
+        300
+      ]
+    },
+    {
+      "name": "Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const rows = $input.all().map((item) => item.json);\nconst created = rows.filter((r) => r.status === 'created');\nconst failed = rows.filter((r) => r.status === 'failed');\nconst rejected = rows.filter((r) => r.status === 'rejected');\nreturn [{ json: { total: rows.length, created: created.length, failed: failed.length, rejected: rejected.length,\n  duplicates: created.filter((r) => r.duplicate).length, unclassified: created.filter((r) => r.category === '미분류').length,\n  results: rows.map(({ request, ...rest }) => rest), failed_requests: failed.map((r) => r.request) } }];"
+      },
+      "position": [
+        1980,
+        300
+      ]
+    },
+    {
+      "name": "Public result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const ran = (n) => { try { return $(n).isExecuted; } catch (e) { return false; } };\nconst { failed_requests, ...rest } = $('Summarize').first().json;\nconst out = { ...rest };\nif (true) {\n  if (ran('Send to DLQ')) out.dlq_saved = Number($('Send to DLQ').first().json.stored ?? 0) > 0;\n  out.alert = ran('Send alert') ? 'sent' : (ran('Decide alert') && $('Decide alert').first().json.suppressed ? 'suppressed' : 'none');\n}\nreturn [{ json: out }];"
+      },
+      "position": [
+        3300,
+        300
+      ]
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        3520,
+        300
+      ]
+    },
+    {
+      "name": "Any failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.failed > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        2200,
+        300
+      ]
+    },
+    {
+      "name": "Send to DLQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/dlq",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ items: $json.failed_requests.map((r, i) => ({ item: r, reason: $json.results.filter((x) => x.status === 'failed')[i]?.reason ?? 'failed', workflow: 'intake' })) }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        2420,
+        140
+      ]
+    },
+    {
+      "name": "Make alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const s = $('Summarize').first().json;\nconst saved = Number($json.stored ?? 0) > 0;\nreturn [{ json: saved\n  ? { workflow: 'intake', node: 'Send to DLQ', severity: 'high', reason: 'dlq', count: s.failed,\n      message: s.failed + ' request(s) could not be created and wait in the DLQ', execution_id: $execution.id }\n  : { workflow: 'intake', node: 'Send to DLQ', severity: 'critical', reason: 'dlq_down', count: s.failed,\n      message: 'DLQ save failed: ' + String($json.error ?? JSON.stringify($json)).slice(0, 150) + ' · lost ids ' + s.failed_requests.map((r) => r.id).join(', '),\n      execution_id: $execution.id, ids: s.failed_requests.map((r) => r.id) } }];"
+      },
+      "position": [
+        2640,
+        140
+      ]
+    },
+    {
+      "name": "Send alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/alerts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify((({ suppressed, recent, ...a }) => a)($json)) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        3080,
+        60
+      ]
+    }
+  ],
+  "connections": {
+    "Intake webhook": {
+      "main": [
+        [
+          {
+            "node": "Is a list?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is a list?": {
+      "main": [
+        [
+          {
+            "node": "Check items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check items": {
+      "main": [
+        [
+          {
+            "node": "Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid?": {
+      "main": [
+        [
+          {
+            "node": "Classify",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify": {
+      "main": [
+        [
+          {
+            "node": "Parse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse": {
+      "main": [
+        [
+          {
+            "node": "Create ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create ticket": {
+      "main": [
+        [
+          {
+            "node": "Mark results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark results": {
+      "main": [
+        [
+          {
+            "node": "Collect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark rejected": {
+      "main": [
+        [
+          {
+            "node": "Collect",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Collect": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Public result": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Any failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any failed?": {
+      "main": [
+        [
+          {
+            "node": "Send to DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Public result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to DLQ": {
+      "main": [
+        [
+          {
+            "node": "Make alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make alert": {
+      "main": [
+        [
+          {
+            "node": "Send alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send alert": {
+      "main": [
+        [
+          {
+            "node": "Public result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "errHandler76001"
+  }
+}

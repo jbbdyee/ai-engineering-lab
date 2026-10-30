@@ -1,0 +1,43 @@
+$ uv run tools/flow.py budget --daily 0.0003
+✔ budget changed: {"daily_usd": 0.0003}
+budget $0.0003 / used $0.000934 · remaining $-0.000634 · over True · per user 20/min · question 500 chars
+
+$ uv run tools/flow.py test cases/lab03-drill.json
+✔ before: POST http://localhost:8800/usage-clear · HTTP 200 · 0.0s · {"cleared": 8}
+POST http://localhost:5678/webhook/my-cost · 6 case(s) × 1
+✔ 1번째 · VPN · 1.1s · 자동 답변 · 1 call · $0.000141
+✔ 2번째 · 프린터 · 1.0s · 자동 답변 · 1 call · $0.000152
+✔ 3번째 · 비밀번호 · 1.3s · 자동 답변 · 1 call · $0.000136
+✔ 4번째 · 메일 · 0.1s · 한도 초과 · 0 calls · $0.000000
+✔ 5번째 · 접수 · 0.1s · 한도 초과 · 0 calls · $0.000000
+✔ 6번째 · VPN 다시 · 0.0s · 한도 초과 · 0 calls · $0.000000
+Passed 6/6
+report: runs/lab03-drill-20261028-210759.json
+
+$ uv run tools/flow.py usage
+requests 3 · calls 3 · tokens in 498 / out 144 · $0.000430
+  model  gpt-4.1-mini      3 calls · in     498 · out    144 · $0.000430
+  user   최유진               1 calls · in     164 · out     54 · $0.000152
+  user   이준호               1 calls · in     165 · out     47 · $0.000141
+  user   한지훈               1 calls · in     169 · out     43 · $0.000136
+  route  자동 답변             3 calls · in     498 · out    144 · $0.000430
+budget $0.0003 / used $0.000430 · remaining $-0.000130 · over True · per user 20/min · question 500 chars
+
+$ uv run tools/flow.py budget --reset
+✔ budget back to data/budget.json
+budget $1.0 / used $0.000430 · remaining $0.999570 · over False · per user 20/min · question 500 chars
+
+$ uv run tools/flow.py test cases/lab03-drill.json
+✔ before: POST http://localhost:8800/usage-clear · HTTP 200 · 0.0s · {"cleared": 3}
+POST http://localhost:5678/webhook/my-cost · 6 case(s) × 1
+✔ 1번째 · VPN · 1.4s · 자동 답변 · 1 call · $0.000141
+✔ 2번째 · 프린터 · 1.2s · 자동 답변 · 1 call · $0.000152
+✔ 3번째 · 비밀번호 · 1.6s · 자동 답변 · 1 call · $0.000136
+✔ 4번째 · 메일 · 1.8s · 자동 답변 · 1 call · $0.000166
+✔ 5번째 · 접수 · 1.4s · 자동 답변 · 1 call · $0.000133
+✔ 6번째 · VPN 다시 · 1.5s · 자동 답변 · 1 call · $0.000156
+Passed 6/6
+report: runs/lab03-drill-20261028-210808.json
+
+$ uv run tools/flow.py usage --clear
+✔ usage cleared: {"cleared": 6}

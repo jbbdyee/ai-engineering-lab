@@ -1,0 +1,161 @@
+{
+  "cases": "lab03-challenge2.json",
+  "webhook": "my-ops-status",
+  "passed": 3,
+  "total": 7,
+  "results": [
+    {
+      "case": "1 · 아무 일 없음 → ok",
+      "webhook": "my-ops-status",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "status = null (expected ok)",
+        "dlq = null (expected 0)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-status\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "2 · (접수 실패 2건)",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.9,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "3 · DLQ가 있으면 warn",
+      "webhook": "my-ops-status",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "status = null (expected warn)",
+        "dlq = null (expected 2)",
+        "reasons has none of ['재처리']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-status\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "4 · (보고서 버그)",
+      "webhook": "nightly-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 500,
+      "request": {},
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "5 · critical 알림이 있으면 critical",
+      "webhook": "my-ops-status",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "status = null (expected critical)",
+        "alerts.critical = null (expected 1)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-status\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "6 · (재처리 · 알림 확인 뒤 비움)",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 2,
+        "still_failed": 0,
+        "parked": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "case": "7 · 고친 뒤 → ok",
+      "webhook": "my-ops-status",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "status = null (expected ok)",
+        "dlq = null (expected 0)",
+        "created = null (expected 2)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-status\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}

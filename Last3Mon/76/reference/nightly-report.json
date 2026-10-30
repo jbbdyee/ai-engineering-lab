@@ -1,0 +1,103 @@
+{
+  "name": "76 Nightly report (provided, has a bug)",
+  "nodes": [
+    {
+      "name": "Report webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nightly-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "440333b3-117e-5245-be3f-741ec769bfa5",
+      "position": [
+        0,
+        300
+      ],
+      "id": "168590b9-ccec-5d1c-9375-34b12cfcc2bc"
+    },
+    {
+      "name": "Get created",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/tickets-created",
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "80bbb556-246d-5c36-8018-5d7e4fb65ac5"
+    },
+    {
+      "name": "Count by category",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "// bug: the response has \"tickets\", not \"items\"\nconst rows = $json.items;\nconst counts = {};\nfor (const t of rows) counts[t.category] = (counts[t.category] ?? 0) + 1;\nreturn [{ json: { counts } }];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "d1f399a8-bc08-5ee4-84bc-5e2f7107d14b"
+    },
+    {
+      "name": "Send report",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "52d3efaa-4a27-5d84-bb73-76af0e7c1dff"
+    }
+  ],
+  "connections": {
+    "Report webhook": {
+      "main": [
+        [
+          {
+            "node": "Get created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get created": {
+      "main": [
+        [
+          {
+            "node": "Count by category",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Count by category": {
+      "main": [
+        [
+          {
+            "node": "Send report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "errHandler76001"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "cases": "lab03.json",
+  "webhook": "my-intake",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "case": "API가 멈춘 동안 2건 → DLQ",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.4,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "고친 뒤 다시 돌리기",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 2,
+        "still_failed": 0,
+        "parked": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "case": "DLQ가 비었음",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 0,
+        "parked": 0,
+        "items": []
+      }
+    },
+    {
+      "case": "접수 건은 2개 (중복 없음)",
+      "webhook": "http://localhost:8800/tickets-created/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 2,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-302",
+            "title": "노트북 배터리가 금방 닳아요",
+            "requester": "이준호",
+            "category": "장비",
+            "priority": "보통"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-301",
+            "title": "사내 위키 로그인이 안 돼요",
+            "requester": "정우성",
+            "category": "계정",
+            "priority": "높음"
+          }
+        ]
+      }
+    },
+    {
+      "case": "한 번 더 돌려도 할 일 없음",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 0,
+        "ok": 0,
+        "still_failed": 0,
+        "parked": 0
+      }
+    }
+  ]
+}

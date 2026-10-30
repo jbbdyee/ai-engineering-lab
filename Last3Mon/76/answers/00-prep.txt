@@ -1,0 +1,34 @@
+$ uv run tools/flow.py ops --reset
+✔ created tickets, DLQ and alerts emptied, fault switch all ok
+
+$ uv run tools/flow.py budget --reset
+✔ budget back to data/budget.json
+budget $1.0 / used $0.000000 · remaining $1.000000 · over False · per user 20/min · question 500 chars
+
+$ uv run tools/flow.py usage --clear
+✔ usage cleared: {"cleared": 0}
+
+$ uv run tools/flow.py off my-intake my-replay my-ops-status reference/lab02-example2-error-handler.json
+✔ unpublished my-intake (id w75a95815facf2d6)
+✔ unpublished my-replay (id w7d8de63c811909b)
+✔ unpublished my-ops-status (id w07b5812eaa88ef9)
+✔ n8n restarted. Turn it back on with: uv run tools/flow.py push <the workflow file>
+
+$ uv run tools/flow.py push reference/baseline-intake.json reference/nightly-report.json
+✔ pushed '76 Intake baseline (provided)' (id w4ef8dc8a25b82e3)
+   POST http://localhost:5678/webhook/base-intake
+✔ pushed '76 Nightly report (provided, has a bug)' (id wb9ce32c18d7df56)
+   POST http://localhost:5678/webhook/nightly-report
+
+$ uv run tools/flow.py doctor
+! n8n install folder /Users/[USER]/day65-n8n
+   → day 65 SETUP-N8N 5단계 (get.n8n.io 설치). 다른 곳에 설치했다면 Last3Mon/65/n8n/.env 에 N8N_HOME=<폴더>
+✔ n8n container day65-n8n-n8n-1
+✔ n8n http://localhost:5678
+✔ data API http://localhost:8800
+✔ dead letter queue /dlq · alerts · fault switch dlq (day 76 data API)
+✔ n8n → http://data-api:8800
+✔ credential 'OpenAI (.env)' (openAiCourse0001)
+✔ node catalog (for check)
+✔ CLI coding agent: codex, claude, agy
+ready

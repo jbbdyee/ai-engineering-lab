@@ -1,0 +1,78 @@
+{
+  "id": "errHandler76001",
+  "name": "76 Error handler (reference)",
+  "nodes": [
+    {
+      "name": "On error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "parameters": {},
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "Make alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const e = $json;\nreturn [{ json: { workflow: e.workflow?.name ?? '?', workflow_id: e.workflow?.id ?? '', node: e.execution?.lastNodeExecuted ?? e.execution?.error?.node?.name ?? '?',\n  message: String(e.execution?.error?.message ?? 'unknown error').slice(0, 300), execution_id: e.execution?.id ?? '', severity: 'critical', reason: 'unexpected' } }];"
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Send alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/alerts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        440,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "On error": {
+      "main": [
+        [
+          {
+            "node": "Make alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make alert": {
+      "main": [
+        [
+          {
+            "node": "Send alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

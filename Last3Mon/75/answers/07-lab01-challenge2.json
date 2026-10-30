@@ -1,0 +1,190 @@
+{
+  "cases": "lab01-challenge2.json",
+  "webhook": "my-cost",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "기록 API 고장(500) · 답은 나감",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.4,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 자주 끊길 경우, VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 IT 포털에서 확인하시기 바랍니다. 인증서는 만료 30일 전부터 재발급 신청이 가능합니다. 추가 도움이 필요하시면 IT 문의로 연락해 주십시오.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1999,
+          "completion_tokens": 150,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 78,
+              "completion_tokens": 6,
+              "cost_usd": 4.08e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1781,
+              "completion_tokens": 78,
+              "cost_usd": 0.0008372
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 140,
+              "completion_tokens": 66,
+              "cost_usd": 0.0001616
+            }
+          }
+        },
+        "cost_usd": 0.0010396,
+        "recorded": false
+      }
+    },
+    {
+      "case": "기록 API 느림(8초) · 답은 나감",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 6.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하시고, 인쇄 대기열을 비운 후 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 IT 담당자에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1967,
+          "completion_tokens": 108,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 72,
+              "completion_tokens": 6,
+              "cost_usd": 3.84e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1779,
+              "completion_tokens": 54,
+              "cost_usd": 0.000798
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 116,
+              "completion_tokens": 48,
+              "cost_usd": 0.0001232
+            }
+          }
+        },
+        "cost_usd": 0.0009596,
+        "recorded": false
+      }
+    },
+    {
+      "case": "고친 뒤 · 기록됨",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.7,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "비밀번호 재설정은 사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 추가 도움이 필요하시면 IT 문의로 연락해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1979,
+          "completion_tokens": 102,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 81,
+              "completion_tokens": 6,
+              "cost_usd": 4.2e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1789,
+              "completion_tokens": 47,
+              "cost_usd": 0.0007908
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 109,
+              "completion_tokens": 49,
+              "cost_usd": 0.000122
+            }
+          }
+        },
+        "cost_usd": 0.0009548,
+        "recorded": true
+      }
+    },
+    {
+      "case": "요약 · 기록된 요청은 1건",
+      "webhook": "http://localhost:8800/usage/summary",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "requests": 1,
+        "calls": 3,
+        "prompt_tokens": 1979,
+        "completion_tokens": 102,
+        "cost_usd": 0.0009548,
+        "by_model": {
+          "gpt-4.1-mini": {
+            "calls": 3,
+            "prompt_tokens": 1979,
+            "completion_tokens": 102,
+            "cost_usd": 0.0009548
+          }
+        },
+        "by_user": {
+          "한지훈": {
+            "calls": 3,
+            "prompt_tokens": 1979,
+            "completion_tokens": 102,
+            "cost_usd": 0.0009548
+          }
+        },
+        "by_route": {
+          "자동 답변": {
+            "calls": 3,
+            "prompt_tokens": 1979,
+            "completion_tokens": 102,
+            "cost_usd": 0.0009548
+          }
+        }
+      }
+    }
+  ]
+}

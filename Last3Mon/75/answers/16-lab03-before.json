@@ -1,0 +1,124 @@
+{
+  "cases": "lab03.json",
+  "webhook": "my-cost",
+  "passed": 1,
+  "total": 3,
+  "results": [
+    {
+      "case": "한도를 넘으면 · FAQ 원문",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "route = 자동 답변 (expected 한도 초과)",
+        "cost_usd = 0.000154 (expected 0)",
+        "llm_calls = 1 (expected 0)"
+      ],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 현재 접수된 관련 티켓이 없어 추가 지원이 필요하면 담당자가 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 165,
+          "completion_tokens": 55,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 165,
+              "completion_tokens": 55,
+              "cost_usd": 0.000154
+            }
+          }
+        },
+        "cost_usd": 0.000154,
+        "trimmed": false,
+        "question_chars": 24,
+        "recorded": true
+      }
+    },
+    {
+      "case": "한도를 넘으면 · 접수 원문",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "route = 자동 답변 (expected 한도 초과)",
+        "cost_usd = 0.0001152 (expected 0)"
+      ],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "T-1002 티켓은 현재 처리 중이며, 인증서 발급 승인 대기 중입니다. 10월 20일에 완료될 예정입니다.",
+        "sources": [],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 152,
+          "completion_tokens": 34,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 152,
+              "completion_tokens": 34,
+              "cost_usd": 0.0001152
+            }
+          }
+        },
+        "cost_usd": 0.0001152,
+        "trimmed": false,
+        "question_chars": 19,
+        "recorded": true
+      }
+    },
+    {
+      "case": "한도 안이면 평소대로",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.4,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속 오류는 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속하시기 바랍니다. 추가 도움이 필요하시면 담당 직원이 도와드리겠습니다.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 1,
+        "usage": {
+          "prompt_tokens": 165,
+          "completion_tokens": 47,
+          "by_step": {
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 165,
+              "completion_tokens": 47,
+              "cost_usd": 0.0001412
+            }
+          }
+        },
+        "cost_usd": 0.0001412,
+        "trimmed": false,
+        "question_chars": 24,
+        "recorded": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+$ uv run tools/flow.py push answers/75-lab01-challenge-record.json
+! unpublished '75 IT helpdesk + user limit (reference)' (w3b18d2741bd22c6): it used the same webhook path
+✔ pushed '75 IT helpdesk + usage record (answer)' (id waec469b37d74b05)
+   POST http://localhost:5678/webhook/my-cost
+
+$ uv run tools/flow.py test cases/lab01-challenge.json -v
+✔ before: POST http://localhost:8800/usage-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/usage-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+POST http://localhost:5678/webhook/my-cost · 4 case(s) × 1
+✔ 기록 1 · VPN · 5.0s · 자동 답변 · 3 calls · $0.001040
+    → request  POST /webhook/my-cost
+      {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 자주 끊길 경우, VPN 클라이언트를 최신 버전으로 업데이트하고 인증서 만료 여부를 IT 포털에서 확인하시기 바랍니다. 인증서는 만료 30일 전부터 재발급 신청이 가능합니다. 추가 도움이 필요하시면 IT 문의로 연락해 주십시오.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1999,
+          "completion_tokens": 150,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 78,
+              "completion_tokens": 6,
+              "cost_usd": 4.08e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1781,
+              "completion_tokens": 78,
+              "cost_usd": 0.0008372
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 140,
+              "completion_tokens": 66,
+              "cost_usd": 0.0001616
+            }
+          }
+        },
+        "cost_usd": 0.0010396
+      }
+✔ 기록 2 · 접수 · 3.5s · 자동 답변 · 3 calls · $0.000959
+    → request  POST /webhook/my-cost
+      {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "티켓 T-1002는 현재 '처리 중' 상태이며, 인증서 발급 승인 대기 중입니다. 완료 예정일은 10월 20일입니다. 추가 문의 사항이 있으시면 연락해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1973,
+          "completion_tokens": 106,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 71,
+              "completion_tokens": 6,
+              "cost_usd": 3.8e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1791,
+              "completion_tokens": 49,
+              "cost_usd": 0.0007948
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 111,
+              "completion_tokens": 51,
+              "cost_usd": 0.000126
+            }
+          }
+        },
+        "cost_usd": 0.0009588
+      }
+✔ 기록 3 · 다른 사람 · 3.4s · 자동 답변 · 3 calls · $0.000953
+    → request  POST /webhook/my-cost
+      {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈"
+      }
+    ← response HTTP 200
+      {
+        "route": "자동 답변",
+        "answer": "비밀번호 재설정은 사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 추가 도움이 필요하시면 IT 문의로 연락해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1978,
+          "completion_tokens": 101,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 81,
+              "completion_tokens": 6,
+              "cost_usd": 4.2e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1789,
+              "completion_tokens": 46,
+              "cost_usd": 0.0007892
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 108,
+              "completion_tokens": 49,
+              "cost_usd": 0.0001216
+            }
+          }
+        },
+        "cost_usd": 0.0009528
+      }
+✔ 사용량 요약 · 요청 3건 · 0.0s · $0.002951
+    → request  POST http://localhost:8800/usage/summary
+      {}
+    ← response HTTP 200
+      {
+        "requests": 3,
+        "calls": 9,
+        "prompt_tokens": 5950,
+        "completion_tokens": 357,
+        "cost_usd": 0.0029512,
+        "by_model": {
+          "gpt-4.1-mini": {
+            "calls": 9,
+            "prompt_tokens": 5950,
+            "completion_tokens": 357,
+            "cost_usd": 0.0029512
+          }
+        },
+        "by_user": {
+          "이준호": {
+            "calls": 3,
+            "prompt_tokens": 1999,
+            "completion_tokens": 150,
+            "cost_usd": 0.0010396
+          },
+          "박서연": {
+            "calls": 3,
+            "prompt_tokens": 1973,
+            "completion_tokens": 106,
+            "cost_usd": 0.0009588
+          },
+          "한지훈": {
+            "calls": 3,
+            "prompt_tokens": 1978,
+            "completion_tokens": 101,
+            "cost_usd": 0.0009528
+          }
+        },
+        "by_route": {
+          "자동 답변": {
+            "calls": 9,
+            "prompt_tokens": 5950,
+            "completion_tokens": 357,
+            "cost_usd": 0.0029512
+          }
+        }
+      }
+Passed 4/4
+report: runs/lab01-challenge-20261028-211025.json
+
+$ uv run tools/flow.py usage
+requests 3 · calls 9 · tokens in 5950 / out 357 · $0.002951
+  model  gpt-4.1-mini      9 calls · in    5950 · out    357 · $0.002951
+  user   이준호               3 calls · in    1999 · out    150 · $0.001040
+  user   박서연               3 calls · in    1973 · out    106 · $0.000959
+  user   한지훈               3 calls · in    1978 · out    101 · $0.000953
+  route  자동 답변             9 calls · in    5950 · out    357 · $0.002951
+budget $1.0 / used $0.002951 · remaining $0.997049 · over False · per user 20/min · question 500 chars

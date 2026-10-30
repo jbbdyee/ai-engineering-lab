@@ -1,0 +1,112 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "API가 멈춘 동안 2건 → DLQ",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "failed": 2
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ]
+    },
+    {
+      "name": "고친 뒤 다시 돌리기",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "replayed": 2,
+          "ok": 2,
+          "still_failed": 0
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "DLQ가 비었음",
+      "url": "http://localhost:8800/dlq/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 0
+        }
+      }
+    },
+    {
+      "name": "접수 건은 2개 (중복 없음)",
+      "url": "http://localhost:8800/tickets-created/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "한 번 더 돌려도 할 일 없음",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "replayed": 0
+        }
+      }
+    }
+  ]
+}

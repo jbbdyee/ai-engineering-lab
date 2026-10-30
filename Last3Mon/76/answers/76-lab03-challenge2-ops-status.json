@@ -1,0 +1,149 @@
+{
+  "name": "76 Ops status (answer)",
+  "nodes": [
+    {
+      "name": "Status webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-ops-status",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "Get DLQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/dlq",
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Recent alerts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/alerts/list",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ within: 600 }) }}",
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "name": "Get created",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/tickets-created",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "name": "Decide status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const dlq = $('Get DLQ').first().json;\nconst alerts = $('Recent alerts').first().json.alerts ?? [];\nconst created = $('Get created').first().json.count ?? 0;\nconst parked = (dlq.items ?? []).filter((e) => e.parked).length;\nconst waiting = (dlq.items ?? []).length - parked;\nconst critical = alerts.filter((a) => a.severity === 'critical').length;\nconst high = alerts.filter((a) => a.severity === 'high').length;\nconst reasons = [];\nif (parked) reasons.push(`parked ${parked}건: 사람이 보고 결정`);\nif (critical) reasons.push(`critical 알림 ${critical}건 (10분)`);\nif (waiting) reasons.push(`DLQ ${waiting}건: 원인을 고친 뒤 재처리`);\nif (high) reasons.push(`high 알림 ${high}건 (10분)`);\nconst status = parked || critical ? 'critical' : (waiting || high ? 'warn' : 'ok');\nreturn [{ json: { status, dlq: waiting, parked, created, alerts: { critical, high }, reasons } }];"
+      },
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "name": "Send status",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Status webhook": {
+      "main": [
+        [
+          {
+            "node": "Get DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get DLQ": {
+      "main": [
+        [
+          {
+            "node": "Recent alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recent alerts": {
+      "main": [
+        [
+          {
+            "node": "Get created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get created": {
+      "main": [
+        [
+          {
+            "node": "Decide status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide status": {
+      "main": [
+        [
+          {
+            "node": "Send status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

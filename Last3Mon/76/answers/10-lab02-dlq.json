@@ -1,0 +1,122 @@
+{
+  "cases": "lab02.json",
+  "webhook": "my-intake",
+  "passed": 3,
+  "total": 4,
+  "results": [
+    {
+      "case": "예제 1 · API가 멈추면 실패로 표시 · 200",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.1,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ]
+      }
+    },
+    {
+      "case": "예제 1 · 실패한 2건은 DLQ에",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 2,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250889.918716
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793250889.918718
+          }
+        ]
+      }
+    },
+    {
+      "case": "예제 2 · 예상 못 한 오류 (nightly-report)",
+      "webhook": "nightly-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 500,
+      "request": {},
+      "response": {
+        "message": "Error in workflow"
+      }
+    },
+    {
+      "case": "예제 2 · Error Workflow가 알림을 남김",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "severity = null (expected critical)",
+        "reason = null (expected unexpected)",
+        "workflow = null (expected 76 Nightly report (provided, has a bug))",
+        "node has none of ['Count by category']"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {}
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "helpdesk": {
+    "active": "1.0.0",
+    "releases": {
+      "1.0.0": {"prompt_version": "p1", "model": "gpt-4.1-mini", "note": "첫 릴리스"},
+      "1.1.0": {"prompt_version": "p2", "model": "gpt-4.1-mini", "note": "FAQ 답 끝에 출처 번호"},
+      "1.2.0": {"prompt_version": "p3", "model": "gpt-4.1-mini", "note": "답을 한 문장으로 짧게"},
+      "2.0.0": {"prompt_version": "p2", "model": "gpt-5.4-nano", "note": "더 작은 모델 (비용)"},
+      "2.1.0": {"prompt_version": "p9", "model": "gpt-4.1-mini", "note": "출처 번호 · 존댓말 다듬기 (지시문 이름 확인 필요)"}
+    }
+  }
+}

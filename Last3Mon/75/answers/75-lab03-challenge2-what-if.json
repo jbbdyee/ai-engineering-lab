@@ -1,0 +1,220 @@
+{
+  "name": "75 Cost report + what-if (answer)",
+  "nodes": [
+    {
+      "name": "Report webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-cost-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "45dddbe3-765d-5071-8c44-f1406634465b",
+      "webhookId": "49a4308f-5df9-5973-963a-3d7f6bbeb9b7"
+    },
+    {
+      "name": "Get summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/usage/summary",
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "cf6e061b-9073-57ea-a564-1769eec23afd"
+    },
+    {
+      "name": "Get budget",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/budget",
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "fb9bdc4e-453a-5261-9b27-f913533bebb5"
+    },
+    {
+      "name": "Get prices",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/prices",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "c0db1fd8-4b10-5824-a526-85ebbd70230a"
+    },
+    {
+      "name": "Make report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const s = $('Get summary').first().json;\nconst b = $('Get budget').first().json;\nconst body = $('Report webhook').first().json.body ?? {};\nconst perDay = Number(body.requests_per_day ?? s.requests);\nconst workdays = Number(body.workdays ?? 22);\nconst avg = s.requests ? s.cost_usd / s.requests : 0;\nconst round = (v) => Math.round(v * 1e6) / 1e6;\nconst users = Object.entries(s.by_user).sort((a, b2) => b2[1].cost_usd - a[1].cost_usd);\nconst models = Object.fromEntries(Object.entries(s.by_model).map(([k, v]) => [k, round(v.cost_usd)]));\nconst result = { requests: s.requests, calls: s.calls, cost_usd: round(s.cost_usd), avg_usd: round(avg),\n  by_model: models, top_user: users.length ? users[0][0] : null,\n  projected_month_usd: round(avg * perDay * workdays), daily_budget_usd: b.daily_usd, remaining_usd: round(b.remaining_usd), over_budget: b.over };\nconst target = body.what_if_model;\nif (target) {\n  const prices = $('Get prices').first().json.models;\n  const p = prices[target];\n  if (!p) return [{ json: { error: 'unknown model', model: target, known: Object.keys(prices) } }];\n  const rows = Object.values(s.by_model);\n  const tokensIn = rows.reduce((sum, r) => sum + r.prompt_tokens, 0);\n  const tokensOut = rows.reduce((sum, r) => sum + r.completion_tokens, 0);\n  const cost = (tokensIn * p.input + tokensOut * p.output) / 1e6;\n  result.what_if = { model: target, cost_usd: round(cost), saving_usd: round(s.cost_usd - cost),\n    projected_month_usd: round((s.requests ? cost / s.requests : 0) * perDay * workdays) };\n}\nreturn [{ json: result }];"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "ee73c6a8-12a8-57fc-ab34-81fd258667cc"
+    },
+    {
+      "name": "Known model?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.error ?? '' }}",
+              "rightValue": "unknown model",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "4ba2d3fa-9968-50d3-a29c-4c19ef3f7592"
+    },
+    {
+      "name": "Send report",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "c124f9d7-3b8c-5134-8343-936873621946"
+    },
+    {
+      "name": "Reject model",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        1320,
+        520
+      ],
+      "id": "95cf4c50-09ed-52f3-81e5-bfd72d87904b"
+    }
+  ],
+  "connections": {
+    "Report webhook": {
+      "main": [
+        [
+          {
+            "node": "Get summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get summary": {
+      "main": [
+        [
+          {
+            "node": "Get budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get budget": {
+      "main": [
+        [
+          {
+            "node": "Get prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get prices": {
+      "main": [
+        [
+          {
+            "node": "Make report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make report": {
+      "main": [
+        [
+          {
+            "node": "Known model?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known model?": {
+      "main": [
+        [
+          {
+            "node": "Send report",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,324 @@
+{
+  "cases": "lab01-mix.json",
+  "webhook": "my-cost",
+  "passed": 7,
+  "total": 7,
+  "results": [
+    {
+      "case": "FAQ · VPN",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.2,
+      "status": 200,
+      "request": {
+        "question": "VPN 접속이 자꾸 끊겨요. 어떻게 하나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "VPN 접속이 자주 끊길 경우 VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 IT 포털에서 확인하시기 바랍니다. 인증서는 만료 30일 전부터 재발급 신청이 가능합니다. 추가 도움이 필요하시면 IT 문의로 연락해 주십시오.",
+        "sources": [
+          "FAQ-003"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1999,
+          "completion_tokens": 150,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 78,
+              "completion_tokens": 6,
+              "cost_usd": 4.08e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1781,
+              "completion_tokens": 78,
+              "cost_usd": 0.0008372
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 140,
+              "completion_tokens": 66,
+              "cost_usd": 0.0001616
+            }
+          }
+        },
+        "cost_usd": 0.0010396
+      }
+    },
+    {
+      "case": "FAQ · 프린터",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.9,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "최유진"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "프린터 전원과 네트워크 연결을 확인하시고, 인쇄 대기열을 비운 후 다시 출력해 보시기 바랍니다. 추가 도움이 필요하시면 IT 담당자에게 문의해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-004"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1967,
+          "completion_tokens": 108,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 72,
+              "completion_tokens": 6,
+              "cost_usd": 3.84e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1779,
+              "completion_tokens": 54,
+              "cost_usd": 0.000798
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 116,
+              "completion_tokens": 48,
+              "cost_usd": 0.0001232
+            }
+          }
+        },
+        "cost_usd": 0.0009596
+      }
+    },
+    {
+      "case": "FAQ · 비밀번호",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.5,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요. 재설정은 어떻게 하나요?",
+        "user": "한지훈"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "비밀번호 재설정은 사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정하시면 됩니다. 추가 도움이 필요하시면 IT 문의로 연락해 주시기 바랍니다.",
+        "sources": [
+          "FAQ-001"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1978,
+          "completion_tokens": 101,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 81,
+              "completion_tokens": 6,
+              "cost_usd": 4.2e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1789,
+              "completion_tokens": 46,
+              "cost_usd": 0.0007892
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 108,
+              "completion_tokens": 49,
+              "cost_usd": 0.0001216
+            }
+          }
+        },
+        "cost_usd": 0.0009528
+      }
+    },
+    {
+      "case": "FAQ · 메일",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.4,
+      "status": 200,
+      "request": {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "김민지"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "메일함 용량이 가득 찼을 경우, 오래된 메일이나 큰 첨부 파일을 삭제하거나 보관함으로 이동하여 용량을 확보하시기 바랍니다. 추가 도움이 필요하시면 IT 담당자에게 문의해 주십시오.",
+        "sources": [
+          "FAQ-005"
+        ],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1969,
+          "completion_tokens": 111,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 74,
+              "completion_tokens": 6,
+              "cost_usd": 3.92e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1780,
+              "completion_tokens": 52,
+              "cost_usd": 0.0007952
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 115,
+              "completion_tokens": 53,
+              "cost_usd": 0.0001308
+            }
+          }
+        },
+        "cost_usd": 0.0009652
+      }
+    },
+    {
+      "case": "접수 · T-1002",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.0,
+      "status": 200,
+      "request": {
+        "question": "T-1002 처리 상태 알려 주세요",
+        "user": "박서연"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "티켓 T-1002는 현재 인증서 발급 승인 대기 중이며, 10월 20일에 완료될 예정입니다. 추가 문의 사항이 있으시면 연락해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1973,
+          "completion_tokens": 98,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 71,
+              "completion_tokens": 6,
+              "cost_usd": 3.8e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1791,
+              "completion_tokens": 49,
+              "cost_usd": 0.0007948
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 111,
+              "completion_tokens": 43,
+              "cost_usd": 0.0001132
+            }
+          }
+        },
+        "cost_usd": 0.000946
+      }
+    },
+    {
+      "case": "접수 · T-1001",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.2,
+      "status": 200,
+      "request": {
+        "question": "T-1001 어떻게 됐나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "티켓 T-1001은 처리 완료되었으며, 새 배터리로 교체되었습니다. 추가 문의 사항이 있으시면 연락해 주시기 바랍니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1944,
+          "completion_tokens": 70,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 72,
+              "completion_tokens": 6,
+              "cost_usd": 3.84e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1781,
+              "completion_tokens": 29,
+              "cost_usd": 0.0007588
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 91,
+              "completion_tokens": 35,
+              "cost_usd": 9.24e-05
+            }
+          }
+        },
+        "cost_usd": 0.0008896
+      }
+    },
+    {
+      "case": "규칙에 없는 질문",
+      "webhook": "my-cost",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.6,
+      "status": 200,
+      "request": {
+        "question": "회의실 화면 공유가 안 되는데 누구에게 물어보나요?",
+        "user": "이준호"
+      },
+      "response": {
+        "route": "자동 답변",
+        "answer": "회의실 화면 공유 문제는 IT 문의로 연락 주시면 도움을 드리겠습니다.",
+        "sources": [],
+        "llm_calls": 3,
+        "usage": {
+          "prompt_tokens": 1883,
+          "completion_tokens": 48,
+          "by_step": {
+            "classify": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 78,
+              "completion_tokens": 6,
+              "cost_usd": 4.08e-05
+            },
+            "answer": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 1719,
+              "completion_tokens": 24,
+              "cost_usd": 0.000726
+            },
+            "review": {
+              "model": "gpt-4.1-mini",
+              "prompt_tokens": 86,
+              "completion_tokens": 18,
+              "cost_usd": 6.32e-05
+            }
+          }
+        },
+        "cost_usd": 0.00083
+      }
+    }
+  ]
+}

@@ -1,0 +1,301 @@
+$ uv run tools/flow.py push answers/76-lab03-challenge2-ops-status.json
+✔ pushed '76 Ops status (answer)' (id w07b5812eaa88ef9)
+   POST http://localhost:5678/webhook/my-ops-status
+
+$ uv run tools/flow.py test cases/lab03-challenge2.json -v
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 2}
+    → request  POST http://localhost:8800/tickets-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 2
+      }
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/dlq-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-ops-status · 7 case(s) × 1
+✔ 1 · 아무 일 없음 → ok · 0.9s
+    → request  POST /webhook/my-ops-status
+      {}
+    ← response HTTP 200
+      {
+        "status": "ok",
+        "dlq": 0,
+        "parked": 0,
+        "created": 0,
+        "alerts": {
+          "critical": 0,
+          "high": 0
+        },
+        "reasons": []
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "tickets": "error"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "error",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ 2 · (접수 실패 2건) · 3.7s
+    → request  POST /webhook/my-intake
+      {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✔ 3 · DLQ가 있으면 warn · 0.1s
+    → request  POST /webhook/my-ops-status
+      {}
+    ← response HTTP 200
+      {
+        "status": "warn",
+        "dlq": 2,
+        "parked": 0,
+        "created": 0,
+        "alerts": {
+          "critical": 0,
+          "high": 1
+        },
+        "reasons": [
+          "DLQ 2건: 원인을 고친 뒤 재처리",
+          "high 알림 1건 (10분)"
+        ]
+      }
+✔ 4 · (보고서 버그) · 0.1s
+    → request  POST /webhook/nightly-report
+      {}
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+… before: wait 3s
+✔ 5 · critical 알림이 있으면 critical · 0.1s
+    → request  POST /webhook/my-ops-status
+      {}
+    ← response HTTP 200
+      {
+        "status": "critical",
+        "dlq": 2,
+        "parked": 0,
+        "created": 0,
+        "alerts": {
+          "critical": 1,
+          "high": 1
+        },
+        "reasons": [
+          "critical 알림 1건 (10분)",
+          "DLQ 2건: 원인을 고친 뒤 재처리",
+          "high 알림 1건 (10분)"
+        ]
+      }
+✔ 6 · (재처리 · 알림 확인 뒤 비움) · 1.2s
+    → request  POST /webhook/my-replay
+      {}
+    ← response HTTP 200
+      {
+        "replayed": 2,
+        "ok": 2,
+        "still_failed": 0,
+        "parked": 0,
+        "duplicates": 0
+      }
+✔ after: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 2}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 2
+      }
+✔ 7 · 고친 뒤 → ok · 0.0s
+    → request  POST /webhook/my-ops-status
+      {}
+    ← response HTTP 200
+      {
+        "status": "ok",
+        "dlq": 0,
+        "parked": 0,
+        "created": 2,
+        "alerts": {
+          "critical": 0,
+          "high": 0
+        },
+        "reasons": []
+      }
+Passed 7/7
+report: runs/lab03-challenge2-20261029-141921.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+
+$ uv run tools/flow.py test cases/lab03-challenge.json
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 2}
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 0}
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 0}
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+POST http://localhost:5678/webhook/my-intake · 7 case(s) × 1
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+✔ API가 오래 멈춤 · 처음 실패 · 2.8s
+✔ 재처리 1 · 또 실패 · 1.9s
+✔ 재처리 2 · 또 실패 · 2.5s
+✔ 재처리 3 · 세 번 실패한 것은 멈춤 (parked) · 0.1s
+✔ parked로 남음 · 0.0s
+✔ 멈춘 것은 알림 · 0.0s
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+✔ 고친 뒤에도 parked는 자동으로 돌리지 않음 · 0.0s
+Passed 7/7
+report: runs/lab03-challenge-20261029-141929.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+
+$ uv run tools/flow.py test cases/lab02-challenge2.json
+✔ before: POST http://localhost:8800/tickets-reset · HTTP 200 · 0.0s · {"cleared": 0}
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 2}
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 3}
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+POST http://localhost:5678/webhook/my-intake · 6 case(s) × 1
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+✔ 첫 실패 → 알림 보냄 · 2.9s
+✔ 10분 안에 또 실패 → 보내지 않음 · 3.4s
+✔ dlq 알림은 1개 · 0.0s
+✔ 그래도 DLQ에는 5건 모두 · 0.0s
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "error", "prompts": "ok", "usage": "ok", "dlq": "error", "slow_seconds": 8}
+✔ DLQ가 멈춘 것은 늘 보냄 (critical) · 2.8s
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+✔ 고친 뒤 · 실패 없음 · 알림 없음 · 3.4s
+Passed 6/6
+report: runs/lab02-challenge2-20261029-141941.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+
+$ uv run tools/flow.py call my-ops-status
+HTTP 200 · 0.1s
+{
+  "status": "critical",
+  "dlq": 5,
+  "parked": 0,
+  "created": 2,
+  "alerts": {
+    "critical": 1,
+    "high": 1
+  },
+  "reasons": [
+    "critical 알림 1건 (10분)",
+    "DLQ 5건: 원인을 고친 뒤 재처리",
+    "high 알림 1건 (10분)"
+  ]
+}
+
+$ uv run tools/flow.py ops --reset
+✔ created tickets, DLQ and alerts emptied, fault switch all ok
+
+$ uv run tools/flow.py doctor
+! n8n install folder /Users/[USER]/day65-n8n
+   → day 65 SETUP-N8N 5단계 (get.n8n.io 설치). 다른 곳에 설치했다면 Last3Mon/65/n8n/.env 에 N8N_HOME=<폴더>
+✔ n8n container day65-n8n-n8n-1
+✔ n8n http://localhost:5678
+✔ data API http://localhost:8800
+✔ dead letter queue /dlq · alerts · fault switch dlq (day 76 data API)
+✔ n8n → http://data-api:8800
+✔ credential 'OpenAI (.env)' (openAiCourse0001)
+✔ node catalog (for check)
+✔ CLI coding agent: codex, claude, agy
+ready

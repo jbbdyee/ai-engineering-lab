@@ -1,0 +1,132 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "1 · 잘못된 항목 → 결과에만 (rejected)",
+      "request": "requests/batch-bad-item.json",
+      "expect": {
+        "equals": {
+          "rejected": 1,
+          "created": 2
+        }
+      }
+    },
+    {
+      "name": "2 · API 오류 → failed",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "failed": 2
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 · failed는 DLQ에",
+      "url": "http://localhost:8800/dlq/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 2
+        }
+      }
+    },
+    {
+      "name": "4 · 버그 → 500",
+      "webhook": "nightly-report",
+      "body": {},
+      "expect": {
+        "status": 500
+      }
+    },
+    {
+      "name": "5 · Error Workflow → critical 알림",
+      "url": "http://localhost:8800/alerts/latest",
+      "body": {},
+      "expect": {
+        "equals": {
+          "severity": "critical",
+          "reason": "unexpected"
+        }
+      },
+      "before": [
+        {
+          "sleep": 3
+        }
+      ]
+    },
+    {
+      "name": "6 · DLQ마저 멈추면 결과가 알려야",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "failed": 3,
+          "dlq_saved": false
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error",
+            "dlq": "error"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7 · DLQ가 멈춘 것을 누가 아나 (critical · dlq_down)",
+      "url": "http://localhost:8800/alerts/latest",
+      "body": {},
+      "expect": {
+        "equals": {
+          "severity": "critical",
+          "reason": "dlq_down"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "cases": "lab03-half.json",
+  "webhook": "my-intake",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "case": "1 · API가 느림 → 기다리다 실패",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 11.6,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "timeout of 3000ms exceeded"
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "timeout of 3000ms exceeded"
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "2 · DLQ에 2건",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 2,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "timeout of 3000ms exceeded",
+            "workflow": "intake",
+            "at": 1793251086.0805922
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 1,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "timeout of 3000ms exceeded",
+            "workflow": "intake",
+            "at": 1793251086.080595
+          }
+        ]
+      }
+    },
+    {
+      "case": "3 · 그런데 접수 건은 이미 2개",
+      "webhook": "http://localhost:8800/tickets-created/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 2,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-301",
+            "title": "사내 위키 로그인이 안 돼요",
+            "requester": "정우성",
+            "category": "계정",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-302",
+            "title": "노트북 배터리가 금방 닳아요",
+            "requester": "이준호",
+            "category": "장비",
+            "priority": "보통"
+          }
+        ]
+      }
+    },
+    {
+      "case": "4 · 재처리 · 이미 있는 건이라 duplicate",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 2,
+        "still_failed": 0,
+        "parked": 0,
+        "duplicates": 2
+      }
+    },
+    {
+      "case": "5 · 그래도 2개 (중복 없음)",
+      "webhook": "http://localhost:8800/tickets-created/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 2,
+        "tickets": [
+          {
+            "ticket_id": "T-2001",
+            "key": "R-301",
+            "title": "사내 위키 로그인이 안 돼요",
+            "requester": "정우성",
+            "category": "계정",
+            "priority": "높음"
+          },
+          {
+            "ticket_id": "T-2002",
+            "key": "R-302",
+            "title": "노트북 배터리가 금방 닳아요",
+            "requester": "이준호",
+            "category": "장비",
+            "priority": "보통"
+          }
+        ]
+      }
+    },
+    {
+      "case": "6 · DLQ가 비었음",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 0,
+        "parked": 0,
+        "items": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-intake",
+  "passed": 3,
+  "total": 7,
+  "results": [
+    {
+      "case": "API가 오래 멈춤 · 처음 실패",
+      "webhook": "my-intake",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 3.4,
+      "status": 200,
+      "request": {
+        "requests": [
+          {
+            "id": "R-301",
+            "user": "정우성",
+            "text": "사내 위키 로그인이 안 돼요"
+          },
+          {
+            "id": "R-302",
+            "user": "이준호",
+            "text": "노트북 배터리가 금방 닳아요"
+          }
+        ]
+      },
+      "response": {
+        "total": 2,
+        "created": 0,
+        "failed": 2,
+        "rejected": 0,
+        "duplicates": 0,
+        "unclassified": 0,
+        "results": [
+          {
+            "id": "R-301",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          },
+          {
+            "id": "R-302",
+            "status": "failed",
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\""
+          }
+        ],
+        "dlq_saved": true,
+        "alert": "sent"
+      }
+    },
+    {
+      "case": "재처리 1 · 또 실패",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.2,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 0,
+        "still_failed": 2,
+        "parked": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "case": "재처리 2 · 또 실패",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.4,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 0,
+        "still_failed": 2,
+        "parked": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "case": "재처리 3 · 세 번 실패한 것은 멈춤 (parked)",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "replayed = 2 (expected 0)",
+        "parked = 0 (expected 2)"
+      ],
+      "seconds": 2.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 0,
+        "still_failed": 2,
+        "parked": 0,
+        "duplicates": 0
+      }
+    },
+    {
+      "case": "parked로 남음",
+      "webhook": "http://localhost:8800/dlq/list",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "parked = 0 (expected 2)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 2,
+        "parked": 0,
+        "items": [
+          {
+            "dlq_id": "D-1",
+            "attempts": 4,
+            "parked": false,
+            "item": {
+              "id": "R-301",
+              "user": "정우성",
+              "text": "사내 위키 로그인이 안 돼요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251105.2922482
+          },
+          {
+            "dlq_id": "D-2",
+            "attempts": 4,
+            "parked": false,
+            "item": {
+              "id": "R-302",
+              "user": "이준호",
+              "text": "노트북 배터리가 금방 닳아요"
+            },
+            "reason": "500 - \"{\\\"error\\\": \\\"tickets service is failing (fault switch)\\\"}\"",
+            "workflow": "intake",
+            "at": 1793251105.5231082
+          }
+        ]
+      }
+    },
+    {
+      "case": "멈춘 것은 알림",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "reason = dlq (expected parked)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "workflow": "intake",
+        "node": "Send to DLQ",
+        "severity": "high",
+        "reason": "dlq",
+        "count": 2,
+        "message": "2 request(s) could not be created and wait in the DLQ",
+        "execution_id": "10168",
+        "at": 1793251099.0033967
+      }
+    },
+    {
+      "case": "고친 뒤에도 parked는 자동으로 돌리지 않음",
+      "webhook": "my-replay",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "replayed = 2 (expected 0)"
+      ],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {},
+      "response": {
+        "replayed": 2,
+        "ok": 2,
+        "still_failed": 0,
+        "parked": 0,
+        "duplicates": 0
+      }
+    }
+  ]
+}

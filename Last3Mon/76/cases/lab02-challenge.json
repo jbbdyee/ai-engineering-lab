@@ -1,0 +1,153 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "API가 멈춤 → DLQ",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "failed": 2,
+          "dlq_saved": true,
+          "alert": "sent"
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "처리한 실패도 알림 (high · 개수)",
+      "url": "http://localhost:8800/alerts/latest",
+      "body": {},
+      "expect": {
+        "equals": {
+          "severity": "high",
+          "reason": "dlq",
+          "count": 2,
+          "workflow": "intake"
+        }
+      }
+    },
+    {
+      "name": "실패가 없으면 알림 없음",
+      "request": "requests/batch-ok.json",
+      "expect": {
+        "equals": {
+          "failed": 0,
+          "alert": "none"
+        }
+      }
+    },
+    {
+      "name": "알림은 그대로 1개",
+      "url": "http://localhost:8800/alerts/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "DLQ도 멈추면 critical",
+      "request": "requests/batch-bad-item.json",
+      "expect": {
+        "equals": {
+          "failed": 2,
+          "dlq_saved": false
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "error",
+            "dlq": "error"
+          }
+        }
+      ],
+      "after": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "잃어버린 id를 알림에",
+      "url": "http://localhost:8800/alerts/latest",
+      "body": {},
+      "expect": {
+        "equals": {
+          "severity": "critical",
+          "reason": "dlq_down",
+          "count": 2
+        },
+        "contains": {
+          "message": [
+            "R-201"
+          ]
+        }
+      }
+    }
+  ]
+}

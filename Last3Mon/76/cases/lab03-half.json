@@ -1,0 +1,125 @@
+{
+  "webhook": "my-intake",
+  "before": [
+    {
+      "url": "http://localhost:8800/tickets-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/dlq-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "1 · API가 느림 → 기다리다 실패",
+      "request": "requests/batch-two.json",
+      "expect": {
+        "equals": {
+          "failed": 2
+        }
+      },
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "tickets": "slow"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2 · DLQ에 2건",
+      "url": "http://localhost:8800/dlq/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 2
+        }
+      }
+    },
+    {
+      "name": "3 · 그런데 접수 건은 이미 2개",
+      "url": "http://localhost:8800/tickets-created/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 2
+        }
+      },
+      "before": [
+        {
+          "sleep": 8
+        },
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "faq": "ok",
+            "tickets": "ok",
+            "prompts": "ok",
+            "usage": "ok",
+            "dlq": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 · 재처리 · 이미 있는 건이라 duplicate",
+      "webhook": "my-replay",
+      "body": {},
+      "expect": {
+        "equals": {
+          "replayed": 2,
+          "ok": 2,
+          "duplicates": 2
+        }
+      }
+    },
+    {
+      "name": "5 · 그래도 2개 (중복 없음)",
+      "url": "http://localhost:8800/tickets-created/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 2
+        }
+      }
+    },
+    {
+      "name": "6 · DLQ가 비었음",
+      "url": "http://localhost:8800/dlq/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 0
+        }
+      }
+    }
+  ]
+}
