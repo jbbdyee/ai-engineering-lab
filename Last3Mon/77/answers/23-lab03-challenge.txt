@@ -1,0 +1,130 @@
+$ uv run tools/flow.py push answers/77-lab03-challenge-weekly.json
+✔ pushed '77 Weekly report (answer)' (id w269ccf31103289f)
+   POST http://localhost:5678/webhook/my-weekly
+
+$ uv run tools/flow.py test cases/lab03-challenge.json -v
+POST http://localhost:5678/webhook/my-weekly · 7 case(s) × 1
+✔ 주간 보고 · 숫자 · 3.6s
+    → request  POST /webhook/my-weekly
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30",
+        "prev_from": "2026-10-19",
+        "prev_to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "markdown": "# IT 헬프데스크 주간 운영 보고 (2026-10-26 ~ 2026-10-30)\n\n## 숫자\n\n| 지표 | 지난주 | 이번 주 |\n| --- | --- | --- |\n| 요청 | 309 | 357 |\n| 오류율 | 0% | 5.88% |\n| p95 | 2525ms | 2598ms |\n| 답 못 함 | 5.5% | 4.76% |\n| SLO | 못 지킴 unanswered_rate | 못 지킴 error_rate, unanswered_rate |\n\n## 문제\n\n- 실패 16건 · Search FAQ · timeout of 1000ms exceeded\n- 실패 5건 · Answer · 429 Rate limit reached for requests\n- 답하지 못한 질문 17건 · 와이파이\n- 이상 시간대 2026-10-26 09시 · 16/16 실패\n- 이상 시간대 2026-10-29 15시 · 5/7 실패\n\n## 요약 (LLM, 숫자 확인 통과)\n\n가장 많은 미응답 주제는 와이파이로 17건입니다. 가장 흔한 장애는 Search FAQ 노드에서 발생한 \"timeout of 1000ms exceeded\" 메시지로 16건입니다. 이상 징후가 가장 심한 시간대는 10월 26일 09시로 오류 16건, 전체 16건입니다.\n\n## 다음 할 일\n\n- FAQ에 '와이파이' 항목 추가\n- FAQ 검색 timeout · 재시도 설정 점검 (72일차)\n- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)",
+        "total": 357,
+        "error_rate": 0.0588,
+        "slo_ok": false,
+        "numbers_ok": true
+      }
+✔ 주간 보고 · 절 · 1.9s
+    → request  POST /webhook/my-weekly
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30",
+        "prev_from": "2026-10-19",
+        "prev_to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "markdown": "# IT 헬프데스크 주간 운영 보고 (2026-10-26 ~ 2026-10-30)\n\n## 숫자\n\n| 지표 | 지난주 | 이번 주 |\n| --- | --- | --- |\n| 요청 | 309 | 357 |\n| 오류율 | 0% | 5.88% |\n| p95 | 2525ms | 2598ms |\n| 답 못 함 | 5.5% | 4.76% |\n| SLO | 못 지킴 unanswered_rate | 못 지킴 error_rate, unanswered_rate |\n\n## 문제\n\n- 실패 16건 · Search FAQ · timeout of 1000ms exceeded\n- 실패 5건 · Answer · 429 Rate limit reached for requests\n- 답하지 못한 질문 17건 · 와이파이\n- 이상 시간대 2026-10-26 09시 · 16/16 실패\n- 이상 시간대 2026-10-29 15시 · 5/7 실패\n\n## 요약 (LLM, 숫자 확인 통과)\n\n가장 많은 미응답 주제는 와이파이로 17건입니다. 가장 흔한 장애는 Search FAQ 노드에서 발생한 \"timeout of 1000ms exceeded\" 메시지로 16건입니다. 이상 징후가 가장 심한 시간대는 10월 26일 09시로, 총 16건 중 16건이 오류입니다.\n\n## 다음 할 일\n\n- FAQ에 '와이파이' 항목 추가\n- FAQ 검색 timeout · 재시도 설정 점검 (72일차)\n- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)",
+        "total": 357,
+        "error_rate": 0.0588,
+        "slo_ok": false,
+        "numbers_ok": true
+      }
+✔ 주간 보고 · 문제 절 · 2.4s
+    → request  POST /webhook/my-weekly
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30",
+        "prev_from": "2026-10-19",
+        "prev_to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "markdown": "# IT 헬프데스크 주간 운영 보고 (2026-10-26 ~ 2026-10-30)\n\n## 숫자\n\n| 지표 | 지난주 | 이번 주 |\n| --- | --- | --- |\n| 요청 | 309 | 357 |\n| 오류율 | 0% | 5.88% |\n| p95 | 2525ms | 2598ms |\n| 답 못 함 | 5.5% | 4.76% |\n| SLO | 못 지킴 unanswered_rate | 못 지킴 error_rate, unanswered_rate |\n\n## 문제\n\n- 실패 16건 · Search FAQ · timeout of 1000ms exceeded\n- 실패 5건 · Answer · 429 Rate limit reached for requests\n- 답하지 못한 질문 17건 · 와이파이\n- 이상 시간대 2026-10-26 09시 · 16/16 실패\n- 이상 시간대 2026-10-29 15시 · 5/7 실패\n\n## 요약 (LLM, 숫자 확인 통과)\n\n가장 많은 미응답 주제는 와이파이로 17건입니다. 가장 흔한 장애는 Search FAQ 노드에서 발생한 \"timeout of 1000ms exceeded\" 메시지로 16건입니다. 이상 징후가 가장 심한 시간대는 10월 26일 09시로, 총 16건 중 16건이 오류입니다.\n\n## 다음 할 일\n\n- FAQ에 '와이파이' 항목 추가\n- FAQ 검색 timeout · 재시도 설정 점검 (72일차)\n- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)",
+        "total": 357,
+        "error_rate": 0.0588,
+        "slo_ok": false,
+        "numbers_ok": true
+      }
+✔ 주간 보고 · 다음 할 일 · 1.7s
+    → request  POST /webhook/my-weekly
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30",
+        "prev_from": "2026-10-19",
+        "prev_to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "markdown": "# IT 헬프데스크 주간 운영 보고 (2026-10-26 ~ 2026-10-30)\n\n## 숫자\n\n| 지표 | 지난주 | 이번 주 |\n| --- | --- | --- |\n| 요청 | 309 | 357 |\n| 오류율 | 0% | 5.88% |\n| p95 | 2525ms | 2598ms |\n| 답 못 함 | 5.5% | 4.76% |\n| SLO | 못 지킴 unanswered_rate | 못 지킴 error_rate, unanswered_rate |\n\n## 문제\n\n- 실패 16건 · Search FAQ · timeout of 1000ms exceeded\n- 실패 5건 · Answer · 429 Rate limit reached for requests\n- 답하지 못한 질문 17건 · 와이파이\n- 이상 시간대 2026-10-26 09시 · 16/16 실패\n- 이상 시간대 2026-10-29 15시 · 5/7 실패\n\n## 요약 (LLM, 숫자 확인 통과)\n\n가장 많은 미응답 주제는 와이파이로 17건입니다. 가장 흔한 장애는 Search FAQ 노드에서 발생한 \"timeout of 1000ms exceeded\" 메시지로 16건입니다. 가장 심각한 이상 징후는 10월 26일 09시에 발생했으며, 오류 16건과 총 16건의 요청이 있었습니다.\n\n## 다음 할 일\n\n- FAQ에 '와이파이' 항목 추가\n- FAQ 검색 timeout · 재시도 설정 점검 (72일차)\n- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)",
+        "total": 357,
+        "error_rate": 0.0588,
+        "slo_ok": false,
+        "numbers_ok": true
+      }
+✔ 주간 보고 · 비교 숫자 · 2.0s
+    → request  POST /webhook/my-weekly
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30",
+        "prev_from": "2026-10-19",
+        "prev_to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "markdown": "# IT 헬프데스크 주간 운영 보고 (2026-10-26 ~ 2026-10-30)\n\n## 숫자\n\n| 지표 | 지난주 | 이번 주 |\n| --- | --- | --- |\n| 요청 | 309 | 357 |\n| 오류율 | 0% | 5.88% |\n| p95 | 2525ms | 2598ms |\n| 답 못 함 | 5.5% | 4.76% |\n| SLO | 못 지킴 unanswered_rate | 못 지킴 error_rate, unanswered_rate |\n\n## 문제\n\n- 실패 16건 · Search FAQ · timeout of 1000ms exceeded\n- 실패 5건 · Answer · 429 Rate limit reached for requests\n- 답하지 못한 질문 17건 · 와이파이\n- 이상 시간대 2026-10-26 09시 · 16/16 실패\n- 이상 시간대 2026-10-29 15시 · 5/7 실패\n\n## 요약 (LLM, 숫자 확인 통과)\n\n가장 많은 미응답 주제는 와이파이로 17건입니다. 가장 흔한 장애는 Search FAQ 노드에서 발생한 \"timeout of 1000ms exceeded\" 메시지로 16건입니다. 이상 징후가 가장 심한 시간대는 10월 26일 09시로 오류 16건, 전체 16건입니다.\n\n## 다음 할 일\n\n- FAQ에 '와이파이' 항목 추가\n- FAQ 검색 timeout · 재시도 설정 점검 (72일차)\n- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)",
+        "total": 357,
+        "error_rate": 0.0588,
+        "slo_ok": false,
+        "numbers_ok": true
+      }
+✔ 주간 보고 · 이상 시간대 · 1.8s
+    → request  POST /webhook/my-weekly
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30",
+        "prev_from": "2026-10-19",
+        "prev_to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "markdown": "# IT 헬프데스크 주간 운영 보고 (2026-10-26 ~ 2026-10-30)\n\n## 숫자\n\n| 지표 | 지난주 | 이번 주 |\n| --- | --- | --- |\n| 요청 | 309 | 357 |\n| 오류율 | 0% | 5.88% |\n| p95 | 2525ms | 2598ms |\n| 답 못 함 | 5.5% | 4.76% |\n| SLO | 못 지킴 unanswered_rate | 못 지킴 error_rate, unanswered_rate |\n\n## 문제\n\n- 실패 16건 · Search FAQ · timeout of 1000ms exceeded\n- 실패 5건 · Answer · 429 Rate limit reached for requests\n- 답하지 못한 질문 17건 · 와이파이\n- 이상 시간대 2026-10-26 09시 · 16/16 실패\n- 이상 시간대 2026-10-29 15시 · 5/7 실패\n\n## 요약 (LLM, 숫자 확인 통과)\n\n가장 많은 미응답 주제는 와이파이로 17건입니다. 가장 흔한 장애는 Search FAQ 노드에서 발생한 \"timeout of 1000ms exceeded\" 메시지로 16건입니다. 이상 징후가 가장 심한 시간대는 10월 26일 09시로, 총 16건 중 16건이 오류입니다.\n\n## 다음 할 일\n\n- FAQ에 '와이파이' 항목 추가\n- FAQ 검색 timeout · 재시도 설정 점검 (72일차)\n- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)",
+        "total": 357,
+        "error_rate": 0.0588,
+        "slo_ok": false,
+        "numbers_ok": true
+      }
+✔ 주간 보고 · 와이파이 · 1.7s
+    → request  POST /webhook/my-weekly
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30",
+        "prev_from": "2026-10-19",
+        "prev_to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "markdown": "# IT 헬프데스크 주간 운영 보고 (2026-10-26 ~ 2026-10-30)\n\n## 숫자\n\n| 지표 | 지난주 | 이번 주 |\n| --- | --- | --- |\n| 요청 | 309 | 357 |\n| 오류율 | 0% | 5.88% |\n| p95 | 2525ms | 2598ms |\n| 답 못 함 | 5.5% | 4.76% |\n| SLO | 못 지킴 unanswered_rate | 못 지킴 error_rate, unanswered_rate |\n\n## 문제\n\n- 실패 16건 · Search FAQ · timeout of 1000ms exceeded\n- 실패 5건 · Answer · 429 Rate limit reached for requests\n- 답하지 못한 질문 17건 · 와이파이\n- 이상 시간대 2026-10-26 09시 · 16/16 실패\n- 이상 시간대 2026-10-29 15시 · 5/7 실패\n\n## 요약 (LLM, 숫자 확인 통과)\n\n가장 많은 미응답 주제는 와이파이로 17건입니다. 가장 흔한 장애는 Search FAQ 노드에서 발생한 \"timeout of 1000ms exceeded\" 메시지로 16건입니다. 이상 징후가 가장 심한 시간대는 10월 26일 09시로, 총 16건 중 16건이 오류입니다.\n\n## 다음 할 일\n\n- FAQ에 '와이파이' 항목 추가\n- FAQ 검색 timeout · 재시도 설정 점검 (72일차)\n- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)",
+        "total": 357,
+        "error_rate": 0.0588,
+        "slo_ok": false,
+        "numbers_ok": true
+      }
+Passed 7/7
+report: runs/lab03-challenge-20261031-075252.json
+
+$ uv run tools/flow.py call my-weekly requests/weekly.json
+HTTP 200 · 1.9s
+{
+  "markdown": "# IT 헬프데스크 주간 운영 보고 (2026-10-26 ~ 2026-10-30)\n\n## 숫자\n\n| 지표 | 지난주 | 이번 주 |\n| --- | --- | --- |\n| 요청 | 309 | 357 |\n| 오류율 | 0% | 5.88% |\n| p95 | 2525ms | 2598ms |\n| 답 못 함 | 5.5% | 4.76% |\n| SLO | 못 지킴 unanswered_rate | 못 지킴 error_rate, unanswered_rate |\n\n## 문제\n\n- 실패 16건 · Search FAQ · timeout of 1000ms exceeded\n- 실패 5건 · Answer · 429 Rate limit reached for requests\n- 답하지 못한 질문 17건 · 와이파이\n- 이상 시간대 2026-10-26 09시 · 16/16 실패\n- 이상 시간대 2026-10-29 15시 · 5/7 실패\n\n## 요약 (LLM, 숫자 확인 통과)\n\n가장 많은 미응답 주제는 와이파이로 17건입니다. 가장 흔한 장애는 Search FAQ 노드에서 발생한 \"timeout of 1000ms exceeded\" 메시지로 16건입니다. 가장 심각한 이상 시간대는 10월 26일 09시로 오류 16건, 전체 16건입니다.\n\n## 다음 할 일\n\n- FAQ에 '와이파이' 항목 추가\n- FAQ 검색 timeout · 재시도 설정 점검 (72일차)\n- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)",
+  "total": 357,
+  "error_rate": 0.0588,
+  "slo_ok": false,
+  "numbers_ok": true
+}

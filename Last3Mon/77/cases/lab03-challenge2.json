@@ -1,0 +1,98 @@
+{
+  "webhook": "my-slo-alert",
+  "before": [
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "둘째 주 · SLO 못 지킴 → 알림",
+      "request": "requests/week2.json",
+      "expect": {
+        "equals": {
+          "ok": false,
+          "breaches": [
+            "error_rate",
+            "unanswered_rate"
+          ],
+          "alert": "sent"
+        },
+        "contains": {
+          "message": [
+            "error_rate 0.0588 > 0.01"
+          ]
+        }
+      }
+    },
+    {
+      "name": "알림 확인 (high · slo)",
+      "body": {},
+      "url": "http://localhost:8800/alerts/latest",
+      "expect": {
+        "equals": {
+          "workflow": "slo",
+          "severity": "high",
+          "reason": "slo"
+        },
+        "contains": {
+          "message": [
+            "unanswered_rate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "10분 안에 다시 확인 → 보내지 않음",
+      "request": "requests/week2.json",
+      "expect": {
+        "equals": {
+          "ok": false,
+          "alert": "suppressed"
+        }
+      }
+    },
+    {
+      "name": "slo 알림은 1개",
+      "body": {
+        "workflow": "slo"
+      },
+      "url": "http://localhost:8800/alerts/list",
+      "expect": {
+        "equals": {
+          "count": 1
+        }
+      }
+    },
+    {
+      "name": "기준 안이면 알림 없음",
+      "body": {
+        "from": "2026-10-19",
+        "to": "2026-10-23",
+        "slo": {
+          "unanswered_rate": 0.06
+        }
+      },
+      "expect": {
+        "equals": {
+          "ok": true,
+          "breaches": [],
+          "alert": "none"
+        }
+      }
+    },
+    {
+      "name": "그래도 알림은 1개",
+      "body": {
+        "workflow": "slo"
+      },
+      "url": "http://localhost:8800/alerts/list",
+      "expect": {
+        "equals": {
+          "count": 1
+        }
+      }
+    }
+  ]
+}

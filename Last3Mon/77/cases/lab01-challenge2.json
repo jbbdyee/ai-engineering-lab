@@ -1,0 +1,62 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "두 주 · 단계별 p95",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "steps.faq_ms.p95": 39,
+          "steps.answer_ms.p95": 2509,
+          "steps.answer_ms.p50": 1179
+        }
+      }
+    },
+    {
+      "name": "두 주 · 단계마다 잰 실행 수",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "steps.faq_ms.runs": 646,
+          "steps.answer_ms.runs": 596
+        }
+      }
+    },
+    {
+      "name": "월요일 · FAQ 단계가 느림",
+      "request": "requests/monday.json",
+      "expect": {
+        "equals": {
+          "steps.faq_ms.p95": 1000,
+          "steps.answer_ms.p95": 2482
+        }
+      }
+    },
+    {
+      "name": "두 주 · 비용",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "cost_usd": 0.07836,
+          "cost_per_run": 0.000118,
+          "llm_calls": 596
+        }
+      }
+    },
+    {
+      "name": "빈 기간 · 비용 0",
+      "body": {
+        "from": "2026-11-02",
+        "to": "2026-11-06"
+      },
+      "expect": {
+        "equals": {
+          "cost_usd": 0,
+          "cost_per_run": 0,
+          "llm_calls": 0,
+          "steps.faq_ms.p95": 0
+        }
+      }
+    }
+  ]
+}

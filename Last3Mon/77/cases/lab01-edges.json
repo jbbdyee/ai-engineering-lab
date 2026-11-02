@@ -1,0 +1,82 @@
+{
+  "webhook": "my-log-report",
+  "before": [
+    {
+      "url": "http://localhost:8800/logs-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "하루 · from = to (포함)",
+      "request": "requests/monday.json",
+      "expect": {
+        "equals": {
+          "total": 70,
+          "errors": 16
+        }
+      }
+    },
+    {
+      "name": "빈 기간 · 0건이어도 200",
+      "body": {
+        "from": "2026-11-02",
+        "to": "2026-11-06"
+      },
+      "expect": {
+        "equals": {
+          "total": 0,
+          "errors": 0,
+          "error_rate": 0,
+          "p95_ms": 0
+        }
+      }
+    },
+    {
+      "name": "주말 · 실행이 없는 날",
+      "body": {
+        "from": "2026-10-24",
+        "to": "2026-10-25"
+      },
+      "expect": {
+        "equals": {
+          "total": 0
+        }
+      }
+    },
+    {
+      "name": "기간을 비우면 전체",
+      "body": {},
+      "expect": {
+        "equals": {
+          "total": 666
+        }
+      }
+    },
+    {
+      "name": "source seed · 두 주 기록만",
+      "body": {
+        "from": "2026-10-19",
+        "to": "2026-10-30",
+        "source": "seed"
+      },
+      "expect": {
+        "equals": {
+          "total": 666
+        }
+      }
+    },
+    {
+      "name": "source live · 오늘 실습 기록 (아직 없음)",
+      "body": {
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "total": 0,
+          "error_rate": 0
+        }
+      }
+    }
+  ]
+}

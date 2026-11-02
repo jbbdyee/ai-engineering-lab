@@ -1,0 +1,179 @@
+{
+  "cases": "lab01-challenge.json",
+  "webhook": "my-log-report",
+  "passed": 0,
+  "total": 6,
+  "results": [
+    {
+      "case": "날짜별 · 월요일",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "by_day.2026-10-26.total = null (expected 70)",
+        "by_day.2026-10-26.errors = null (expected 16)",
+        "by_day.2026-10-26.error_rate = null (expected 0.2286)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "날짜별 · 목요일",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "by_day.2026-10-29.total = null (expected 97)",
+        "by_day.2026-10-29.errors = null (expected 5)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "날짜는 10일",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "by_day has none of ['\"2026-10-19\"']"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "릴리스별 다시 묻기 · 1.2.0",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "by_release has none of ['\"1.2.0\": {\"answers\": 8, \"repeats\": 5, \"repeat_rate\": 0.625}']"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "릴리스별 다시 묻기 · 1.0.0 · 1.1.0",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "by_release has none of ['\"1.0.0\": {\"answers\": 402, \"repeats\": 19, \"repeat_rate\": 0.0473}']"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "1.1.0",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "by_release has none of ['\"1.1.0\": {\"answers\": 181, \"repeats\": 14, \"repeat_rate\": 0.0773}']"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+    }
+  ]
+}

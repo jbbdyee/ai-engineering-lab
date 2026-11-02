@@ -1,0 +1,36 @@
+$ uv run tools/flow.py logs --from 2026-10-19 --to 2026-10-30 --last 5
+666 run(s) · errors 21 (3.2%)
+  route: 자동 답변 591 · 담당자 연결 34 · 오류 21 · 잠시 후 20
+  2026-10-30T17:05:38  success 자동 답변   1311ms  프린터    인쇄 대기열이 안 비워져요
+  2026-10-30T17:11:46  success 자동 답변   1175ms  메일    메일함 용량이 꽉 찼대요
+  2026-10-30T17:20:51  success 담당자 연결    79ms  와이파이    회의실 와이파이가 안 잡혀요
+  2026-10-30T17:24:39  success 자동 답변   1205ms  메일    첨부 파일이 너무 커서 안 보내져요
+  2026-10-30T17:59:20  success 자동 답변   1076ms  메일    메일함 용량이 꽉 찼대요
+
+$ uv run tools/flow.py logs --from 2026-10-26 --to 2026-10-26 --last 0
+70 run(s) · errors 16 (22.9%)
+  route: 자동 답변 50 · 오류 16 · 담당자 연결 4
+
+$ uv run tools/flow.py call base-report requests/two-weeks.json
+HTTP 200 · 1.2s
+{
+  "total": 602,
+  "errors": 21,
+  "error_rate": 3.488372093023256,
+  "avg_ms": 1249.2392026578073,
+  "by_route": {
+    "자동 답변": 529,
+    "담당자 연결": 32,
+    "잠시 후": 20
+  }
+}
+
+$ uv run tools/flow.py call base-report requests/monday.json
+HTTP 200 · 0.1s
+{
+  "total": 0,
+  "errors": 0,
+  "error_rate": null,
+  "avg_ms": null,
+  "by_route": {}
+}

@@ -1,0 +1,321 @@
+$ uv run tools/flow.py test cases/lab01-challenge2.json -v
+POST http://localhost:5678/webhook/my-log-report · 5 case(s) × 1
+✘ 두 주 · 단계별 p95 · 0.1s · steps.faq_ms.p95 = null (expected 39); steps.answer_ms.p95 = null (expected 2509); steps.answer_ms.p50 = null (expected 1179)
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        }
+      }
+✘ 두 주 · 단계마다 잰 실행 수 · 0.1s · steps.faq_ms.runs = null (expected 646); steps.answer_ms.runs = null (expected 596)
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        }
+      }
+✘ 월요일 · FAQ 단계가 느림 · 0.1s · steps.faq_ms.p95 = null (expected 1000); steps.answer_ms.p95 = null (expected 2482)
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-26"
+      }
+    ← response HTTP 200
+      {
+        "total": 70,
+        "errors": 16,
+        "error_rate": 0.2286,
+        "p50_ms": 1082,
+        "p95_ms": 2468,
+        "by_route": {
+          "오류": 16,
+          "자동 답변": 50,
+          "담당자 연결": 4
+        },
+        "by_day": {
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 50,
+            "repeats": 1,
+            "repeat_rate": 0.02
+          }
+        }
+      }
+✘ 두 주 · 비용 · 0.1s · cost_usd = null (expected 0.07836); cost_per_run = null (expected 0.000118); llm_calls = null (expected 596)
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        }
+      }
+✘ 빈 기간 · 비용 0 · 0.0s · cost_usd = null (expected 0); cost_per_run = null (expected 0); llm_calls = null (expected 0); steps.faq_ms.p95 = null (expected 0)
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-11-02",
+        "to": "2026-11-06"
+      }
+    ← response HTTP 200
+      {
+        "total": 0,
+        "errors": 0,
+        "error_rate": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "by_route": {},
+        "by_day": {},
+        "by_release": {}
+      }
+Passed 0/5
+report: runs/lab01-challenge2-20261031-074930.json

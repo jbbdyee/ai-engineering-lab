@@ -1,0 +1,124 @@
+$ uv run tools/flow.py test cases/lab01-challenge.json -v
+POST http://localhost:5678/webhook/my-log-report · 6 case(s) × 1
+✘ 날짜별 · 월요일 · 0.1s · by_day.2026-10-26.total = null (expected 70); by_day.2026-10-26.errors = null (expected 16); by_day.2026-10-26.error_rate = null (expected 0.2286)
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✘ 날짜별 · 목요일 · 0.1s · by_day.2026-10-29.total = null (expected 97); by_day.2026-10-29.errors = null (expected 5)
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✘ 날짜는 10일 · 0.1s · by_day has none of ['"2026-10-19"']
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✘ 릴리스별 다시 묻기 · 1.2.0 · 0.1s · by_release has none of ['"1.2.0": {"answers": 8, "repeats": 5, "repeat_rate": 0.625}']
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✘ 릴리스별 다시 묻기 · 1.0.0 · 1.1.0 · 0.1s · by_release has none of ['"1.0.0": {"answers": 402, "repeats": 19, "repeat_rate": 0.0473}']
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✘ 1.1.0 · 0.1s · by_release has none of ['"1.1.0": {"answers": 181, "repeats": 14, "repeat_rate": 0.0773}']
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+Passed 0/6
+report: runs/lab01-challenge-20261031-074914.json

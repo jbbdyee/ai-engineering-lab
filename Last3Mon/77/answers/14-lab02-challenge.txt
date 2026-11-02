@@ -1,0 +1,823 @@
+$ uv run tools/flow.py push answers/77-lab02-challenge-repeat-topics.json
+! unpublished '77 Log report + anomalies (reference)' (w4957bb6724af44d): it used the same webhook path
+✔ pushed '77 Log report + repeat topics (answer)' (id wf3d06e3d30eeee6)
+   POST http://localhost:5678/webhook/my-log-report
+
+$ uv run tools/flow.py test cases/lab02-challenge.json -v
+POST http://localhost:5678/webhook/my-log-report · 5 case(s) × 1
+✔ 두 주 · 다시 묻는 비율이 가장 높은 주제 · 0.9s · 596 calls · $0.078360
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596,
+        "failures": [
+          {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          },
+          {
+            "node": "Answer",
+            "message": "429 Rate limit reached for requests",
+            "count": 5
+          }
+        ],
+        "unanswered_topics": [
+          {
+            "topic": "와이파이",
+            "count": 34
+          }
+        ],
+        "anomalies": [
+          {
+            "hour": "2026-10-26T09",
+            "total": 16,
+            "errors": 16,
+            "error_rate": 1
+          },
+          {
+            "hour": "2026-10-29T15",
+            "total": 7,
+            "errors": 5,
+            "error_rate": 0.7143
+          }
+        ],
+        "repeat_topics": [
+          {
+            "topic": "프린터",
+            "answers": 81,
+            "repeats": 8,
+            "repeat_rate": 0.0988
+          },
+          {
+            "topic": "비밀번호",
+            "answers": 139,
+            "repeats": 9,
+            "repeat_rate": 0.0647
+          },
+          {
+            "topic": "VPN",
+            "answers": 124,
+            "repeats": 8,
+            "repeat_rate": 0.0645
+          },
+          {
+            "topic": "접수 현황",
+            "answers": 96,
+            "repeats": 6,
+            "repeat_rate": 0.0625
+          },
+          {
+            "topic": "메일",
+            "answers": 90,
+            "repeats": 5,
+            "repeat_rate": 0.0556
+          },
+          {
+            "topic": "설치",
+            "answers": 61,
+            "repeats": 2,
+            "repeat_rate": 0.0328
+          }
+        ]
+      }
+✔ 두 주 · 수로는 비밀번호가 가장 많지만 비율은 2위 · 0.3s · 596 calls · $0.078360
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596,
+        "failures": [
+          {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          },
+          {
+            "node": "Answer",
+            "message": "429 Rate limit reached for requests",
+            "count": 5
+          }
+        ],
+        "unanswered_topics": [
+          {
+            "topic": "와이파이",
+            "count": 34
+          }
+        ],
+        "anomalies": [
+          {
+            "hour": "2026-10-26T09",
+            "total": 16,
+            "errors": 16,
+            "error_rate": 1
+          },
+          {
+            "hour": "2026-10-29T15",
+            "total": 7,
+            "errors": 5,
+            "error_rate": 0.7143
+          }
+        ],
+        "repeat_topics": [
+          {
+            "topic": "프린터",
+            "answers": 81,
+            "repeats": 8,
+            "repeat_rate": 0.0988
+          },
+          {
+            "topic": "비밀번호",
+            "answers": 139,
+            "repeats": 9,
+            "repeat_rate": 0.0647
+          },
+          {
+            "topic": "VPN",
+            "answers": 124,
+            "repeats": 8,
+            "repeat_rate": 0.0645
+          },
+          {
+            "topic": "접수 현황",
+            "answers": 96,
+            "repeats": 6,
+            "repeat_rate": 0.0625
+          },
+          {
+            "topic": "메일",
+            "answers": 90,
+            "repeats": 5,
+            "repeat_rate": 0.0556
+          },
+          {
+            "topic": "설치",
+            "answers": 61,
+            "repeats": 2,
+            "repeat_rate": 0.0328
+          }
+        ]
+      }
+✔ 두 주 · 다시 물은 주제는 6개 · 0.1s · 596 calls · $0.078360
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596,
+        "failures": [
+          {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          },
+          {
+            "node": "Answer",
+            "message": "429 Rate limit reached for requests",
+            "count": 5
+          }
+        ],
+        "unanswered_topics": [
+          {
+            "topic": "와이파이",
+            "count": 34
+          }
+        ],
+        "anomalies": [
+          {
+            "hour": "2026-10-26T09",
+            "total": 16,
+            "errors": 16,
+            "error_rate": 1
+          },
+          {
+            "hour": "2026-10-29T15",
+            "total": 7,
+            "errors": 5,
+            "error_rate": 0.7143
+          }
+        ],
+        "repeat_topics": [
+          {
+            "topic": "프린터",
+            "answers": 81,
+            "repeats": 8,
+            "repeat_rate": 0.0988
+          },
+          {
+            "topic": "비밀번호",
+            "answers": 139,
+            "repeats": 9,
+            "repeat_rate": 0.0647
+          },
+          {
+            "topic": "VPN",
+            "answers": 124,
+            "repeats": 8,
+            "repeat_rate": 0.0645
+          },
+          {
+            "topic": "접수 현황",
+            "answers": 96,
+            "repeats": 6,
+            "repeat_rate": 0.0625
+          },
+          {
+            "topic": "메일",
+            "answers": 90,
+            "repeats": 5,
+            "repeat_rate": 0.0556
+          },
+          {
+            "topic": "설치",
+            "answers": 61,
+            "repeats": 2,
+            "repeat_rate": 0.0328
+          }
+        ]
+      }
+✔ 첫 주 · 설치는 다시 묻지 않음 · 0.0s · 292 calls · $0.038550
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "total": 309,
+        "errors": 0,
+        "error_rate": 0,
+        "p50_ms": 1252,
+        "p95_ms": 2525,
+        "by_route": {
+          "자동 답변": 292,
+          "담당자 연결": 17
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 292,
+            "repeats": 16,
+            "repeat_rate": 0.0548
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 309,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 292,
+            "p50": 1200,
+            "p95": 2470
+          }
+        },
+        "cost_usd": 0.03855,
+        "cost_per_run": 0.000125,
+        "llm_calls": 292,
+        "failures": [],
+        "unanswered_topics": [
+          {
+            "topic": "와이파이",
+            "count": 17
+          }
+        ],
+        "anomalies": [],
+        "repeat_topics": [
+          {
+            "topic": "프린터",
+            "answers": 45,
+            "repeats": 4,
+            "repeat_rate": 0.0889
+          },
+          {
+            "topic": "VPN",
+            "answers": 59,
+            "repeats": 4,
+            "repeat_rate": 0.0678
+          },
+          {
+            "topic": "비밀번호",
+            "answers": 69,
+            "repeats": 4,
+            "repeat_rate": 0.058
+          },
+          {
+            "topic": "접수 현황",
+            "answers": 40,
+            "repeats": 2,
+            "repeat_rate": 0.05
+          },
+          {
+            "topic": "메일",
+            "answers": 42,
+            "repeats": 2,
+            "repeat_rate": 0.0476
+          }
+        ]
+      }
+✔ 앞의 지표는 그대로 · 0.1s · 596 calls · $0.078360
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596,
+        "failures": [
+          {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          },
+          {
+            "node": "Answer",
+            "message": "429 Rate limit reached for requests",
+            "count": 5
+          }
+        ],
+        "unanswered_topics": [
+          {
+            "topic": "와이파이",
+            "count": 34
+          }
+        ],
+        "anomalies": [
+          {
+            "hour": "2026-10-26T09",
+            "total": 16,
+            "errors": 16,
+            "error_rate": 1
+          },
+          {
+            "hour": "2026-10-29T15",
+            "total": 7,
+            "errors": 5,
+            "error_rate": 0.7143
+          }
+        ],
+        "repeat_topics": [
+          {
+            "topic": "프린터",
+            "answers": 81,
+            "repeats": 8,
+            "repeat_rate": 0.0988
+          },
+          {
+            "topic": "비밀번호",
+            "answers": 139,
+            "repeats": 9,
+            "repeat_rate": 0.0647
+          },
+          {
+            "topic": "VPN",
+            "answers": 124,
+            "repeats": 8,
+            "repeat_rate": 0.0645
+          },
+          {
+            "topic": "접수 현황",
+            "answers": 96,
+            "repeats": 6,
+            "repeat_rate": 0.0625
+          },
+          {
+            "topic": "메일",
+            "answers": 90,
+            "repeats": 5,
+            "repeat_rate": 0.0556
+          },
+          {
+            "topic": "설치",
+            "answers": 61,
+            "repeats": 2,
+            "repeat_rate": 0.0328
+          }
+        ]
+      }
+Passed 5/5
+report: runs/lab02-challenge-20261031-075031.json
+
+$ uv run tools/flow.py test cases/lab02.json
+POST http://localhost:5678/webhook/my-log-report · 6 case(s) × 1
+✔ 예제 1 · 가장 많은 실패 · 0.1s · 596 calls · $0.078360
+✔ 예제 1 · 두 번째 실패 · 0.1s · 596 calls · $0.078360
+✔ 예제 1 · 답하지 못한 주제 · 0.1s · 596 calls · $0.078360
+✔ 예제 2 · 이상 시간대 1 · 0.1s · 596 calls · $0.078360
+✔ 예제 2 · 이상 시간대 2 · 0.1s · 596 calls · $0.078360
+✔ 예제 2 · 첫 주에는 없음 · 0.0s · 292 calls · $0.038550
+Passed 6/6
+report: runs/lab02-20261031-075031.json

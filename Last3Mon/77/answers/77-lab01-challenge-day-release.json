@@ -1,0 +1,101 @@
+{
+  "name": "77 Log report + days and releases (answer)",
+  "nodes": [
+    {
+      "name": "Report webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-log-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "Get logs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/logs/query",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $json.body.from ?? '', to: $json.body.to ?? '', tag: $json.body.tag ?? '', source: $json.body.source ?? 'all' }) }}",
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Compute metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const pct = (vals, p) => { const s = [...vals].sort((a, b) => a - b); return s.length ? s[Math.max(0, Math.ceil(p * s.length) - 1)] : 0; };\nconst rate = (a, b) => (b ? Math.round((a / b) * 10000) / 10000 : 0);\nconst rows = $json.logs ?? [];\nconst errors = rows.filter((r) => r.status === 'error').length;\nconst by_route = {};\nfor (const r of rows) { const k = r.route ?? '오류'; by_route[k] = (by_route[k] ?? 0) + 1; }\nconst d = rows.map((r) => r.duration_ms);\nconst out = { total: rows.length, errors, error_rate: rate(errors, rows.length), p50_ms: pct(d, 0.5), p95_ms: pct(d, 0.95), by_route };\nconst group = (key) => { const g = {}; for (const r of rows) (g[key(r)] ??= []).push(r); return g; };\nout.by_day = Object.fromEntries(Object.entries(group((r) => r.started_at.slice(0, 10))).sort().map(([k, v]) => {\n  const e = v.filter((r) => r.status === 'error').length; return [k, { total: v.length, errors: e, error_rate: rate(e, v.length) }]; }));\nout.by_release = {};\nfor (const r of rows.filter((x) => x.route === '자동 답변')) { const b = (out.by_release[r.release] ??= { answers: 0, repeats: 0 }); b.answers += 1; if (r.repeat) b.repeats += 1; }\nfor (const b of Object.values(out.by_release)) b.repeat_rate = rate(b.repeats, b.answers);\nreturn [{ json: out }];"
+      },
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "name": "Send report",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Report webhook": {
+      "main": [
+        [
+          {
+            "node": "Get logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get logs": {
+      "main": [
+        [
+          {
+            "node": "Compute metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute metrics": {
+      "main": [
+        [
+          {
+            "node": "Send report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

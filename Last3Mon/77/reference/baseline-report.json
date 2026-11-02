@@ -1,0 +1,101 @@
+{
+  "name": "77 Log report (team baseline, provided)",
+  "nodes": [
+    {
+      "name": "Report webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "base-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "Get logs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/logs/query",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ source: 'all' }) }}",
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Compute metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "// The team's old report: written in a hurry last month. Compare its numbers with the definitions in AGENTS.md 3.\nconst body = $('Report webhook').first().json.body ?? {};\nconst from = body.from ?? '', to = body.to ?? '';\nconst rows = ($json.logs ?? []).filter((r) => (!from || r.started_at >= from) && (!to || r.started_at < to));\nconst errors = rows.filter((r) => r.status === 'error').length;\nconst by_route = {};\nfor (const r of rows) if (r.route) by_route[r.route] = (by_route[r.route] ?? 0) + 1;\nconst avg_ms = rows.reduce((a, r) => a + r.duration_ms, 0) / rows.length;\nreturn [{ json: { total: rows.length, errors, error_rate: (errors / rows.length) * 100, avg_ms, by_route } }];"
+      },
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "name": "Send report",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Report webhook": {
+      "main": [
+        [
+          {
+            "node": "Get logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get logs": {
+      "main": [
+        [
+          {
+            "node": "Compute metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute metrics": {
+      "main": [
+        [
+          {
+            "node": "Send report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

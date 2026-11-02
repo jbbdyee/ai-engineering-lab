@@ -1,0 +1,218 @@
+{
+  "cases": "replay-before.json",
+  "webhook": "my-helpdesk",
+  "passed": 10,
+  "total": 10,
+  "results": [
+    {
+      "case": "before · 회의실 와이파이가 안 ",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.1,
+      "status": 200,
+      "request": {
+        "question": "회의실 와이파이가 안 잡혀요",
+        "user": "이준호",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "와이파이",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · 사내 Wi-Fi 비밀번",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "사내 Wi-Fi 비밀번호가 뭐예요?",
+        "user": "박서연",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "와이파이",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · 와이파이가 자주 끊겨요",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "와이파이가 자주 끊겨요",
+        "user": "최유진",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "와이파이",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · 노트북이 와이파이에 연",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "노트북이 와이파이에 연결이 안 돼요",
+        "user": "한지훈",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "와이파이",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · 손님용 wifi도 있나",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "손님용 wifi도 있나요?",
+        "user": "김민지",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "와이파이",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · VPN이 자꾸 끊겨요",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "VPN이 자꾸 끊겨요",
+        "user": "정우성",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "VPN",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · 비밀번호를 잊어버렸어요",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요",
+        "user": "오세훈",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "비밀번호",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · 프린터 출력이 안 돼요",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "윤하늘",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "프린터",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · 메일함 용량이 꽉 찼대",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "강민수",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "메일",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    },
+    {
+      "case": "before · 새 프로그램 설치는 어",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "새 프로그램 설치는 어떻게 신청하나요?",
+        "user": "서지아",
+        "tag": "before"
+      },
+      "response": {
+        "route": "담당자 연결",
+        "status": "error",
+        "topic": "설치",
+        "answer": "지금은 답할 수 없어 담당자에게 연결합니다.",
+        "error": "timeout of 1000ms exceeded"
+      }
+    }
+  ]
+}

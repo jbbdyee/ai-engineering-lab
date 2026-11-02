@@ -1,0 +1,651 @@
+{
+  "cases": "lab02.json",
+  "webhook": "my-log-report",
+  "passed": 0,
+  "total": 6,
+  "results": [
+    {
+      "case": "예제 1 · 가장 많은 실패",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "failures.0.node = null (expected Search FAQ)",
+        "failures.0.message = null (expected timeout of 1000ms exceeded)",
+        "failures.0.count = null (expected 16)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596
+      }
+    },
+    {
+      "case": "예제 1 · 두 번째 실패",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "failures.1.node = null (expected Answer)",
+        "failures.1.count = null (expected 5)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596
+      }
+    },
+    {
+      "case": "예제 1 · 답하지 못한 주제",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "unanswered_topics.0.topic = null (expected 와이파이)",
+        "unanswered_topics.0.count = null (expected 34)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596
+      }
+    },
+    {
+      "case": "예제 2 · 이상 시간대 1",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "anomalies.0.hour = null (expected 2026-10-26T09)",
+        "anomalies.0.total = null (expected 16)",
+        "anomalies.0.errors = null (expected 16)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596
+      }
+    },
+    {
+      "case": "예제 2 · 이상 시간대 2",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "anomalies.1.hour = null (expected 2026-10-29T15)",
+        "anomalies.1.total = null (expected 7)",
+        "anomalies.1.errors = null (expected 5)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-26": {
+            "total": 70,
+            "errors": 16,
+            "error_rate": 0.2286
+          },
+          "2026-10-27": {
+            "total": 62,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-28": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-29": {
+            "total": 97,
+            "errors": 5,
+            "error_rate": 0.0515
+          },
+          "2026-10-30": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 402,
+            "repeats": 19,
+            "repeat_rate": 0.0473
+          },
+          "1.1.0": {
+            "answers": 181,
+            "repeats": 14,
+            "repeat_rate": 0.0773
+          },
+          "1.2.0": {
+            "answers": 8,
+            "repeats": 5,
+            "repeat_rate": 0.625
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 646,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 596,
+            "p50": 1179,
+            "p95": 2509
+          }
+        },
+        "cost_usd": 0.07836,
+        "cost_per_run": 0.000118,
+        "llm_calls": 596
+      }
+    },
+    {
+      "case": "예제 2 · 첫 주에는 없음",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "anomalies = null (expected [])"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      },
+      "response": {
+        "total": 309,
+        "errors": 0,
+        "error_rate": 0,
+        "p50_ms": 1252,
+        "p95_ms": 2525,
+        "by_route": {
+          "자동 답변": 292,
+          "담당자 연결": 17
+        },
+        "by_day": {
+          "2026-10-19": {
+            "total": 73,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-20": {
+            "total": 57,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-21": {
+            "total": 60,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-22": {
+            "total": 55,
+            "errors": 0,
+            "error_rate": 0
+          },
+          "2026-10-23": {
+            "total": 64,
+            "errors": 0,
+            "error_rate": 0
+          }
+        },
+        "by_release": {
+          "1.0.0": {
+            "answers": 292,
+            "repeats": 16,
+            "repeat_rate": 0.0548
+          }
+        },
+        "steps": {
+          "faq_ms": {
+            "runs": 309,
+            "p50": 27,
+            "p95": 39
+          },
+          "answer_ms": {
+            "runs": 292,
+            "p50": 1200,
+            "p95": 2470
+          }
+        },
+        "cost_usd": 0.03855,
+        "cost_per_run": 0.000125,
+        "llm_calls": 292
+      }
+    }
+  ]
+}

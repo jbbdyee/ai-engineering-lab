@@ -131,12 +131,28 @@ uv run tools/flow.py ops
 
 수업 준비 때(10/29) 강사 노트북에서 정답 워크플로우로 실제로 나온 출력입니다. 시간은 실행마다 조금씩 다르고, ✔ · ✘는 같아야 합니다.
 
-고치기 전 (Lab 01 과제 2 정답)
+#### 고치기 전 · Lab 01 과제 2까지 고친 `my-intake`
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py ops --reset
+uv run tools/flow.py fault tickets error
+uv run tools/flow.py call my-intake requests/batch-two.json
+uv run tools/flow.py fault tickets ok
+uv run tools/flow.py ops
+uv run tools/flow.py test cases/lab02.json -v
+```
+
+출력 (줄임):
 
 ```text
-$ fault tickets error  →  call my-intake requests/batch-two.json
-HTTP 200 · 2.8s   ( "failed": 2 )
-$ ops
+HTTP 200 · 2.8s
+{ "total": 2, "created": 0, "failed": 2, "rejected": 0, "duplicates": 0, "unclassified": 0,
+  "results": [ { "id": "R-301", "status": "failed", "reason": "500 - … tickets service is failing (fault switch)" },
+               { "id": "R-302", "status": "failed", "reason": "500 - … tickets service is failing (fault switch)" } ] }
+
+fault switch: all ok
 created tickets: 0
 DLQ: 0 (parked 0)
 alerts: 0
@@ -148,7 +164,25 @@ alerts: 0
 Passed 2/4
 ```
 
-고친 뒤
+**왜 이렇게 나왔나 (고치기 전)**
+
+- **응답은 정직합니다.** 200 · `failed: 2`, 항목마다 이유(`tickets service is failing`)까지 있습니다. Lab 01에서 이미 이렇게 고쳤습니다. 그래서 "실패로 표시" 케이스는 ✔입니다.
+- **그런데 `ops`에는 아무것도 없습니다.** 접수 건 0, DLQ 0, 알림 0. 결과를 받은 화면(사용자의 브라우저, 부른 프로그램)이 닫히면 R-301 · R-302 두 문의는 **어디에도 남지 않습니다.** 고장 스위치를 `ok`로 되돌려도 다시 보낼 것이 없습니다.
+- **DLQ 케이스 ✘ `size = 0`:** DLQ에 넣는 갈래가 아직 없으니 당연합니다.
+- **Error Workflow 케이스 ✘:** 예제 2에서 고칠 것입니다. 지금은 신경 쓰지 않습니다.
+- 2/4는 **예상한 결과**입니다.
+
+#### 고친 뒤
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py push my-work/intake.json
+uv run tools/flow.py test cases/lab02.json -v
+uv run tools/flow.py ops
+```
+
+출력 (결과 줄과 `ops`):
 
 ```text
 ✔ 예제 1 · API가 멈추면 실패로 표시 · 200 · 4.1s
@@ -157,17 +191,22 @@ Passed 2/4
 ✘ 예제 2 · Error Workflow가 알림을 남김 · 0.0s · severity = null (expected critical); ...
 Passed 3/4
 
-$ ops
 DLQ: 2 (parked 0)
   D-1  R-301  attempts 1  parked False  500 - "{\"error\": \"tickets service is failing (f
   D-2  R-302  attempts 1  parked False  500 - "{\"error\": \"tickets service is failing (f
 ```
 
-**왜 이렇게 나왔나**
+**고친 뒤 이렇게 나온 까닭**
 
-- 고치기 전 `failed: 2`는 Lab 01에서 이미 있었습니다. 하지만 `ops`의 DLQ가 0입니다. 결과를 받은 화면이 닫히면 두 문의는 **아무 데도 남지 않습니다.**
-- 고친 뒤 DLQ에 R-301 · R-302가 원래 요청 그대로, 실패 이유 · `attempts 1`과 함께 들어갔습니다. 이제 원인을 고친 뒤 다시 돌릴 수 있습니다 (Lab 03).
-- 남은 ✘는 `nightly-report`의 오류를 아무도 알리지 않아서입니다 (예제 2).
+| 볼 것 | 고치기 전 | 고친 뒤 | 무엇이 바꿨나 |
+| --- | --- | --- | --- |
+| 응답 | `failed: 2` | `failed: 2` (그대로) | 응답은 바꾸지 않음 |
+| DLQ | 0 | 2 (D-1 · D-2) | `failed` 항목을 DLQ에 넣는 갈래 |
+| 다시 돌릴 수 있나 | 없음 | 원래 요청 그대로 있음 | DLQ에 요청 전체를 저장 |
+
+- 응답은 똑같이 `failed: 2`입니다. 달라진 것은 **실패가 남았느냐**입니다. DLQ 한 줄마다 `R-301`(원래 요청 id), `attempts 1`(DLQ에 들어간 횟수), `parked False`(아직 사람이 볼 것으로 멈추지 않음), 실패 이유가 있습니다.
+- 원래 요청이 그대로 있으니, 원인(데이터 API 장애)을 고친 뒤 **같은 요청을 다시 돌릴 수 있습니다.** 그것이 Lab 03의 재처리입니다. 다시 돌려도 키가 요청 id라 중복은 생기지 않습니다.
+- 남은 ✘ 하나는 `nightly-report`의 오류를 아무도 알리지 않아서입니다. 예제 2에서 고칩니다.
 
 ## 예제 2 · Error Workflow (12분)
 
@@ -286,7 +325,44 @@ uv run tools/flow.py test cases/lab01.json
 
 수업 준비 때(10/29) 강사 노트북에서 정답 워크플로우로 실제로 나온 출력입니다.
 
-고친 뒤
+#### 고치기 전 · 에러 처리기 없음
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py call nightly-report
+uv run tools/flow.py test cases/lab02.json -v      # 예제 1을 고친 뒤의 결과
+```
+
+출력 (줄임):
+
+```text
+HTTP 500 · 0.1s
+{ "message": "Error in workflow" }
+
+✔ 예제 2 · 예상 못 한 오류 (nightly-report) · 0.1s
+✘ 예제 2 · Error Workflow가 알림을 남김 · 0.0s · severity = null (expected critical); ...
+Passed 3/4
+```
+
+**왜 이렇게 나왔나 (고치기 전)**
+
+- `nightly-report`에는 일부러 넣은 버그가 있어 0.1초 만에 500으로 끝납니다. 이것은 DLQ로 받을 수 없는 실패입니다. 항목 하나가 아니라 **워크플로우가 통째로 멈춘 것**이고, 오늘 만든 갈래들은 `my-intake` 안에만 있기 때문입니다.
+- 500을 본 것은 `call`을 한 우리뿐입니다. 밤에 스케줄로 돌았다면 아무도 보지 못했을 것입니다. 알림 케이스의 `severity = null`은 "알림이 하나도 없음"이라는 뜻입니다.
+- `ops`를 봐도 `alerts: 0`입니다. 실패는 했는데 **누구도 모르는** 상태입니다.
+
+#### 고친 뒤
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py push my-work/error-handler.json my-work/intake.json
+uv run tools/flow.py test cases/lab02.json -v
+uv run tools/flow.py ops
+uv run tools/flow.py test cases/lab01.json
+```
+
+출력 (결과 줄과 `ops`):
 
 ```text
 ✔ 예제 1 · API가 멈추면 실패로 표시 · 200 · 4.8s
@@ -296,18 +372,24 @@ uv run tools/flow.py test cases/lab01.json
 ✔ 예제 2 · Error Workflow가 알림을 남김 · 0.0s
 Passed 4/4
 
-$ ops
 alerts: 1
   [critical] 76 Nightly report (provided, has a bug) · unexpected · Count by category · rows is not iterable [line 4]
 (lab01 6/6)
 ```
 
-**왜 이렇게 나왔나**
+**고친 뒤 이렇게 나온 까닭**
 
-- `nightly-report`는 여전히 500입니다 (버그를 고치지 않음). 달라진 것은 **누가 아느냐**입니다. 3초 뒤 critical 알림이 생겼고, 어느 워크플로우 · 어느 노드(`Count by category`) · 무슨 오류(`rows is not iterable [line 4]`)인지 한 줄로 보입니다.
-- 오류 문장은 버그를 가리킵니다: 응답의 `tickets`를 `items`로 잘못 읽어 `rows`가 비어(`undefined`) 있었습니다. 알림만 보고 고칠 곳을 찾을 수 있습니다.
-- `nightly-report`의 설정에 이미 `errorWorkflow: errHandler76001`이 있었기 때문에, 처리기를 그 id로 **게시하는 것만으로** 알림이 시작되었습니다.
-- 내 `my-intake`도 같은 처리기를 씁니다. 하지만 오늘의 실패는 모두 처리하므로(200) 처리기가 불리지 않습니다. `lab01` 6/6.
+| 볼 것 | 고치기 전 | 고친 뒤 | 무엇이 바꿨나 |
+| --- | --- | --- | --- |
+| `nightly-report` | 500 | 500 (그대로) | 버그는 고치지 않음 |
+| 알림 | 0 | critical 1 | 에러 처리기 `errHandler76001`을 게시 |
+| 누가 아나 | `call`한 사람만 | 알림을 보는 사람 모두 | |
+
+- `nightly-report`는 **여전히 500**입니다. 버그를 고친 것이 아니라 **누가 아느냐**를 바꿨습니다.
+- `… before: wait 3s`: 알림은 응답이 나간 **뒤에** 생깁니다. n8n이 워크플로우가 멈춘 것을 보고 에러 처리기를 따로 부르기 때문입니다. 그래서 테스트가 3초 기다린 뒤 확인했습니다.
+- 알림 한 줄에 **어느 워크플로우**(`76 Nightly report`) · **어떤 종류**(`unexpected`, 예상 못 한 오류) · **어느 노드**(`Count by category`) · **무슨 오류**(`rows is not iterable [line 4]`)가 다 있습니다. 응답의 `tickets`를 `items`로 잘못 읽어 `rows`가 비어 있었던 것입니다. 알림만 보고 고칠 곳을 찾을 수 있습니다.
+- `nightly-report`의 설정에는 처음부터 `errorWorkflow: errHandler76001`이 있었습니다. 그래서 처리기를 그 id로 **게시하는 것만으로** 알림이 시작되었습니다.
+- 내 `my-intake`도 같은 처리기를 씁니다. 하지만 오늘의 실패를 모두 스스로 처리하고 200으로 끝나므로 처리기가 불리지 않습니다. `lab01` 6/6도 그대로입니다.
 
 ## 예제 3 · 어느 실패가 어느 그물에 (6분, 에이전트 없이)
 
@@ -381,6 +463,19 @@ flowchart LR
 
 수업 준비 때(10/29) 강사 노트북에서 예제 2 정답으로 실제로 나온 출력입니다.
 
+이 예제는 **고치지 않습니다.** 예제 2까지 만든 그물(결과 · DLQ · 알림)에 실패 넷을 던져 보고, 어디에 걸리는지 봅니다. 6 · 7번의 구멍은 과제 1에서 막습니다.
+
+#### 지금 상태 · 예제 2까지
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py test cases/lab02-nets.json -v
+uv run tools/flow.py ops
+```
+
+출력 (결과 줄과 `ops`):
+
 ```text
 ✔ 1 · 잘못된 항목 → 결과에만 (rejected) · 1.7s
 ✔ 2 · API 오류 → failed · 2.8s
@@ -392,18 +487,51 @@ flowchart LR
 ✘ 7 · DLQ가 멈춘 것을 누가 아나 (critical · dlq_down) · 0.0s · reason = unexpected (expected dlq_down)
 Passed 5/7
 
-$ ops
+created tickets: 2
+  T-2001  key R-201  장비/보통  프린터 용지가 걸려요
+  T-2002  key R-203  소프트웨어/보통  메일 첨부가 안 열려요
 DLQ: 2 (parked 0)
   D-1  R-301 …   D-2  R-302 …
 alerts: 1
   [critical] 76 Nightly report (provided, has a bug) · unexpected · Count by category · rows is not iterable [line 4]
 ```
 
-**왜 이렇게 나왔나**
+**왜 이렇게 나왔나 (케이스마다)**
 
-- 1~5: 그물 셋이 각자 일했습니다. 빈 글은 결과에, API 오류는 DLQ에, 버그는 알림으로.
-- 6: 응답은 200 · `failed: 3`. 그런데 DLQ는 **2건 그대로**입니다. `batch-ok`의 세 문의(R-101~103)는 DLQ 저장이 500으로 실패했고, `neverError` 때문에 워크플로우는 아무 일 없다는 듯 끝났습니다. 결과에도 "DLQ에 못 넣었다"는 말이 없습니다.
-- 7: 마지막 알림은 여전히 5번의 버그 알림입니다. **세 문의를 잃었다는 것을 아무도 모릅니다.** 과제 1에서 이 구멍을 막습니다.
+| 케이스 | 던진 실패 | 걸린 그물 | 남은 흔적 |
+| --- | --- | --- | --- |
+| 1 | 빈 글 항목 | 결과 (`rejected`) | 응답에만. 보낸 쪽이 고칠 일 |
+| 2 · 3 | 데이터 API 오류 (`fault tickets error`) | 결과 (`failed`) + DLQ | D-1 · D-2 |
+| 4 · 5 | `nightly-report`의 버그 | Error Workflow | critical 알림 |
+| 6 · 7 | 데이터 API **와** DLQ 모두 오류 (`fault dlq error`) | **없음** | **없음** |
+
+- 1~5: 그물 셋이 각자 맡은 실패를 잡았습니다. `ops`의 접수 건 2개(R-201 · R-203)는 1번 요청의 정상 항목, DLQ 2건은 2번, 알림은 4번의 것입니다.
+- **6 · 7이 오늘의 구멍입니다.** 6번에서 `batch-ok`의 세 문의(R-101~103)는 접수 건 만들기도 DLQ 저장도 500으로 실패했습니다. 응답은 200 · `failed: 3`이지만, DLQ는 **2건 그대로**입니다. DLQ 저장 노드가 실패해도 멈추지 않게(`neverError`) 해 두었기 때문에 워크플로우는 아무 일 없다는 듯 끝났고, 결과에도 "DLQ에 못 넣었다"(`dlq_saved`)는 말이 없습니다.
+- 7번의 `reason = unexpected`: 마지막 알림이 여전히 5번의 버그 알림이라는 뜻입니다. DLQ가 멈췄다는 알림(`dlq_down`)은 없습니다. **세 문의를 잃었는데 아무도 모릅니다.**
+- 5/7은 **예상한 결과**입니다. 그물이 있어도 **그물이 고장 나면** 실패가 빠져나갑니다.
+
+#### 과제 1을 고친 뒤 · 같은 테스트
+
+실행한 명령 (과제 1 끝에서):
+
+```bash
+uv run tools/flow.py test cases/lab02-nets.json
+```
+
+출력:
+
+```text
+✔ 1 · 잘못된 항목 → 결과에만 (rejected) · 2.1s
+✔ 2 · API 오류 → failed · 2.9s
+✔ 3 · failed는 DLQ에 · 0.0s
+✔ 4 · 버그 → 500 · 0.1s
+✔ 5 · Error Workflow → critical 알림 · 0.0s
+✔ 6 · DLQ마저 멈추면 결과가 알려야 · 3.7s
+✔ 7 · DLQ가 멈춘 것을 누가 아나 (critical · dlq_down) · 0.0s
+Passed 7/7
+```
+
+**고친 뒤 이렇게 나온 까닭:** 과제 1에서 DLQ 저장 결과를 확인해 결과에 `dlq_saved: false`를 넣고, 저장에 실패하면 `dlq_down` critical 알림에 잃어버린 id를 적게 했습니다. 그래서 6 · 7번이 ✔가 되었습니다. 1~5는 그대로입니다. 자세한 것은 과제 1의 실행 결과에 있습니다.
 
 ## 과제 1 · 처리한 실패도 알리기, DLQ가 멈추면 (10분)
 
@@ -521,7 +649,15 @@ uv run tools/flow.py ops
 
 수업 준비 때(10/29) 강사 노트북에서 실제로 나온 출력입니다.
 
-고치기 전 (예제 2 정답)
+#### 고치기 전 · 예제 2까지 고친 `my-intake`
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py test cases/lab02-challenge.json -v
+```
+
+출력 (결과 줄만):
 
 ```text
 ✘ API가 멈춤 → DLQ · 2.7s · dlq_saved = null (expected true); alert = null (expected sent)
@@ -533,7 +669,27 @@ uv run tools/flow.py ops
 Passed 0/6
 ```
 
-고친 뒤
+**왜 이렇게 나왔나 (고치기 전)**
+
+- **첫 줄 ✘:** DLQ에는 실제로 넣었습니다. 하지만 결과에 `dlq_saved` · `alert` 칸이 없어 `null`입니다. 보낸 쪽은 실패한 것이 안전하게 보관됐는지 알 수 없습니다.
+- **처리한 실패 알림 ✘:** 예제 2의 Error Workflow는 **워크플로우가 멈춘 실패**만 알립니다. `my-intake`는 실패를 스스로 처리하고 200으로 끝나니 처리기가 불리지 않습니다. 그래서 DLQ에 2건이 쌓여도 알림은 0개입니다. DLQ를 누가 들여다보지 않으면 아무도 모릅니다.
+- **실패가 없으면 ✘ · 알림 1개 ✘:** 결과에 `alert: "none"`이 없고, 앞 케이스에서 알림이 0개라 "그대로 1개"도 맞지 않습니다.
+- **DLQ도 멈추면 ✘ · 잃어버린 id ✘:** 예제 3의 구멍 그대로입니다.
+- 0/6은 **예상한 결과**입니다. 결과와 알림의 새 칸을 아직 만들지 않았으니 모두 ✘입니다.
+
+#### 고친 뒤
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py push my-work/intake.json
+uv run tools/flow.py test cases/lab02-challenge.json -v
+uv run tools/flow.py test cases/lab02-nets.json
+uv run tools/flow.py test cases/lab02.json
+uv run tools/flow.py ops
+```
+
+출력 (결과 줄과, 응답에 있던 알림 두 개):
 
 ```text
 ✔ API가 멈춤 → DLQ · 4.3s
@@ -545,16 +701,22 @@ Passed 0/6
 Passed 6/6
 (lab02-nets 7/7 · lab02 4/4)
 
-알림 두 개 (응답에서):
-  [high] intake · dlq · count 2 · "2 request(s) could not be created and wait in the DLQ"
-  [critical] intake · dlq_down · count 2 · "DLQ save failed: dlq service is failing (fault switch) · lost ids R-201, R-203"
+[high] intake · dlq · count 2 · "2 request(s) could not be created and wait in the DLQ"
+[critical] intake · dlq_down · count 2 · "DLQ save failed: dlq service is failing (fault switch) · lost ids R-201, R-203"
 ```
 
-**왜 이렇게 나왔나**
+**고친 뒤 이렇게 나온 까닭**
 
-- 고치기 전에는 DLQ에는 넣지만 알림이 0개라 모두 ✘입니다. 결과에 `dlq_saved` · `alert` 칸도 없습니다.
-- 고친 뒤 실패 2건 → high 알림 **하나**(`count 2`). 실패가 없는 `batch-ok`에는 `alert: none`, 알림은 1개 그대로.
-- DLQ가 멈추면 `dlq_saved: false` + critical `dlq_down` 알림, 메시지에 `lost ids R-201, R-203`. DLQ에 없어도 사람이 알림만 보고 두 문의를 살릴 수 있습니다. 예제 3의 구멍이 막혀 `lab02-nets` 7/7.
+| 상황 | 고치기 전 | 고친 뒤 결과 | 알림 |
+| --- | --- | --- | --- |
+| API가 멈춤 (2건 실패) | DLQ에만 | `dlq_saved: true, alert: "sent"` | high `dlq` **하나** (`count 2`) |
+| 실패 없음 | 칸 없음 | `alert: "none"` | 없음 (1개 그대로) |
+| DLQ도 멈춤 | 아무 흔적 없음 | `dlq_saved: false` | critical `dlq_down` + `lost ids R-201, R-203` |
+
+- **실패 2건 → 알림 하나:** 실패마다 하나씩이 아니라 요청 하나에 하나, 개수(`count 2`)를 담았습니다. 알림을 받은 사람은 "DLQ에 2건이 기다린다"를 압니다. 이 알림은 high입니다. 문의는 DLQ에 안전하게 있고, 원인을 고친 뒤 재처리하면 되기 때문입니다.
+- **실패가 없으면 알림 없음:** 정상 요청은 알림을 만들지 않습니다. 알림이 "무슨 일이 있다"는 뜻을 잃지 않게 하는 규칙입니다.
+- **DLQ도 멈추면 critical:** 이번에는 문의가 DLQ에도 없습니다. 그래서 등급이 critical이고, 메시지에 **잃어버린 id**(R-201 · R-203)를 적었습니다. 사람이 이 알림만 보고 보낸 쪽에 연락하거나 손으로 다시 넣을 수 있습니다.
+- `lab02-nets` 7/7: 예제 3의 구멍(6 · 7번)이 막혔습니다. `lab02` 4/4: DLQ와 Error Workflow는 그대로입니다.
 
 ## 과제 2 · 알림 폭주 막기 (10분)
 
@@ -666,7 +828,15 @@ uv run tools/flow.py ops --reset
 
 수업 준비 때(10/29) 강사 노트북에서 실제로 나온 출력입니다.
 
-고치기 전 (과제 1 정답)
+#### 고치기 전 · 과제 1까지 고친 `my-intake`
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py test cases/lab02-challenge2.json -v
+```
+
+출력 (결과 줄만):
 
 ```text
 ✔ 첫 실패 → 알림 보냄 · 2.9s
@@ -678,7 +848,26 @@ uv run tools/flow.py ops --reset
 Passed 4/6
 ```
 
-고친 뒤
+**왜 이렇게 나왔나 (고치기 전)**
+
+- **10분 안에 또 실패 ✘ `alert = sent`:** 과제 1의 규칙은 "실패가 있으면 보낸다" 하나뿐입니다. 같은 장애가 이어져도 요청마다 알림을 또 보냅니다. 그래서 dlq 알림이 **2개**입니다.
+- 장애가 30분 이어지고 요청이 1분에 한 번 오면 같은 알림이 30개 쌓입니다. 사람은 곧 알림을 읽지 않게 되고(**알림 피로**), 정말 새로운 알림도 놓칩니다.
+- **✔ 넷:** DLQ에 5건 모두 들어간 것, DLQ가 멈춘 critical을 보낸 것, 실패가 없을 때 알림이 없는 것은 과제 1에서 이미 됩니다. 고친 뒤에도 그대로여야 합니다.
+- 4/6은 **예상한 결과**입니다.
+
+#### 고친 뒤
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py push my-work/intake.json
+uv run tools/flow.py test cases/lab02-challenge2.json -v
+uv run tools/flow.py test cases/lab02-challenge.json
+uv run tools/flow.py test cases/lab01-challenge2.json
+uv run tools/flow.py ops --reset
+```
+
+출력 (결과 줄만):
 
 ```text
 ✔ 첫 실패 → 알림 보냄 · 4.5s
@@ -691,12 +880,20 @@ Passed 6/6
 (lab02-challenge 6/6 · lab01-challenge2 4/4)
 ```
 
-**왜 이렇게 나왔나**
+**고친 뒤 이렇게 나온 까닭**
 
-- 고치기 전에는 두 번째 실패에도 알림을 또 보내 dlq 알림이 2개입니다. 장애가 30분 이어지면 요청마다 하나씩 쌓입니다.
-- 고친 뒤 두 번째는 `suppressed`, dlq 알림 1개. 그래도 **DLQ에는 5건 모두** 있습니다. 줄인 것은 알림이지 실패의 기록이 아닙니다.
-- DLQ가 멈춘 critical은 10분 안이라도 `sent`. 급한 것은 줄이지 않았습니다.
-- 마지막 `batch-dup-id`는 `failed: 0` · `alert: none`이고, Lab 01 과제 2의 같은 id 거절도 그대로입니다.
+| 케이스 | 고치기 전 | 고친 뒤 | 까닭 |
+| --- | --- | --- | --- |
+| 첫 실패 | `sent` | `sent` | 10분 안에 같은 이유의 알림이 없음 |
+| 10분 안에 또 실패 | `sent` | `suppressed` | 같은 이유(`dlq`)의 알림이 이미 있음 |
+| dlq 알림 수 | 2 | 1 | 같은 까닭 |
+| DLQ | 5건 | 5건 (그대로) | 줄인 것은 알림뿐 |
+| DLQ가 멈춤 | critical `sent` | critical `sent` | 급한 것은 줄이지 않음 |
+
+- 보내기 전에 지난 10분 안에 같은 이유의 알림이 있었는지 보고, 있으면 `suppressed`로 정했습니다. 결과에 `suppressed`라고 쓰니 **보내지 않은 것도 기록에 남습니다.**
+- **DLQ에는 5건 모두 있습니다.** 줄인 것은 사람에게 가는 알림이지, 실패의 기록이 아닙니다. 첫 알림을 본 사람이 DLQ를 열면 그 뒤에 쌓인 것까지 다 보입니다.
+- DLQ가 멈춘 critical은 10분 안이라도 `sent`입니다. 문의를 잃고 있는 중이라, 줄이면 안 되는 알림입니다.
+- 마지막 케이스(`batch-dup-id`)는 `failed: 0` · `alert: none`입니다. `lab01-challenge2` 4/4로 Lab 01 과제 2의 같은 id 거절도 그대로입니다.
 
 ## 막혔을 때
 

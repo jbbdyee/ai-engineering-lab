@@ -1,0 +1,153 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "normal · 회의실 와이파이가 안 ",
+      "body": {
+        "question": "회의실 와이파이가 안 잡혀요",
+        "user": "이준호",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · 사내 Wi-Fi 비밀번",
+      "body": {
+        "question": "사내 Wi-Fi 비밀번호가 뭐예요?",
+        "user": "박서연",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · 와이파이가 자주 끊겨요",
+      "body": {
+        "question": "와이파이가 자주 끊겨요",
+        "user": "최유진",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · 노트북이 와이파이에 연",
+      "body": {
+        "question": "노트북이 와이파이에 연결이 안 돼요",
+        "user": "한지훈",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · 손님용 wifi도 있나",
+      "body": {
+        "question": "손님용 wifi도 있나요?",
+        "user": "김민지",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · VPN이 자꾸 끊겨요",
+      "body": {
+        "question": "VPN이 자꾸 끊겨요",
+        "user": "정우성",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · 비밀번호를 잊어버렸어요",
+      "body": {
+        "question": "비밀번호를 잊어버렸어요",
+        "user": "오세훈",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · 프린터 출력이 안 돼요",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "윤하늘",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · 메일함 용량이 꽉 찼대",
+      "body": {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "강민수",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    },
+    {
+      "name": "normal · 새 프로그램 설치는 어",
+      "body": {
+        "question": "새 프로그램 설치는 어떻게 신청하나요?",
+        "user": "서지아",
+        "tag": "normal"
+      },
+      "expect": {
+        "equals": {
+          "route": "자동 답변",
+          "status": "success"
+        }
+      }
+    }
+  ]
+}

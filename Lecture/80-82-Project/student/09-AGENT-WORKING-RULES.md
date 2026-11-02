@@ -4,7 +4,7 @@
 
 ## 1. 팀 저장소의 `AGENTS.md`
 
-에이전트는 저장소 뿌리의 `AGENTS.md`(claude는 `CLAUDE.md`에 `@AGENTS.md` 한 줄)를 읽습니다. 64~79일차의 `AGENTS.md`를 바탕으로 팀 것을 만듭니다. **첫날 리드가 만들고 팀이 함께 고칩니다.**
+에이전트는 저장소 뿌리의 `AGENTS.md`(claude는 `CLAUDE.md`에 `@AGENTS.md` 한 줄)를 읽습니다. 64~79일차의 `AGENTS.md`를 바탕으로 팀 것을 만듭니다. **첫날 팀장이 만들고 팀이 함께 고칩니다.**
 
 ```markdown
 # AGENTS.md · <팀이름> Tech Support 워크플로우
@@ -50,7 +50,7 @@ workflows/team1-support.json 의 Classify 노드와 Parse class(Code)를 그 표
 | 파일 나누기 | 한 사람 = 한 워크플로우 파일 (04 문서 5절의 하위 워크플로우) |
 | 바꾸기 전 | `git pull` → 내 파일만 에이전트에게 |
 | 바꾼 뒤 | `flow.py check` → `push` → 공통 시나리오 → `git commit` (메시지에 통과 수: "분류 Agent · common 7/14") |
-| 계약을 바꿔야 할 때 | 리드에게 → 설계서 3절을 먼저 고치고 → 그다음 코드 |
+| 계약을 바꿔야 할 때 | 팀장에게 → 설계서 3절을 먼저 고치고 → 그다음 코드 |
 | 다른 사람 n8n에서 확인 | 상대가 `git pull` → `flow.py push workflows/*.json` |
 
 ## 4. 하루짜리 실습과 다른 점

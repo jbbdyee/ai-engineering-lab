@@ -1,0 +1,141 @@
+{
+  "cases": "lab01.json",
+  "webhook": "base-report",
+  "passed": 0,
+  "total": 5,
+  "results": [
+    {
+      "case": "두 주 전체",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "total = 602 (expected 666)",
+        "error_rate = 3.488372093023256 (expected 0.0315)",
+        "p50_ms = null (expected 1205)",
+        "p95_ms = null (expected 2537)"
+      ],
+      "seconds": 0.2,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 602,
+        "errors": 21,
+        "error_rate": 3.488372093023256,
+        "avg_ms": 1249.2392026578073,
+        "by_route": {
+          "자동 답변": 529,
+          "담당자 연결": 32,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "두 주 · 갈래별",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "by_route.자동 답변 = 529 (expected 591)",
+        "by_route.담당자 연결 = 32 (expected 34)",
+        "by_route.오류 = null (expected 21)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 602,
+        "errors": 21,
+        "error_rate": 3.488372093023256,
+        "avg_ms": 1249.2392026578073,
+        "by_route": {
+          "자동 답변": 529,
+          "담당자 연결": 32,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "첫 주",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "total = 245 (expected 309)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      },
+      "response": {
+        "total": 245,
+        "errors": 0,
+        "error_rate": 0,
+        "avg_ms": 1317.1551020408162,
+        "by_route": {
+          "자동 답변": 230,
+          "담당자 연결": 15
+        }
+      }
+    },
+    {
+      "case": "둘째 주",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "total = 293 (expected 357)",
+        "error_rate = 7.167235494880546 (expected 0.0588)",
+        "p95_ms = null (expected 2598)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 293,
+        "errors": 21,
+        "error_rate": 7.167235494880546,
+        "avg_ms": 1173.1399317406144,
+        "by_route": {
+          "자동 답변": 237,
+          "담당자 연결": 15,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "10월 26일 하루",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "total = 0 (expected 70)",
+        "errors = 0 (expected 16)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-26"
+      },
+      "response": {
+        "total": 0,
+        "errors": 0,
+        "error_rate": null,
+        "avg_ms": null,
+        "by_route": {}
+      }
+    }
+  ]
+}

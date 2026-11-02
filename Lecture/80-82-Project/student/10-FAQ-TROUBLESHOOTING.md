@@ -34,7 +34,7 @@ n8n v1 실행 순서는 갈래를 차례로 실행합니다 (66일차). 구조�
 
 <details><summary>팀원 노트북마다 결과가 달라요.</summary>
 
-같은 `workflows/*.json`을 push했는지(`git pull`), 데이터 API가 단위 프로젝트 판인지(`doctor`), 고장 스위치가 꺼져 있는지(`fault all ok`), 색인을 다시 만들었는지(In-Memory는 n8n을 다시 켜면 비어 있음)를 봅니다.
+같은 `workflows/*.json`을 push했는지(`git pull`), 데이터 API가 단위 프로젝트 판인지(`doctor`), 고장 스위치가 꺼져 있는지(`fault all ok`), 색인을 다시 만들었는지(In-Memory는 n8n을 다시 켜면 비어 있음)를 봅니다. 노트북에서는 되는데 팀 VM에서만 다르면, VM의 Credential(OpenAI · 웹훅 키 · 데이터 API 키)과 VM에 배포한 커밋이 기본 브랜치의 마지막 커밋인지 봅니다.
 </details>
 
 ## 막혔을 때

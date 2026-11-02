@@ -1,0 +1,163 @@
+{
+  "name": "77 Weekly report (answer)",
+  "nodes": [
+    {
+      "name": "Weekly webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-weekly",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "This week",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-log-report",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $json.body.from, to: $json.body.to }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Last week",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-log-report",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $('Weekly webhook').first().json.body.prev_from, to: $('Weekly webhook').first().json.body.prev_to }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "name": "Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-log-summary",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $('Weekly webhook').first().json.body.from, to: $('Weekly webhook').first().json.body.to }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "name": "Write report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const b = $('Weekly webhook').first().json.body;\nconst now = $('This week').first().json, prev = $('Last week').first().json, s = $('Summary').first().json;\nconst pctS = (v) => `${Math.round(v * 10000) / 100}%`;\nconst hour = (h) => `${h.slice(0, 10)} ${h.slice(11, 13)}시`;\nconst slo = (r) => (r.slo?.ok ? '지킴' : '못 지킴 ' + (r.slo?.breaches ?? []).join(', '));\nconst lines = [`# IT 헬프데스크 주간 운영 보고 (${b.from} ~ ${b.to})`, ''];\nlines.push('## 숫자', '', '| 지표 | 지난주 | 이번 주 |', '| --- | --- | --- |');\nlines.push(`| 요청 | ${prev.total} | ${now.total} |`, `| 오류율 | ${pctS(prev.error_rate)} | ${pctS(now.error_rate)} |`,\n  `| p95 | ${prev.p95_ms}ms | ${now.p95_ms}ms |`, `| 답 못 함 | ${pctS(prev.unanswered_rate)} | ${pctS(now.unanswered_rate)} |`, `| SLO | ${slo(prev)} | ${slo(now)} |`, '');\nlines.push('## 문제', '');\nfor (const f of (now.failures ?? []).slice(0, 3)) lines.push(`- 실패 ${f.count}건 · ${f.node} · ${f.message}`);\nfor (const u of (now.unanswered_topics ?? []).slice(0, 3)) lines.push(`- 답하지 못한 질문 ${u.count}건 · ${u.topic}`);\nfor (const a of now.anomalies ?? []) lines.push(`- 이상 시간대 ${hour(a.hour)} · ${a.errors}/${a.total} 실패`);\nlines.push('', '## 요약 (LLM, 숫자 확인 ' + (s.numbers_ok ? '통과' : '실패: ' + s.unknown_numbers.join(', ')) + ')', '', s.summary, '');\nlines.push('## 다음 할 일', '');\nif ((now.unanswered_topics ?? [])[0]) lines.push(`- FAQ에 '${now.unanswered_topics[0].topic}' 항목 추가`);\nif ((now.failures ?? []).some((f) => f.node === 'Search FAQ')) lines.push('- FAQ 검색 timeout · 재시도 설정 점검 (72일차)');\nif ((now.failures ?? []).some((f) => /429/.test(f.message))) lines.push('- LLM 사용량 한도 · 대체 경로 점검 (75 · 72일차)');\nreturn [{ json: { markdown: lines.join('\\n'), total: now.total, error_rate: now.error_rate, slo_ok: now.slo?.ok ?? null, numbers_ok: s.numbers_ok } }];"
+      },
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "name": "Send weekly",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Weekly webhook": {
+      "main": [
+        [
+          {
+            "node": "This week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "This week": {
+      "main": [
+        [
+          {
+            "node": "Last week",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Last week": {
+      "main": [
+        [
+          {
+            "node": "Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary": {
+      "main": [
+        [
+          {
+            "node": "Write report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write report": {
+      "main": [
+        [
+          {
+            "node": "Send weekly",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

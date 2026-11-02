@@ -1,0 +1,154 @@
+{
+  "cases": "lab03-challenge2.json",
+  "webhook": "my-slo-alert",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "case": "둘째 주 · SLO 못 지킴 → 알림",
+      "webhook": "my-slo-alert",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "ok": false,
+        "breaches": [
+          "error_rate",
+          "unanswered_rate"
+        ],
+        "alert": "sent",
+        "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+        "total": 357
+      }
+    },
+    {
+      "case": "알림 확인 (high · slo)",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "workflow": "slo",
+        "severity": "high",
+        "reason": "slo",
+        "breaches": [
+          "error_rate",
+          "unanswered_rate"
+        ],
+        "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+        "at": 1793400787.7696092
+      }
+    },
+    {
+      "case": "10분 안에 다시 확인 → 보내지 않음",
+      "webhook": "my-slo-alert",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.3,
+      "status": 200,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "ok": false,
+        "breaches": [
+          "error_rate",
+          "unanswered_rate"
+        ],
+        "alert": "suppressed",
+        "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+        "total": 357
+      }
+    },
+    {
+      "case": "slo 알림은 1개",
+      "webhook": "http://localhost:8800/alerts/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "workflow": "slo"
+      },
+      "response": {
+        "count": 1,
+        "alerts": [
+          {
+            "workflow": "slo",
+            "severity": "high",
+            "reason": "slo",
+            "breaches": [
+              "error_rate",
+              "unanswered_rate"
+            ],
+            "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+            "at": 1793400787.7696092
+          }
+        ]
+      }
+    },
+    {
+      "case": "기준 안이면 알림 없음",
+      "webhook": "my-slo-alert",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-23",
+        "slo": {
+          "unanswered_rate": 0.06
+        }
+      },
+      "response": {
+        "ok": true,
+        "breaches": [],
+        "alert": "none",
+        "message": "",
+        "total": 309
+      }
+    },
+    {
+      "case": "그래도 알림은 1개",
+      "webhook": "http://localhost:8800/alerts/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "workflow": "slo"
+      },
+      "response": {
+        "count": 1,
+        "alerts": [
+          {
+            "workflow": "slo",
+            "severity": "high",
+            "reason": "slo",
+            "breaches": [
+              "error_rate",
+              "unanswered_rate"
+            ],
+            "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+            "at": 1793400787.7696092
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # 단위 프로젝트 안내서 · 지능형 기술 지원 자동화(Tech Support) 워크플로우
 
 - 기간: 80~82일차 (2026-11-05 목, 11-06 금, 11-09 월), 하루 8교시 · 모두 24시간
-- **82일차 8교시(17:00~17:50)는 평가 시험 40문제**입니다. 프로젝트 제출(13:50) · 발표(5~6교시) · 총평(7교시) 뒤에 봅니다.
+- **82일차 8교시(17:00~17:50)는 평가 시험 25문항**입니다. 통과하지 못한 사람은 재시험(15문항)을 봅니다. 프로젝트 제출(14:50) · 최종 발표(6~7교시) 뒤에 보고, 총평은 시험과 함께 합니다.
 - 교과목: 노코드 멀티 에이전트 워크플로우 설계 및 운영
 - 주제: 노코드·로코드 기반 기업형 '지능형 기술 지원 자동화(Tech Support)' 워크플로우 구축 — **이 큰 틀 안에서 팀마다 주제를 정합니다** ([11-TOPIC-GUIDE](11-TOPIC-GUIDE.md))
 - 원본 요구: [Req/KSM-REQ.md](../Req/KSM-REQ.md) (교과목 프로젝트 진행 가이드), 평가 기준표 `Req/*.xlsx`
@@ -88,6 +88,7 @@ flowchart LR
 
 ### 가산 (선택)
 
+- 입구 · 뒷단 조합 B(텔레그램 · Zammad) · C(웹 화면 · FastAPI) — 80일차 2교시에 주제와 함께 정함 ([11-TOPIC-GUIDE](11-TOPIC-GUIDE.md) 7절). A로 공통 시나리오를 먼저 통과시킨 뒤 어댑터를 붙임
 - 실제 외부 서비스(Slack · Email · Jira · Notion) 연동 — 팀 계정이 있을 때만, **회사 · 개인 실서비스 계정의 키를 저장소에 올리지 않음**
 - 지속형 벡터 저장소(PGVector · Qdrant 등)로 색인을 보존하고 백업 · 복구를 실제로 시연
 - 74일차 배포 관문(`flow.py gate`), 75일차 사용량 · 비용 기록, 77일차 운영 지표, 79일차 Ops Assistant에 프로젝트 로그 연결
@@ -118,8 +119,8 @@ flowchart LR
 | 문서 | 내용 |
 | --- | --- |
 | [11-TOPIC-GUIDE](11-TOPIC-GUIDE.md) | **주제 정하기**: 큰 틀의 조건 5가지 · 주제 예 8개 · 기본 주제와의 차이 · 공통 시나리오 옮기기 |
-| [01-SCHEDULE-AND-TEAMS](01-SCHEDULE-AND-TEAMS.md) | 3일 시간표 · 마감 · 팀 역할 · 매일 점검 |
-| [02-ENVIRONMENT-AND-SERVICES](02-ENVIRONMENT-AND-SERVICES.md) | 환경, 외부 서비스를 무엇으로 대신하나, 인증 · 키 · 비용 |
+| [01-SCHEDULE-AND-TEAMS](01-SCHEDULE-AND-TEAMS.md) | 3일 시간표 · 산출물 점검 · 발표 · 마감 · 팀 역할 |
+| [02-ENVIRONMENT-AND-SERVICES](02-ENVIRONMENT-AND-SERVICES.md) | 환경 · 팀 VM, 외부 서비스를 무엇으로 대신하나, 인증 · 키 · 비용 |
 | [03-SCENARIOS-AND-DATA](03-SCENARIOS-AND-DATA.md) | 공통 데이터 · 문의 유형 · 권한 · 공통 시나리오 14개 · 팀 시나리오 |
 | [04-REFERENCE-ARCHITECTURE](04-REFERENCE-ARCHITECTURE.md) | 역할 · 노드 · 페이로드 · 분기 · 병렬 · 루프 · 64~79일차 매핑 |
 | [05-RAG-DESIGN-GUIDE](05-RAG-DESIGN-GUIDE.md) | 청킹 · 임베딩 · 저장소 · 메타데이터 · 백업 · 확장 |

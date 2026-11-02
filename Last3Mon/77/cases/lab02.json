@@ -1,0 +1,67 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "예제 1 · 가장 많은 실패",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "failures.0.node": "Search FAQ",
+          "failures.0.message": "timeout of 1000ms exceeded",
+          "failures.0.count": 16
+        }
+      }
+    },
+    {
+      "name": "예제 1 · 두 번째 실패",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "failures.1.node": "Answer",
+          "failures.1.count": 5
+        }
+      }
+    },
+    {
+      "name": "예제 1 · 답하지 못한 주제",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "unanswered_topics.0.topic": "와이파이",
+          "unanswered_topics.0.count": 34
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 이상 시간대 1",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "anomalies.0.hour": "2026-10-26T09",
+          "anomalies.0.total": 16,
+          "anomalies.0.errors": 16
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 이상 시간대 2",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "anomalies.1.hour": "2026-10-29T15",
+          "anomalies.1.total": 7,
+          "anomalies.1.errors": 5
+        }
+      }
+    },
+    {
+      "name": "예제 2 · 첫 주에는 없음",
+      "request": "requests/week1.json",
+      "expect": {
+        "equals": {
+          "anomalies": []
+        }
+      }
+    }
+  ]
+}

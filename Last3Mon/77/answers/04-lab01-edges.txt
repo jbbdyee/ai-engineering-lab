@@ -1,0 +1,124 @@
+$ uv run tools/flow.py test cases/lab01-edges.json -v
+✔ before: POST http://localhost:8800/logs-reset · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/logs-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+POST http://localhost:5678/webhook/my-log-report · 6 case(s) × 1
+✔ 하루 · from = to (포함) · 0.0s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-26"
+      }
+    ← response HTTP 200
+      {
+        "total": 70,
+        "errors": 16,
+        "error_rate": 0.2286,
+        "p50_ms": 1082,
+        "p95_ms": 2468,
+        "by_route": {
+          "오류": 16,
+          "자동 답변": 50,
+          "담당자 연결": 4
+        }
+      }
+✔ 빈 기간 · 0건이어도 200 · 0.1s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-11-02",
+        "to": "2026-11-06"
+      }
+    ← response HTTP 200
+      {
+        "total": 0,
+        "errors": 0,
+        "error_rate": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "by_route": {}
+      }
+✔ 주말 · 실행이 없는 날 · 0.0s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-24",
+        "to": "2026-10-25"
+      }
+    ← response HTTP 200
+      {
+        "total": 0,
+        "errors": 0,
+        "error_rate": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "by_route": {}
+      }
+✔ 기간을 비우면 전체 · 0.1s
+    → request  POST /webhook/my-log-report
+      {}
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✔ source seed · 두 주 기록만 · 0.0s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30",
+        "source": "seed"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✔ source live · 오늘 실습 기록 (아직 없음) · 0.0s
+    → request  POST /webhook/my-log-report
+      {
+        "source": "live"
+      }
+    ← response HTTP 200
+      {
+        "total": 0,
+        "errors": 0,
+        "error_rate": 0,
+        "p50_ms": 0,
+        "p95_ms": 0,
+        "by_route": {}
+      }
+Passed 6/6
+report: runs/lab01-edges-20261031-074913.json
+
+$ uv run tools/flow.py test cases/lab01-edges.json --webhook base-report
+✔ before: POST http://localhost:8800/logs-reset · HTTP 200 · 0.0s · {"cleared": 0}
+POST http://localhost:5678/webhook/base-report · 6 case(s) × 1
+✘ 하루 · from = to (포함) · 0.1s · total = 0 (expected 70); errors = 0 (expected 16)
+✘ 빈 기간 · 0건이어도 200 · 0.1s · error_rate = null (expected 0); p95_ms = null (expected 0)
+✔ 주말 · 실행이 없는 날 · 0.1s
+✔ 기간을 비우면 전체 · 0.0s
+✘ source seed · 두 주 기록만 · 0.1s · total = 602 (expected 666)
+✘ source live · 오늘 실습 기록 (아직 없음) · 0.1s · total = 666 (expected 0); error_rate = 3.153153153153153 (expected 0)
+Passed 2/6
+report: runs/lab01-edges-20261031-074913.json

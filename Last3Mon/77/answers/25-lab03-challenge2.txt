@@ -1,0 +1,160 @@
+$ uv run tools/flow.py push answers/77-lab03-challenge2-slo-alert.json
+✔ pushed '77 SLO alert (answer)' (id w46a402ba838f33c)
+   POST http://localhost:5678/webhook/my-slo-alert
+
+$ uv run tools/flow.py test cases/lab03-challenge2.json -v
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+POST http://localhost:5678/webhook/my-slo-alert · 6 case(s) × 1
+✔ 둘째 주 · SLO 못 지킴 → 알림 · 1.0s
+    → request  POST /webhook/my-slo-alert
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "ok": false,
+        "breaches": [
+          "error_rate",
+          "unanswered_rate"
+        ],
+        "alert": "sent",
+        "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+        "total": 357
+      }
+✔ 알림 확인 (high · slo) · 0.0s
+    → request  POST http://localhost:8800/alerts/latest
+      {}
+    ← response HTTP 200
+      {
+        "workflow": "slo",
+        "severity": "high",
+        "reason": "slo",
+        "breaches": [
+          "error_rate",
+          "unanswered_rate"
+        ],
+        "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+        "at": 1793400787.7696092
+      }
+✔ 10분 안에 다시 확인 → 보내지 않음 · 0.3s
+    → request  POST /webhook/my-slo-alert
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "ok": false,
+        "breaches": [
+          "error_rate",
+          "unanswered_rate"
+        ],
+        "alert": "suppressed",
+        "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+        "total": 357
+      }
+✔ slo 알림은 1개 · 0.0s
+    → request  POST http://localhost:8800/alerts/list
+      {
+        "workflow": "slo"
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "alerts": [
+          {
+            "workflow": "slo",
+            "severity": "high",
+            "reason": "slo",
+            "breaches": [
+              "error_rate",
+              "unanswered_rate"
+            ],
+            "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+            "at": 1793400787.7696092
+          }
+        ]
+      }
+✔ 기준 안이면 알림 없음 · 0.1s
+    → request  POST /webhook/my-slo-alert
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-23",
+        "slo": {
+          "unanswered_rate": 0.06
+        }
+      }
+    ← response HTTP 200
+      {
+        "ok": true,
+        "breaches": [],
+        "alert": "none",
+        "message": "",
+        "total": 309
+      }
+✔ 그래도 알림은 1개 · 0.0s
+    → request  POST http://localhost:8800/alerts/list
+      {
+        "workflow": "slo"
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "alerts": [
+          {
+            "workflow": "slo",
+            "severity": "high",
+            "reason": "slo",
+            "breaches": [
+              "error_rate",
+              "unanswered_rate"
+            ],
+            "message": "SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476 > 0.02",
+            "at": 1793400787.7696092
+          }
+        ]
+      }
+Passed 6/6
+report: runs/lab03-challenge2-20261031-075308.json
+
+$ uv run tools/flow.py test cases/lab03-slo.json
+POST http://localhost:5678/webhook/my-log-report · 4 case(s) × 1
+✔ 둘째 주 · SLO 못 지킴 · 0.1s · 304 calls · $0.039810
+✔ 첫 주 · 답 못 함만 · 0.1s · 292 calls · $0.038550
+✔ 기준을 바꾸면 · 첫 주 · 0.1s · 292 calls · $0.038550
+✔ 고친 뒤 · 오류 · 답 못 함 기준은 지킴 · 0.1s · 10 calls · $0.000000
+Passed 4/4
+report: runs/lab03-slo-20261031-075308.json
+
+$ uv run tools/flow.py ops
+fault switch: all ok
+live run logs: 30 (tag before 10 · tag after 10 · tag normal 10)
+added FAQ: 1 (FAQ-007)
+created tickets: 0
+DLQ: 0 (parked 0)
+alerts: 1
+  [high] slo · slo · - · SLO breach: error_rate 0.0588 > 0.01, unanswered_rate 0.0476
+
+$ uv run tools/flow.py ops --reset
+✔ live run logs, added FAQ, created tickets, DLQ and alerts emptied, fault switch all ok
+
+$ uv run tools/flow.py doctor
+! n8n install folder /Users/[USER]/day65-n8n
+   → day 65 SETUP-N8N 5단계 (get.n8n.io 설치). 다른 곳에 설치했다면 Last3Mon/65/n8n/.env 에 N8N_HOME=<폴더>
+✔ n8n container day65-n8n-n8n-1
+✔ n8n http://localhost:5678
+✔ data API http://localhost:8800
+✔ dead letter queue /dlq · alerts · fault switch dlq (day 76 data API)
+✔ run logs /logs (666 seeded runs) · FAQ additions /faq-extra (day 77 data API)
+✔ n8n → http://data-api:8800
+✔ credential 'OpenAI (.env)' (openAiCourse0001)
+✔ node catalog (for check)
+✔ CLI coding agent: codex, claude, agy
+ready

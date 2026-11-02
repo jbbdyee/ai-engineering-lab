@@ -1,0 +1,67 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "첫 주 · 오류 0 → 이상 없음",
+      "request": "requests/week1.json",
+      "expect": {
+        "equals": {
+          "error_rate": 0,
+          "anomalies": []
+        }
+      }
+    },
+    {
+      "name": "둘째 주 · 기준 0.0588 × 3",
+      "request": "requests/week2.json",
+      "expect": {
+        "equals": {
+          "error_rate": 0.0588,
+          "anomalies.0.hour": "2026-10-26T09",
+          "anomalies.1.hour": "2026-10-29T15"
+        }
+      }
+    },
+    {
+      "name": "월요일만 · 기준 0.2286 × 3",
+      "request": "requests/monday.json",
+      "expect": {
+        "equals": {
+          "error_rate": 0.2286,
+          "anomalies.0.hour": "2026-10-26T09",
+          "anomalies.0.errors": 16
+        },
+        "not_contains": {
+          "anomalies": [
+            "2026-10-29T15"
+          ]
+        }
+      }
+    },
+    {
+      "name": "목요일만 · 15시만",
+      "body": {
+        "from": "2026-10-29",
+        "to": "2026-10-29"
+      },
+      "expect": {
+        "equals": {
+          "error_rate": 0.0515,
+          "anomalies.0.hour": "2026-10-29T15",
+          "anomalies.0.total": 7
+        }
+      }
+    },
+    {
+      "name": "두 주 · 기준 0.0315 × 3",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "error_rate": 0.0315,
+          "anomalies.0.hour": "2026-10-26T09",
+          "anomalies.1.hour": "2026-10-29T15"
+        }
+      }
+    }
+  ]
+}

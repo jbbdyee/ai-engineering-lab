@@ -1,0 +1,135 @@
+{
+  "cases": "lab01.json",
+  "webhook": "my-log-report",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "case": "두 주 전체",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "두 주 · 갈래별",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "첫 주",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.2,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      },
+      "response": {
+        "total": 309,
+        "errors": 0,
+        "error_rate": 0,
+        "p50_ms": 1252,
+        "p95_ms": 2525,
+        "by_route": {
+          "자동 답변": 292,
+          "담당자 연결": 17
+        }
+      }
+    },
+    {
+      "case": "둘째 주",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "total": 357,
+        "errors": 21,
+        "error_rate": 0.0588,
+        "p50_ms": 1171,
+        "p95_ms": 2598,
+        "by_route": {
+          "오류": 21,
+          "자동 답변": 299,
+          "담당자 연결": 17,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "10월 26일 하루",
+      "webhook": "my-log-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-26"
+      },
+      "response": {
+        "total": 70,
+        "errors": 16,
+        "error_rate": 0.2286,
+        "p50_ms": 1082,
+        "p95_ms": 2468,
+        "by_route": {
+          "오류": 16,
+          "자동 답변": 50,
+          "담당자 연결": 4
+        }
+      }
+    }
+  ]
+}

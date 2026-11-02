@@ -1,0 +1,40 @@
+$ uv run tools/flow.py test cases/lab02-challenge2.json -v
+POST http://localhost:5678/webhook/my-log-summary · 3 case(s) × 1
+✘ 요약 · 숫자는 통계에 있는 것만 · 0.0s · status 404 (expected 200); numbers_ok = null (expected true); top_topic = null (expected 와이파이); worst_hour = null (expected 2026-10-26T09)
+    → request  POST /webhook/my-log-summary
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-log-summary\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+✘ 요약 · 주제와 시간대를 말함 · 0.0s · status 404 (expected 200); summary has none of ['와이파이']
+    → request  POST /webhook/my-log-summary
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-log-summary\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+✘ 요약 · 날짜 · 0.0s · status 404 (expected 200); summary has none of ['10월 26일', '10-26', '26일']
+    → request  POST /webhook/my-log-summary
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-log-summary\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+Passed 0/3
+report: runs/lab02-challenge2-20261031-075032.json

@@ -1,0 +1,132 @@
+{
+  "cases": "lab03-challenge2.json",
+  "webhook": "my-slo-alert",
+  "passed": 0,
+  "total": 6,
+  "results": [
+    {
+      "case": "둘째 주 · SLO 못 지킴 → 알림",
+      "webhook": "my-slo-alert",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "ok = null (expected false)",
+        "breaches = null (expected [\"error_rate\", \"unanswered_rate\"])",
+        "alert = null (expected sent)",
+        "message has none of ['error_rate 0.0588 > 0.01']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-slo-alert\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "알림 확인 (high · slo)",
+      "webhook": "http://localhost:8800/alerts/latest",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "workflow = null (expected slo)",
+        "severity = null (expected high)",
+        "reason = null (expected slo)",
+        "message has none of ['unanswered_rate']"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {}
+    },
+    {
+      "case": "10분 안에 다시 확인 → 보내지 않음",
+      "webhook": "my-slo-alert",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "ok = null (expected false)",
+        "alert = null (expected suppressed)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-slo-alert\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "slo 알림은 1개",
+      "webhook": "http://localhost:8800/alerts/list",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "count = 0 (expected 1)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "workflow": "slo"
+      },
+      "response": {
+        "count": 0,
+        "alerts": []
+      }
+    },
+    {
+      "case": "기준 안이면 알림 없음",
+      "webhook": "my-slo-alert",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "ok = null (expected true)",
+        "breaches = null (expected [])",
+        "alert = null (expected none)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-23",
+        "slo": {
+          "unanswered_rate": 0.06
+        }
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-slo-alert\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "그래도 알림은 1개",
+      "webhook": "http://localhost:8800/alerts/list",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "count = 0 (expected 1)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "workflow": "slo"
+      },
+      "response": {
+        "count": 0,
+        "alerts": []
+      }
+    }
+  ]
+}

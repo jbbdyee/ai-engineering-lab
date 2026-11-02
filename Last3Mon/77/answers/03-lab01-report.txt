@@ -1,0 +1,121 @@
+$ uv run tools/flow.py push reference/lab01-example2-report.json
+✔ pushed '77 Log report (reference)' (id w1971efa15af33a8)
+   POST http://localhost:5678/webhook/my-log-report
+
+$ uv run tools/flow.py test cases/lab01.json -v
+POST http://localhost:5678/webhook/my-log-report · 5 case(s) × 1
+✔ 두 주 전체 · 0.9s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✔ 두 주 · 갈래별 · 0.1s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 0.0315,
+        "p50_ms": 1205,
+        "p95_ms": 2537,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "오류": 21,
+          "잠시 후": 20
+        }
+      }
+✔ 첫 주 · 0.2s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "total": 309,
+        "errors": 0,
+        "error_rate": 0,
+        "p50_ms": 1252,
+        "p95_ms": 2525,
+        "by_route": {
+          "자동 답변": 292,
+          "담당자 연결": 17
+        }
+      }
+✔ 둘째 주 · 0.1s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-30"
+      }
+    ← response HTTP 200
+      {
+        "total": 357,
+        "errors": 21,
+        "error_rate": 0.0588,
+        "p50_ms": 1171,
+        "p95_ms": 2598,
+        "by_route": {
+          "오류": 21,
+          "자동 답변": 299,
+          "담당자 연결": 17,
+          "잠시 후": 20
+        }
+      }
+✔ 10월 26일 하루 · 0.0s
+    → request  POST /webhook/my-log-report
+      {
+        "from": "2026-10-26",
+        "to": "2026-10-26"
+      }
+    ← response HTTP 200
+      {
+        "total": 70,
+        "errors": 16,
+        "error_rate": 0.2286,
+        "p50_ms": 1082,
+        "p95_ms": 2468,
+        "by_route": {
+          "오류": 16,
+          "자동 답변": 50,
+          "담당자 연결": 4
+        }
+      }
+Passed 5/5
+report: runs/lab01-20261031-074912.json
+
+$ uv run tools/flow.py call my-log-report requests/week2.json
+HTTP 200 · 0.1s
+{
+  "total": 357,
+  "errors": 21,
+  "error_rate": 0.0588,
+  "p50_ms": 1171,
+  "p95_ms": 2598,
+  "by_route": {
+    "오류": 21,
+    "자동 답변": 299,
+    "담당자 연결": 17,
+    "잠시 후": 20
+  }
+}

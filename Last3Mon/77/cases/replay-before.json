@@ -1,0 +1,141 @@
+{
+  "webhook": "my-helpdesk",
+  "before": [
+    {
+      "url": "http://localhost:8800/logs-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "slow",
+        "slow_seconds": 1.2
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "faq": "ok",
+        "tickets": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "before · 회의실 와이파이가 안 ",
+      "body": {
+        "question": "회의실 와이파이가 안 잡혀요",
+        "user": "이준호",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · 사내 Wi-Fi 비밀번",
+      "body": {
+        "question": "사내 Wi-Fi 비밀번호가 뭐예요?",
+        "user": "박서연",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · 와이파이가 자주 끊겨요",
+      "body": {
+        "question": "와이파이가 자주 끊겨요",
+        "user": "최유진",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · 노트북이 와이파이에 연",
+      "body": {
+        "question": "노트북이 와이파이에 연결이 안 돼요",
+        "user": "한지훈",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · 손님용 wifi도 있나",
+      "body": {
+        "question": "손님용 wifi도 있나요?",
+        "user": "김민지",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · VPN이 자꾸 끊겨요",
+      "body": {
+        "question": "VPN이 자꾸 끊겨요",
+        "user": "정우성",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · 비밀번호를 잊어버렸어요",
+      "body": {
+        "question": "비밀번호를 잊어버렸어요",
+        "user": "오세훈",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · 프린터 출력이 안 돼요",
+      "body": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "윤하늘",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · 메일함 용량이 꽉 찼대",
+      "body": {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "강민수",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    },
+    {
+      "name": "before · 새 프로그램 설치는 어",
+      "body": {
+        "question": "새 프로그램 설치는 어떻게 신청하나요?",
+        "user": "서지아",
+        "tag": "before"
+      },
+      "expect": {
+        "status": 200
+      }
+    }
+  ]
+}

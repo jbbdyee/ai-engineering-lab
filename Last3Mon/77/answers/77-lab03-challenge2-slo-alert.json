@@ -1,0 +1,239 @@
+{
+  "name": "77 SLO alert (answer)",
+  "nodes": [
+    {
+      "name": "SLO webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-slo-alert",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "Get report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/my-log-report",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $json.body.from ?? '', to: $json.body.to ?? '', tag: $json.body.tag ?? '', source: $json.body.source ?? 'all', slo: $json.body.slo ?? {} }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Recent alerts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/alerts/list",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ workflow: 'slo', reason: 'slo', within: 600 }) }}",
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "name": "Decide",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Get report').first().json;\nconst recent = $json.count ?? 0;\nconst breaches = r.slo?.breaches ?? [];\nconst message = breaches.length ? 'SLO breach: ' + breaches.map((k) => `${k} ${r[k]} > ${r.slo.limits[k]}`).join(', ') : '';\nconst alert = breaches.length === 0 ? 'none' : recent > 0 ? 'suppressed' : 'sent';\nreturn [{ json: { ok: breaches.length === 0, breaches, alert, message, total: r.total } }];"
+      },
+      "position": [
+        660,
+        300
+      ]
+    },
+    {
+      "name": "Send it?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.alert === 'sent' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        880,
+        300
+      ]
+    },
+    {
+      "name": "Send alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/alerts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ workflow: 'slo', severity: 'high', reason: 'slo', breaches: $json.breaches, message: $json.message }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        1100,
+        200
+      ]
+    },
+    {
+      "name": "Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: $('Decide').first().json }];"
+      },
+      "position": [
+        1320,
+        300
+      ]
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1540,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "SLO webhook": {
+      "main": [
+        [
+          {
+            "node": "Get report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get report": {
+      "main": [
+        [
+          {
+            "node": "Recent alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recent alerts": {
+      "main": [
+        [
+          {
+            "node": "Decide",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide": {
+      "main": [
+        [
+          {
+            "node": "Send it?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send it?": {
+      "main": [
+        [
+          {
+            "node": "Send alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send alert": {
+      "main": [
+        [
+          {
+            "node": "Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

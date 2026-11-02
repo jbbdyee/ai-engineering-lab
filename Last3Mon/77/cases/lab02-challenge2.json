@@ -1,0 +1,40 @@
+{
+  "webhook": "my-log-summary",
+  "cases": [
+    {
+      "name": "요약 · 숫자는 통계에 있는 것만",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "numbers_ok": true,
+          "top_topic": "와이파이",
+          "worst_hour": "2026-10-26T09"
+        }
+      }
+    },
+    {
+      "name": "요약 · 주제와 시간대를 말함",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "contains": {
+          "summary": [
+            "와이파이"
+          ]
+        }
+      }
+    },
+    {
+      "name": "요약 · 날짜",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "contains": {
+          "summary": [
+            "10월 26일",
+            "10-26",
+            "26일"
+          ]
+        }
+      }
+    }
+  ]
+}

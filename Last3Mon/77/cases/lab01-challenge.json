@@ -1,0 +1,76 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "날짜별 · 월요일",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "by_day.2026-10-26.total": 70,
+          "by_day.2026-10-26.errors": 16,
+          "by_day.2026-10-26.error_rate": 0.2286
+        }
+      }
+    },
+    {
+      "name": "날짜별 · 목요일",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "by_day.2026-10-29.total": 97,
+          "by_day.2026-10-29.errors": 5
+        }
+      }
+    },
+    {
+      "name": "날짜는 10일",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "contains": {
+          "by_day": [
+            "\"2026-10-19\""
+          ]
+        },
+        "not_contains": {
+          "by_day": [
+            "\"2026-10-24\"",
+            "\"2026-10-25\""
+          ]
+        }
+      }
+    },
+    {
+      "name": "릴리스별 다시 묻기 · 1.2.0",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "contains": {
+          "by_release": [
+            "\"1.2.0\": {\"answers\": 8, \"repeats\": 5, \"repeat_rate\": 0.625}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "릴리스별 다시 묻기 · 1.0.0 · 1.1.0",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "contains": {
+          "by_release": [
+            "\"1.0.0\": {\"answers\": 402, \"repeats\": 19, \"repeat_rate\": 0.0473}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "1.1.0",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "contains": {
+          "by_release": [
+            "\"1.1.0\": {\"answers\": 181, \"repeats\": 14, \"repeat_rate\": 0.0773}"
+          ]
+        }
+      }
+    }
+  ]
+}

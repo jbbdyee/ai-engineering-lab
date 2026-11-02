@@ -1,0 +1,148 @@
+{
+  "cases": "lab01-edges.json",
+  "webhook": "base-report",
+  "passed": 2,
+  "total": 6,
+  "results": [
+    {
+      "case": "하루 · from = to (포함)",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "total = 0 (expected 70)",
+        "errors = 0 (expected 16)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-26",
+        "to": "2026-10-26"
+      },
+      "response": {
+        "total": 0,
+        "errors": 0,
+        "error_rate": null,
+        "avg_ms": null,
+        "by_route": {}
+      }
+    },
+    {
+      "case": "빈 기간 · 0건이어도 200",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "error_rate = null (expected 0)",
+        "p95_ms = null (expected 0)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-11-02",
+        "to": "2026-11-06"
+      },
+      "response": {
+        "total": 0,
+        "errors": 0,
+        "error_rate": null,
+        "avg_ms": null,
+        "by_route": {}
+      }
+    },
+    {
+      "case": "주말 · 실행이 없는 날",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-24",
+        "to": "2026-10-25"
+      },
+      "response": {
+        "total": 0,
+        "errors": 0,
+        "error_rate": null,
+        "avg_ms": null,
+        "by_route": {}
+      }
+    },
+    {
+      "case": "기간을 비우면 전체",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 3.153153153153153,
+        "avg_ms": 1259.3843843843845,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "source seed · 두 주 기록만",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "total = 602 (expected 666)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30",
+        "source": "seed"
+      },
+      "response": {
+        "total": 602,
+        "errors": 21,
+        "error_rate": 3.488372093023256,
+        "avg_ms": 1249.2392026578073,
+        "by_route": {
+          "자동 답변": 529,
+          "담당자 연결": 32,
+          "잠시 후": 20
+        }
+      }
+    },
+    {
+      "case": "source live · 오늘 실습 기록 (아직 없음)",
+      "webhook": "base-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "total = 666 (expected 0)",
+        "error_rate = 3.153153153153153 (expected 0)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "source": "live"
+      },
+      "response": {
+        "total": 666,
+        "errors": 21,
+        "error_rate": 3.153153153153153,
+        "avg_ms": 1259.3843843843845,
+        "by_route": {
+          "자동 답변": 591,
+          "담당자 연결": 34,
+          "잠시 후": 20
+        }
+      }
+    }
+  ]
+}

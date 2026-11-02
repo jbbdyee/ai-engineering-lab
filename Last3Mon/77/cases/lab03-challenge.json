@@ -1,0 +1,83 @@
+{
+  "webhook": "my-weekly",
+  "cases": [
+    {
+      "name": "주간 보고 · 숫자",
+      "request": "requests/weekly.json",
+      "expect": {
+        "equals": {
+          "total": 357,
+          "error_rate": 0.0588,
+          "slo_ok": false,
+          "numbers_ok": true
+        }
+      }
+    },
+    {
+      "name": "주간 보고 · 절",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "markdown": [
+            "## 숫자"
+          ]
+        }
+      }
+    },
+    {
+      "name": "주간 보고 · 문제 절",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "markdown": [
+            "## 문제"
+          ]
+        }
+      }
+    },
+    {
+      "name": "주간 보고 · 다음 할 일",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "markdown": [
+            "## 다음 할 일"
+          ]
+        }
+      }
+    },
+    {
+      "name": "주간 보고 · 비교 숫자",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "markdown": [
+            "| 요청 | 309 | 357 |"
+          ]
+        }
+      }
+    },
+    {
+      "name": "주간 보고 · 이상 시간대",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "markdown": [
+            "2026-10-26 09시"
+          ]
+        }
+      }
+    },
+    {
+      "name": "주간 보고 · 와이파이",
+      "request": "requests/weekly.json",
+      "expect": {
+        "contains": {
+          "markdown": [
+            "FAQ에 '와이파이' 항목 추가"
+          ]
+        }
+      }
+    }
+  ]
+}

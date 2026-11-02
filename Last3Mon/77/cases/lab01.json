@@ -1,0 +1,63 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "두 주 전체",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 0.0315,
+          "p50_ms": 1205,
+          "p95_ms": 2537
+        }
+      }
+    },
+    {
+      "name": "두 주 · 갈래별",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "by_route.자동 답변": 591,
+          "by_route.담당자 연결": 34,
+          "by_route.잠시 후": 20,
+          "by_route.오류": 21
+        }
+      }
+    },
+    {
+      "name": "첫 주",
+      "request": "requests/week1.json",
+      "expect": {
+        "equals": {
+          "total": 309,
+          "errors": 0,
+          "error_rate": 0
+        }
+      }
+    },
+    {
+      "name": "둘째 주",
+      "request": "requests/week2.json",
+      "expect": {
+        "equals": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598
+        }
+      }
+    },
+    {
+      "name": "10월 26일 하루",
+      "request": "requests/monday.json",
+      "expect": {
+        "equals": {
+          "total": 70,
+          "errors": 16
+        }
+      }
+    }
+  ]
+}

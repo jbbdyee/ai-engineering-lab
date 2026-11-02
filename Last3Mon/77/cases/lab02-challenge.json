@@ -1,0 +1,68 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "두 주 · 다시 묻는 비율이 가장 높은 주제",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "repeat_topics.0.topic": "프린터",
+          "repeat_topics.0.answers": 81,
+          "repeat_topics.0.repeats": 8,
+          "repeat_topics.0.repeat_rate": 0.0988
+        }
+      }
+    },
+    {
+      "name": "두 주 · 수로는 비밀번호가 가장 많지만 비율은 2위",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "repeat_topics.1.topic": "비밀번호",
+          "repeat_topics.1.repeats": 9,
+          "repeat_topics.1.repeat_rate": 0.0647
+        }
+      }
+    },
+    {
+      "name": "두 주 · 다시 물은 주제는 6개",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "repeat_topics.5.topic": "설치",
+          "repeat_topics.5.repeat_rate": 0.0328
+        },
+        "not_contains": {
+          "repeat_topics": [
+            "와이파이"
+          ]
+        }
+      }
+    },
+    {
+      "name": "첫 주 · 설치는 다시 묻지 않음",
+      "request": "requests/week1.json",
+      "expect": {
+        "equals": {
+          "repeat_topics.0.topic": "프린터"
+        },
+        "not_contains": {
+          "repeat_topics": [
+            "설치"
+          ]
+        }
+      }
+    },
+    {
+      "name": "앞의 지표는 그대로",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "total": 666,
+          "failures.0.count": 16,
+          "anomalies.0.hour": "2026-10-26T09"
+        }
+      }
+    }
+  ]
+}

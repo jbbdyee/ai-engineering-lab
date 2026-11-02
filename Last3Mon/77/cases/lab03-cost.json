@@ -1,0 +1,77 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "고치기 전 · 느린 FAQ · 1초에 끊김",
+      "body": {
+        "tag": "before",
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "total": 10,
+          "errors": 10
+        },
+        "range": {
+          "steps.faq_ms.p50": [
+            900,
+            1600
+          ]
+        }
+      }
+    },
+    {
+      "name": "고친 뒤 · 느린 FAQ · 기다려서 답함",
+      "body": {
+        "tag": "after",
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "total": 10,
+          "errors": 0
+        },
+        "range": {
+          "steps.faq_ms.p50": [
+            1150,
+            3500
+          ]
+        }
+      }
+    },
+    {
+      "name": "고친 뒤 · 평소 FAQ · 기다릴 일이 없음",
+      "body": {
+        "tag": "normal",
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "total": 10,
+          "errors": 0
+        },
+        "range": {
+          "steps.faq_ms.p50": [
+            0,
+            400
+          ]
+        }
+      }
+    },
+    {
+      "name": "고친 뒤 · 답 단계는 FAQ 속도와 상관없음",
+      "body": {
+        "tag": "normal",
+        "source": "live"
+      },
+      "expect": {
+        "range": {
+          "steps.answer_ms.p50": [
+            300,
+            6000
+          ]
+        }
+      }
+    }
+  ]
+}

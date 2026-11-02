@@ -13,6 +13,7 @@
 | 도구 | `tools/flow.py` (check · push · call · test · bench · fault · llm · ops · doctor, 모두 `-v`) |
 | 코드 작성 | CLI 코딩 에이전트 (codex · claude · agy), 팀 저장소의 `AGENTS.md`를 따름 ([09-AGENT-WORKING-RULES](09-AGENT-WORKING-RULES.md)) |
 | 실습 키트 | `~/aio-01d4-stu/Last3Mon/80` (공통 시나리오 · 템플릿 · 도구, 80일차 전에 `git pull`) |
+| 팀 VM | 팀마다 하나, 인터넷으로 접속 (주소 · 계정은 80일차 1교시 안내). 팀장이 n8n · 데이터 API · Credential을 올리고 배포 · 시연에 씀 |
 
 **첫날 확인**
 
@@ -25,13 +26,18 @@ cd ~/aio-01d4-stu/Last3Mon/80 && uv run tools/flow.py doctor        # 마지막 
 
 ### 팀 안에서 n8n을 어떻게 나누나
 
-각자 노트북의 n8n은 따로입니다. 다른 사람의 n8n에서 내 워크플로우는 보이지 않습니다.
+각자 노트북의 n8n은 따로입니다. 다른 사람의 n8n에서 내 워크플로우는 보이지 않습니다. 팀이 함께 보는 기준은 **팀 VM의 n8n**입니다.
 
 | 방식 | 하는 법 | 언제 |
 | --- | --- | --- |
-| **저장소로 나누기 (기본)** | 워크플로우 JSON을 팀 저장소에 두고, 각자 `git pull` → `flow.py push`로 자기 n8n에 올림 | 늘 |
-| 시연용 한 대 | 발표 · 최종 시험은 리드의 노트북 한 대에서 | 82일차 |
+| **저장소로 나누기 (기본)** | 워크플로우 JSON을 팀 저장소에 두고, 각자 `git pull` → `flow.py push`로 자기 노트북 n8n에 올려 개발 · 시험 | 늘 |
+| **팀 VM에 배포** | 팀장이 VM에서 기본 브랜치를 `git pull` → `flow.py push` → 공통 시나리오 `flow.py test` | 80일차 7교시 첫 배포, 81일차 4 · 7교시 |
+| 시연 · 발표 | 산출물 발표 · 리허설 · 최종 발표는 팀 VM에서 | 80 · 81일차 8교시, 82일차 |
 | 모듈 나누기 | 70일차처럼 하위 워크플로우(웹훅 또는 Execute Workflow)로 나눠 사람마다 한 파일 | 큰 워크플로우 |
+
+**팀 VM 준비 (80일차 3교시, 팀장)**: 노트북과 같은 순서로 n8n · 데이터 API를 켜고 `flow.py doctor`가 `ready`인지 봅니다. OpenAI · 웹훅 Header Auth · 데이터 API 키는 VM n8n의 Credential에만 넣습니다.
+
+> 팀 VM은 **인터넷에서 열립니다.** n8n 로그인 비밀번호를 기본값으로 두지 않고, 팀 웹훅에는 Header Auth를 겁니다. VM 주소 · 비밀번호 · 키를 저장소 · 문서 · 발표 자료에 쓰지 않습니다 (팀 헌장 5절에는 "팀장에게 물을 것"으로).
 
 워크플로우 이름 · 웹훅 경로 앞에 팀 이름을 붙입니다 (`team1-support`, `team1-index`). 같은 n8n에 여러 팀 것이 올라가도 겹치지 않습니다.
 
@@ -48,6 +54,20 @@ cd ~/aio-01d4-stu/Last3Mon/80 && uv run tools/flow.py doctor        # 마지막 
 | 장애 연습 | 외부 서비스가 느리거나 멈춤 | 고장 스위치 `flow.py fault faq\|tickets slow\|error\|flaky`, `flow.py llm down\|up` | 실제로는 일어남 |
 
 설계서의 "외부 연동 노드" 표에는 **연습용과 실제 운영용을 둘 다** 적습니다 (인증 방식 · 오류 코드 · 한도가 다르기 때문). 연습용에서 정상 동작을 보이고, 실제 서비스로 바꿀 때 바뀌는 곳을 표시하면 됩니다.
+
+### 조합 B · C의 어댑터 (81일차 4교시)
+
+입구 · 뒷단 조합([11-TOPIC-GUIDE](11-TOPIC-GUIDE.md) 7절)에서 A는 위 표의 연습용 그대로라 어댑터가 없습니다. B · C는 바깥 부품을 공통 계약 모양으로 바꾸는 **어댑터**를 더합니다. 두뇌(본체 워크플로우 `<팀>-support`)는 바꾸지 않습니다.
+
+| 조합 | 입구 어댑터 | 뒷단 어댑터 |
+| --- | --- | --- |
+| **B** | Telegram Trigger로 메시지를 받고, 변환 Code에서 `message.text` → `question`, `chat.id` → `user`로 바꿔 본체에 넘김. 답은 Telegram 노드로 같은 채팅방에 | 이관할 때 data-api `POST /tickets` 대신 Zammad 노드로 티켓 생성, 처리가 끝나면 Zammad 웹훅으로 n8n에 알림 |
+| **C** | FastAPI가 웹 화면의 질문을 계약 모양으로 바꿔 n8n 팀 웹훅을 호출 | FastAPI가 data-api와 같은 모양의 `/tickets` · `/alerts`를 직접 제공 (관리자 화면이 읽음) |
+
+- 순서: **A로 공통 시나리오 통과 → 어댑터.** 공통 시나리오는 어떤 조합이든 팀 웹훅으로 돌립니다.
+- Telegram Trigger · Zammad 웹훅은 바깥에서 n8n을 불러야 하므로 **팀 VM**의 n8n에 둡니다 (노트북 n8n은 바깥에서 닿지 않음).
+- 봇 토큰 · Zammad 토큰은 n8n Credential에만, FastAPI의 키는 `.env`에만 둡니다 (아래 규칙과 같음).
+- 설계서의 "외부 연동 노드" 표 · 연결선 페이로드 표에 어댑터를 **한 연결선**으로 적습니다 (바깥 모양 → 계약 모양).
 
 ### 실제 서비스를 쓰고 싶은 팀 (가산)
 

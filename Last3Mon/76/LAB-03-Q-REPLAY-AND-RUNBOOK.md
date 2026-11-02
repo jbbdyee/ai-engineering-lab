@@ -128,7 +128,15 @@ uv run tools/flow.py ops
 
 수업 준비 때(10/29) 강사 노트북에서 정답 워크플로우로 실제로 나온 출력입니다. 시간은 실행마다 조금씩 다르고, ✔ · ✘는 같아야 합니다.
 
-고치기 전
+#### 고치기 전 · `my-replay`가 아직 없음
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py test cases/lab03.json -v
+```
+
+출력 (결과 줄만):
 
 ```text
 ✔ API가 멈춘 동안 2건 → DLQ · 2.9s
@@ -139,7 +147,24 @@ uv run tools/flow.py ops
 Passed 1/5
 ```
 
-고친 뒤
+**왜 이렇게 나왔나 (고치기 전)**
+
+- **첫 줄 ✔:** Lab 02에서 만든 `my-intake`가 장애 중의 2건을 DLQ에 잘 넣었습니다. 여기까지는 이미 됩니다.
+- **다시 돌리기 ✘ 404:** 테스트가 고장 스위치를 `ok`로 돌린 뒤 `my-replay` 웹훅을 불렀는데, 그런 웹훅이 없어 n8n이 404(찾을 수 없음)를 줬습니다. `replayed` 등이 `null`인 것도 응답이 없어서입니다.
+- **DLQ ✘ `size = 2` · 접수 건 ✘ `count = 0`:** 아무도 다시 돌리지 않았으니 2건은 DLQ에 쌓인 채이고, 접수 건은 하나도 없습니다. 원인을 고쳐도 **모아 둔 실패는 저절로 처리되지 않습니다.**
+- 1/5는 **예상한 결과**입니다.
+
+#### 고친 뒤
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py push my-work/replay.json
+uv run tools/flow.py test cases/lab03.json -v
+uv run tools/flow.py ops
+```
+
+출력 (결과 줄과 `ops`):
 
 ```text
 ✔ API가 멈춘 동안 2건 → DLQ · 4.4s
@@ -148,13 +173,28 @@ Passed 1/5
 ✔ 접수 건은 2개 (중복 없음) · 0.0s
 ✔ 한 번 더 돌려도 할 일 없음 · 0.0s
 Passed 5/5
+
+created tickets: 2
+  T-2001  key R-302  장비/보통  노트북 배터리가 금방 닳아요
+  T-2002  key R-301  계정/높음  사내 위키 로그인이 안 돼요
+DLQ: 0 (parked 0)
+alerts: 1
+  [high] intake · dlq · Send to DLQ · count 2 · 2 request(s) could not be created and wait in the DLQ
 ```
 
-**왜 이렇게 나왔나**
+**고친 뒤 이렇게 나온 까닭**
 
-- 고치기 전에는 `my-replay` 웹훅이 없어 404. DLQ의 2건은 쌓인 채 접수 건 0개입니다.
-- 고친 뒤 1.1초에 `ok: 2`: 두 요청을 `my-intake`로 다시 보내 접수 건을 만들고, DLQ에서 지웠습니다. 다시 보낸 요청도 `my-intake`의 확인 · 분류 · 키 규칙을 똑같이 거쳤습니다.
-- 한 번 더 돌리면 DLQ가 비어 `replayed: 0` (0.0초). 비었을 때 갈래가 바로 답했습니다.
+| 케이스 | 고치기 전 | 고친 뒤 | 무엇이 바꿨나 |
+| --- | --- | --- | --- |
+| 다시 돌리기 | 404 | 200 · `replayed: 2, ok: 2` | `my-replay`가 DLQ를 읽어 `my-intake`로 다시 보냄 |
+| DLQ | 2 | 0 | 성공한 것은 DLQ에서 지움 |
+| 접수 건 | 0 | 2 | 다시 보낸 2건이 접수됨 |
+| 한 번 더 | 404 | `replayed: 0` | DLQ가 비면 바로 끝 |
+
+- **1.1초에 `ok: 2`:** DLQ의 두 요청을 `my-intake`로 다시 보냈고, 둘 다 접수 건이 되어 DLQ에서 지웠습니다. 재처리가 접수 건을 직접 만들지 않고 `my-intake`를 다시 부르는 것이 중요합니다. 다시 보낸 요청도 항목 확인 · 분류 · 키 · 입구 규칙을 **똑같이** 거칩니다.
+- **접수 건 2개, 키 `R-301` · `R-302`:** 원래 요청 id가 그대로 키가 되었습니다. 그래서 같은 재처리를 두 번 돌려도 중복이 생기지 않습니다.
+- **한 번 더 돌리면 0.0초에 `replayed: 0`:** DLQ가 비었을 때 바로 답하는 갈래가 있어, 할 일이 없으면 아무것도 부르지 않습니다.
+- `ops`의 high 알림은 장애 중에 `my-intake`가 남긴 것입니다 (Lab 02 과제 1). 재처리가 끝나도 알림은 사람이 확인할 때까지 남습니다.
 
 ## 예제 2 · 런북과 장애 연습 (12분, 에이전트 없이)
 
@@ -244,21 +284,86 @@ sequenceDiagram
 
 수업 준비 때(10/29) 강사 노트북에서 실제로 나온 출력입니다 (줄임).
 
+이 예제는 워크플로우를 **고치지 않습니다.** 런북대로 장애를 내고, 보고, 원인을 고치고, 재처리합니다. 여기서 "고치기 전 · 고친 뒤"는 **장애 원인**(고장 스위치)을 고치기 전과 뒤입니다.
+
+#### 고치기 전 · 장애 중
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py ops --reset
+uv run tools/flow.py fault tickets error
+uv run tools/flow.py call my-intake requests/batch-two.json
+uv run tools/flow.py call nightly-report
+uv run tools/flow.py ops
+```
+
+출력:
+
 ```text
-$ fault tickets error  →  call my-intake requests/batch-two.json      HTTP 200 · 2.8s ("failed": 2)
-$ call nightly-report                                                 HTTP 500 · 0.1s
-$ ops
+HTTP 200 · 2.8s   ("failed": 2)
+HTTP 500 · 0.1s
+
+created tickets: 0
 DLQ: 2 (parked 0)
   D-1  R-301  attempts 1 …   D-2  R-302  attempts 1 …
 alerts: 2
   [high] intake · dlq · Send to DLQ · count 2 · 2 request(s) could not be created and wait in the DLQ
   [critical] 76 Nightly report (provided, has a bug) · unexpected · Count by category · rows is not iterable [line 4]
-$ fault tickets ok  →  call my-replay                                 HTTP 200 · 1.4s
-$ ops
+```
+
+**왜 이렇게 나왔나 (장애 중)**
+
+- `ops` 한 번으로 지금 무슨 일이 있는지가 다 보입니다. DLQ 2건, 알림 둘입니다.
+- **알림 둘은 원인이 다릅니다.** high `dlq`는 데이터 API 장애(고장 스위치) 때문에 `my-intake`가 처리하지 못한 2건이고, critical `unexpected`는 `nightly-report`의 **버그**입니다. 런북의 첫 일은 "알림마다 원인을 가르기"입니다.
+- 접수 건 0: 장애 동안 들어온 문의는 모두 DLQ에서 기다립니다. 잃은 것은 없습니다.
+
+#### 고친 뒤 · 원인을 고치고 재처리
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py fault tickets ok          # "고침" (오늘은 고장 스위치를 되돌리는 것)
+uv run tools/flow.py call my-replay
+uv run tools/flow.py ops
+```
+
+출력:
+
+```text
+HTTP 200 · 1.4s
+
 created tickets: 2
 DLQ: 0 (parked 0)
+alerts: 2
+  [high] intake · dlq · …
+  [critical] 76 Nightly report (provided, has a bug) · unexpected · …
+```
 
-$ test cases/lab03-drill.json
+**고친 뒤 이렇게 나온 까닭**
+
+| 볼 것 | 장애 중 | 고친 뒤 | 까닭 |
+| --- | --- | --- | --- |
+| DLQ | 2 | 0 | 재처리가 2건을 `my-intake`로 다시 보냄 |
+| 접수 건 | 0 | 2 | 같은 까닭, 키가 같아 중복 없음 |
+| high 알림 | 있음 | 있음 | 알림은 사람이 확인하고 지울 때까지 남음 |
+| critical 알림 | 있음 | 있음 | **버그는 재처리로 고쳐지지 않음** |
+
+- 데이터 API 장애는 원인(고장 스위치)을 되돌리고 재처리하면 끝입니다. DLQ 0 · 접수 건 2.
+- 그런데 critical 알림은 그대로입니다. `nightly-report`의 버그는 재처리로 고쳐지지 않습니다. 런북에 "critical `unexpected`는 코드 담당에게"가 **따로** 있어야 하는 까닭입니다.
+- 알림 둘이 아직 남아 있는 것도 일부러입니다. 알림은 "처리했다"를 사람이 확인한 뒤에 지웁니다 (런북 3절).
+
+#### 같은 연습을 테스트로
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py test cases/lab03-drill.json -v
+```
+
+출력 (결과 줄만):
+
+```text
 ✔ 1 · 평소 · 2.6s
 ✔ 2 · 장애 시작 · API 오류 · 3.0s
 ✔ 3 · DLQ 확인 · 0.0s
@@ -269,11 +374,7 @@ $ test cases/lab03-drill.json
 Passed 7/7
 ```
 
-**왜 이렇게 나왔나**
-
-- 장애를 낸 뒤 `ops` 한 번으로 DLQ 2건과 알림 둘이 보였습니다. **원인이 다른 알림 둘**입니다: high는 데이터 API 장애(고장 스위치), critical은 `nightly-report`의 버그입니다.
-- 고장 스위치를 되돌리고 재처리하자 DLQ 0 · 접수 건 2. 하지만 critical 알림은 남아 있습니다. 버그는 재처리로 고쳐지지 않습니다 — 런북에 "critical unexpected는 코드 담당에게"가 따로 있어야 합니다.
-- 테스트의 접수 건 5건 = 평소 3 + 재처리 2. 같은 연습을 사람이 해도, 테스트가 해도 결과가 같습니다.
+**이렇게 나온 까닭:** 위에서 손으로 한 순서(평소 → 장애 → 확인 → 원인 고침 → 재처리 → 확인)를 테스트가 그대로 했습니다. 마지막 5건 = 평소 3 + 재처리 2. 사람이 해도 테스트가 해도 결과가 같으니, 런북의 명령이 **그대로 따라 할 수 있는** 것임을 확인했습니다.
 
 ## 예제 3 · 반쯤 처리된 요청 (6분, 에이전트 없이)
 
@@ -346,6 +447,17 @@ Lab 01 예제 1의 기준처럼 키가 실행 번호였다면, 4번의 재처리
 
 수업 준비 때(10/29) 강사 노트북에서 예제 1 정답으로 실제로 나온 출력입니다.
 
+이 예제는 **고치지 않습니다.** 예제 1의 `my-replay`를 그대로 두고, "실패했다"던 요청이 사실은 처리된 경우에 재처리가 안전한지 봅니다.
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py test cases/lab03-half.json -v
+uv run tools/flow.py ops
+```
+
+출력 (결과 줄과 `ops`):
+
 ```text
 ✔ 1 · API가 느림 → 기다리다 실패 · 11.6s
 ✔ 2 · DLQ에 2건 · 0.0s
@@ -356,13 +468,26 @@ Lab 01 예제 1의 기준처럼 키가 실행 번호였다면, 4번의 재처리
 ✔ 5 · 그래도 2개 (중복 없음) · 0.0s
 ✔ 6 · DLQ가 비었음 · 0.0s
 Passed 6/6
+
+created tickets: 2
+  T-2001  key R-301  계정/높음  사내 위키 로그인이 안 돼요
+  T-2002  key R-302  장비/보통  노트북 배터리가 금방 닳아요
+DLQ: 0 (parked 0)
 ```
 
-**왜 이렇게 나왔나**
+**왜 이렇게 나왔나 (케이스마다)**
 
-- 1 · 2: `slow`라 3초마다 끊겨 11.6초 뒤 `failed: 2`, 두 요청이 DLQ로.
-- 3: 8초 뒤 접수 건이 **이미 2개**입니다. 데이터 API가 늦게라도 처리했습니다. 이 순간 DLQ에도 2건, 접수 건도 2건 — 같은 문의가 두 곳에 있습니다.
-- 4 · 5: 재처리가 두 건을 다시 보냈고, 키(`R-301` · `R-302`)가 같아 데이터 API가 처음 번호를 돌려줬습니다 (`duplicates: 2`). 접수 건은 2개 그대로, DLQ는 0. **반쯤 처리된 요청도 재처리가 안전한 것은 키 덕분입니다.**
+| 케이스 | 일어난 일 | 그 순간 DLQ | 그 순간 접수 건 |
+| --- | --- | --- | --- |
+| 1 · 2 | `slow`라 3초마다 끊겨 11.6초 뒤 `failed: 2` → DLQ | 2 | 0 |
+| 3 | 8초 뒤 데이터 API가 늦게 처리 | 2 | **2** |
+| 4 | 재처리가 두 건을 다시 보냄 → 둘 다 "이미 있음" | 0 | 2 |
+| 5 · 6 | 확인 | 0 | 2 |
+
+- **3번이 핵심입니다.** 이 순간 같은 문의가 **두 곳**에 있습니다. DLQ에는 "실패"로, 접수 건에는 "성공"으로. n8n은 3초에 끊었지만 데이터 API는 요청을 받아 두었다가 8초 뒤 처리했습니다. Lab 01 예제 3의 "시간 초과는 모름"이 여기서 DLQ로 이어졌습니다.
+- **4번 `duplicates: 2`:** 재처리는 그 사실을 모르고 두 건을 다시 보냈습니다. 키(`R-301` · `R-302`)가 같아 데이터 API가 처음 번호를 돌려줬고, `my-intake`는 이것을 `ok`이면서 `duplicate`로 셌습니다.
+- **5번 접수 건 2개 그대로:** 키가 실행 번호였다면 여기서 4개가 되었을 것입니다. **반쯤 처리된 요청도 재처리가 안전한 것은 키 덕분입니다.** 재처리는 "최소 한 번"(at-least-once) 보내고, 키가 "결과는 한 번"을 지킵니다.
+- 6/6은 **예상한 결과**입니다. 고칠 것은 없고, 이 결과가 "재처리 전에 접수 건을 일일이 확인하지 않아도 되는" 근거입니다.
 
 ## 과제 1 · 세 번 실패하면 멈추기 (10분)
 
@@ -472,7 +597,15 @@ uv run tools/flow.py ops
 
 수업 준비 때(10/29) 강사 노트북에서 실제로 나온 출력입니다.
 
-고치기 전 (예제 1 정답)
+#### 고치기 전 · 예제 1의 `my-replay`
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py test cases/lab03-challenge.json -v
+```
+
+출력 (결과 줄만):
 
 ```text
 ✔ API가 오래 멈춤 · 처음 실패 · 3.4s
@@ -485,7 +618,26 @@ uv run tools/flow.py ops
 Passed 3/7
 ```
 
-고친 뒤
+**왜 이렇게 나왔나 (고치기 전)**
+
+- **처음 ~ 재처리 2 ✔:** 데이터 API가 계속 멈춰 있으니 다시 보내도 실패하는 것이 기대입니다. 실패할 때마다 DLQ의 `attempts`가 1 → 2 → 3으로 늘었습니다.
+- **재처리 3 ✘ `replayed = 2`:** `attempts`가 3인데도 두 건을 또 보냈습니다. 예제 1의 `my-replay`는 횟수를 보지 않으니 **몇 번을 돌려도 같습니다.** 스케줄로 1분마다 돌린다면 고장 난 API를 끝없이 두드립니다.
+- **parked ✘ · 알림 ✘ `reason = dlq`:** 멈춘 것이 없으니 parked도 0이고, 마지막 알림은 `my-intake`의 평소 `dlq` 알림입니다. "사람이 봐야 할 것"이라는 신호가 없습니다.
+- **고친 뒤 ✘ `replayed = 2`:** 원인이 고쳐지자 재처리가 두 건을 **사람이 보기 전에** 자동으로 보내 버렸습니다. 세 번이나 실패한 요청은 요청 자체가 이상할 수도 있는데, 확인 없이 처리되었습니다.
+- 3/7은 **예상한 결과**입니다.
+
+#### 고친 뒤
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py push my-work/replay.json
+uv run tools/flow.py test cases/lab03-challenge.json -v
+uv run tools/flow.py test cases/lab03.json
+uv run tools/flow.py ops
+```
+
+출력 (결과 줄과 `ops`):
 
 ```text
 ✔ API가 오래 멈춤 · 처음 실패 · 4.3s
@@ -497,13 +649,25 @@ Passed 3/7
 ✔ 고친 뒤에도 parked는 자동으로 돌리지 않음 · 0.0s
 Passed 7/7
 (lab03 5/5)
+
+created tickets: 2
+  T-2001  key R-301  계정/높음  사내 위키 로그인이 안 돼요
+  T-2002  key R-302  장비/보통  노트북 배터리가 금방 닳아요
+DLQ: 0 (parked 0)
 ```
 
-**왜 이렇게 나왔나**
+**고친 뒤 이렇게 나온 까닭**
 
-- 고치기 전 재처리 3도 두 건을 또 보냈습니다 (2.0초, `replayed: 2`). 몇 번을 돌려도 같습니다. 마지막 알림은 `my-intake`의 `dlq`라 parked 알림이 없고, 고친 뒤 재처리는 사람이 보기 전에 자동으로 보내 버렸습니다.
-- 고친 뒤 재처리 3은 **0.1초**: `attempts`가 3이 된 두 건을 다시 보내지 않고 parked로 표시하고 high 알림을 남겼습니다. DLQ에는 `parked: 2`로 남아 사람을 기다립니다.
-- 고친 뒤 재처리도 `replayed: 0`: parked는 자동으로 돌리지 않습니다. `lab03` 5/5로 평소 재처리는 그대로입니다.
+| 케이스 | 고치기 전 | 고친 뒤 | 무엇이 바꿨나 |
+| --- | --- | --- | --- |
+| 재처리 3 | 2.0초 · `replayed: 2` | 0.1초 · `replayed: 0, parked: 2` | `attempts`가 3이면 보내지 않고 parked로 |
+| parked로 남음 | 0 | 2 | DLQ에서 지우지 않고 표시만 |
+| 알림 | `dlq` | high `parked` | 멈춘 것은 사람에게 알림 |
+| 고친 뒤 재처리 | `replayed: 2` | `replayed: 0` | parked는 자동으로 돌리지 않음 |
+
+- **재처리 3이 0.1초:** 두 건을 `my-intake`로 보내지 않았기 때문에 빠릅니다. 대신 parked로 표시하고 high 알림을 남겼습니다. DLQ에는 `parked: 2`로 남아 사람을 기다립니다.
+- **고친 뒤에도 `replayed: 0`:** 원인이 고쳐져도 parked는 그대로입니다. 사람이 보고 "다시 보내도 된다"고 정할 때까지 기다립니다. 끝없이 다시 보내지도 않고, 버리지도 않습니다.
+- **`ops`가 DLQ 0인 까닭:** 마지막에 돌린 `lab03` 테스트가 처음에 DLQ를 비우고 자기 시나리오를 돌렸기 때문입니다. 접수 건 2개는 그 테스트의 재처리 결과입니다. `lab03` 5/5로 평소 재처리(세 번 미만)는 그대로입니다.
 
 ## 과제 2 · 운영 상태 한눈에 (10분)
 
@@ -612,7 +776,15 @@ uv run tools/flow.py ops --reset
 
 수업 준비 때(10/29) 강사 노트북에서 실제로 나온 출력입니다.
 
-고치기 전
+#### 고치기 전 · `my-ops-status`가 아직 없음
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py test cases/lab03-challenge2.json -v
+```
+
+출력 (결과 줄만):
 
 ```text
 ✘ 1 · 아무 일 없음 → ok · 0.0s · status 404 (expected 200); status = null (expected ok); dlq = null (expected 0)
@@ -625,7 +797,27 @@ uv run tools/flow.py ops --reset
 Passed 3/7
 ```
 
-고친 뒤
+**왜 이렇게 나왔나 (고치기 전)**
+
+- 이 테스트의 케이스는 두 종류입니다. 괄호 안의 2 · 4 · 6은 **상태를 바꾸는** 일(접수 실패를 내기, 보고서 버그를 내기, 재처리하고 알림을 비우기)이고, 1 · 3 · 5 · 7은 **상태를 묻는** 일입니다.
+- 상태를 바꾸는 셋은 이미 있는 `my-intake` · `nightly-report` · `my-replay`가 하니 ✔입니다.
+- 상태를 묻는 넷은 `my-ops-status` 웹훅이 없어 모두 404입니다. 지금 운영 상태를 알려면 `ops`를 돌려 DLQ · parked · 알림 숫자를 사람이 읽고 판단해야 합니다.
+- 3/7은 **예상한 결과**입니다.
+
+#### 고친 뒤
+
+실행한 명령:
+
+```bash
+uv run tools/flow.py push my-work/ops-status.json
+uv run tools/flow.py test cases/lab03-challenge2.json -v
+uv run tools/flow.py test cases/lab03-challenge.json
+uv run tools/flow.py test cases/lab02-challenge2.json     # 아래 call을 위해 강사가 더 돌린 것
+uv run tools/flow.py call my-ops-status
+uv run tools/flow.py ops --reset
+```
+
+출력 (결과 줄과 `call`):
 
 ```text
 ✔ 1 · 아무 일 없음 → ok · 0.9s
@@ -639,18 +831,24 @@ Passed 3/7
 Passed 7/7
 (lab03-challenge 7/7)
 
-$ call my-ops-status      (lab02-challenge2 바로 뒤, 비우기 전)
 HTTP 200 · 0.1s
 { "status": "critical", "dlq": 5, "parked": 0, "created": 2, "alerts": { "critical": 1, "high": 1 },
   "reasons": [ "critical 알림 1건 (10분)", "DLQ 5건: 원인을 고친 뒤 재처리", "high 알림 1건 (10분)" ] }
 ```
 
-**왜 이렇게 나왔나**
+**고친 뒤 이렇게 나온 까닭**
 
-- 고치기 전에는 웹훅이 없어 상태 케이스 넷이 404. 상태를 바꾸는 케이스 셋(실패 · 버그 · 재처리)만 ✔.
-- 고친 뒤 `ok` → 실패 2건 뒤 `warn`(DLQ 2, "원인을 고친 뒤 재처리") → 버그 뒤 `critical` → 재처리하고 알림을 확인(비움)한 뒤 다시 `ok`. 신호가 실제 상태를 따라갑니다.
-- 마지막 `call`은 Lab 02 과제 2 테스트가 남긴 상태를 그대로 읽었습니다: DLQ 5건에 `dlq_down` critical 알림 → `critical`, 까닭 셋. 숫자 여럿을 읽지 않아도 무엇부터 할지 보입니다.
-- 상태 웹훅은 0.1초 안팎: 데이터 API를 세 번 읽기만 하고 LLM을 부르지 않습니다.
+| 순서 | 그 전에 생긴 일 | 상태 | 까닭 (`reasons`) |
+| --- | --- | --- | --- |
+| 1 | 없음 | `ok` | DLQ 0 · 알림 0 |
+| 3 | 접수 실패 2건 | `warn` | DLQ 2건: 원인을 고친 뒤 재처리 |
+| 5 | 보고서 버그 | `critical` | critical 알림 1건 |
+| 7 | 재처리 · 알림 확인(비움) | `ok` | 다시 깨끗함 |
+
+- 상태 하나가 실제 상황을 따라갔습니다. 문의가 DLQ에서 기다리면 `warn`(급하지 않지만 할 일이 있음), 버그 같은 critical 알림이 있으면 `critical`(지금 사람이 봐야 함), 다 처리하면 `ok`입니다. 가장 나쁜 것이 상태가 됩니다.
+- `reasons`에 **무엇을 할지**가 있습니다 ("원인을 고친 뒤 재처리"). 숫자 여럿을 읽고 판단하지 않아도 무엇부터 할지 보입니다.
+- **마지막 `call`이 `critical`인 까닭:** 바로 앞에 돌린 `lab02-challenge2` 테스트가 남긴 상태(DLQ 5건, `dlq_down` critical 알림)를 그대로 읽었기 때문입니다. 수강생 순서에서 `lab03-challenge` 바로 뒤에 부르면 다른 숫자가 나올 수 있고, 그것이 맞습니다. 상태 웹훅은 지금 있는 것을 읽을 뿐입니다.
+- 0.1초 안팎인 것은 데이터 API를 세 번 **읽기만** 하고 LLM을 부르지 않기 때문입니다. 모니터링이 1분마다 불러도 부담이 없습니다.
 
 ## 막혔을 때
 

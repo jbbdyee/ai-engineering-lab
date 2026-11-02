@@ -1,0 +1,544 @@
+{
+  "name": "77 Live helpdesk fixed (reference)",
+  "nodes": [
+    {
+      "name": "Question webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-helpdesk",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "de518e93-ed19-541f-a6fc-687a4efaf1b2",
+      "position": [
+        0,
+        300
+      ],
+      "id": "c92ed07d-21e3-5441-bf1f-7547c58d0804"
+    },
+    {
+      "name": "Topic",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const q = String($json.body.question ?? '');\nconst table = [['접수 현황', /T-?\\d{4}/i], ['와이파이', /와이파이|wi-?fi/i], ['VPN', /vpn|원격|재택/i], ['비밀번호', /비밀번호|패스워드/i],\n  ['프린터', /프린터|인쇄/i], ['메일', /메일|첨부/i], ['설치', /설치|라이선스|프로그램/i]];\nconst hit = table.find(([, re]) => re.test(q));\nreturn [{ json: { topic: hit ? hit[0] : '기타', t0: Date.now() } }];"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "88961978-e8ec-5726-a23d-67ca6574360c"
+    },
+    {
+      "name": "Search FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq",
+        "options": {
+          "timeout": 3000
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $('Question webhook').first().json.body.question }}"
+            }
+          ]
+        }
+      },
+      "onError": "continueErrorOutput",
+      "position": [
+        440,
+        300
+      ],
+      "id": "23b65ea5-d9d2-5781-a93c-aa1d5e0ad959",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 300
+    },
+    {
+      "name": "FAQ done",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, faq_ms: Date.now() - $('Topic').first().json.t0 } }];"
+      },
+      "position": [
+        550,
+        180
+      ]
+    },
+    {
+      "name": "Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ ($json.results ?? []).length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "ebc6810e-e76b-5221-89bb-4c0eb9fad932"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $('Question webhook').first().json.body.question }}\nFAQ: {{ JSON.stringify($('Search FAQ').first().json.results) }}",
+        "options": {
+          "systemMessage": "You are the company IT help desk. Answer in Korean in at most 3 sentences using only the FAQ entries given. Never invent steps. Use 합니다체.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        880,
+        200
+      ],
+      "id": "2ee0f4ec-9cdf-507b-aa32-64e9c8f475ef"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        880,
+        420
+      ],
+      "id": "1cf57665-a16a-5f55-94b1-732f34b30d91"
+    },
+    {
+      "name": "Answered",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Question webhook').first().json.body;\nconst t = $('Topic').first().json;\nconst base = { execution_id: Number($execution.id), workflow: 'helpdesk', user: body.user ?? '', topic: t.topic, question: body.question ?? '', release: '1.1.0',\n  channel: 'stable', repeat: false, tag: body.tag ?? '', duration_ms: Date.now() - t.t0, cost_usd: 0 };\nconst faq_ms = $('FAQ done').first().json.faq_ms;\nbase.steps = { faq_ms, answer_ms: Math.max(0, base.duration_ms - faq_ms) };\nreturn [{ json: { ...base, status: 'success', error_node: null, error_message: null, route: '자동 답변', llm_calls: 1, answer: String($json.output ?? '').trim() } }];"
+      },
+      "position": [
+        1100,
+        200
+      ],
+      "id": "6db09299-84d1-50b1-800f-c074ccb0d3ed"
+    },
+    {
+      "name": "Not found",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Question webhook').first().json.body;\nconst t = $('Topic').first().json;\nconst base = { execution_id: Number($execution.id), workflow: 'helpdesk', user: body.user ?? '', topic: t.topic, question: body.question ?? '', release: '1.1.0',\n  channel: 'stable', repeat: false, tag: body.tag ?? '', duration_ms: Date.now() - t.t0, cost_usd: 0 };\nconst faq_ms = $('FAQ done').first().json.faq_ms;\nbase.steps = { faq_ms, answer_ms: 0 };\nreturn [{ json: { ...base, status: 'success', error_node: null, error_message: null, route: '담당자 연결', llm_calls: 0, answer: 'FAQ에서 찾지 못해 담당자에게 연결합니다.' } }];"
+      },
+      "position": [
+        1100,
+        400
+      ],
+      "id": "33f61379-1764-55c7-aff5-3521b1cf451b"
+    },
+    {
+      "name": "Failed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Question webhook').first().json.body;\nconst t = $('Topic').first().json;\nconst base = { execution_id: Number($execution.id), workflow: 'helpdesk', user: body.user ?? '', topic: t.topic, question: body.question ?? '', release: '1.1.0',\n  channel: 'stable', repeat: false, tag: body.tag ?? '', duration_ms: Date.now() - t.t0, cost_usd: 0 };\nbase.steps = { faq_ms: base.duration_ms, answer_ms: 0 };\nconst message = String($json.error?.message ?? $json.error ?? 'error').slice(0, 120);\nreturn [{ json: { ...base, status: 'error', error_node: 'Search FAQ', error_message: message, route: null, llm_calls: 0, answer: '지금은 답할 수 없어 담당자에게 연결합니다.' } }];"
+      },
+      "position": [
+        1100,
+        600
+      ],
+      "id": "6a62a108-4c6c-57fa-b444-3c0b72f85597"
+    },
+    {
+      "name": "Log Answered",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/logs",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ items: [(({ answer, ...rest }) => rest)($json)] }) }}"
+      },
+      "position": [
+        1320,
+        200
+      ],
+      "id": "cc12c3ab-8643-571d-83f4-d27c09dd8e5a"
+    },
+    {
+      "name": "Reply Answered",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Answered').first().json;\nreturn [{ json: { route: r.route ?? '담당자 연결', status: r.status, topic: r.topic, answer: r.answer, error: r.error_message } }];"
+      },
+      "position": [
+        1540,
+        200
+      ],
+      "id": "5c5ffce6-1941-59af-bc8a-5071809d0656"
+    },
+    {
+      "name": "Send Answered",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1760,
+        200
+      ],
+      "id": "1c9e1737-ae60-5754-abbb-2bfab0c7e9b7"
+    },
+    {
+      "name": "Log Not found",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/logs",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ items: [(({ answer, ...rest }) => rest)($json)] }) }}"
+      },
+      "position": [
+        1320,
+        400
+      ],
+      "id": "055e9419-007c-5f4d-b4a6-e70b34ff2a24"
+    },
+    {
+      "name": "Reply Not found",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Not found').first().json;\nreturn [{ json: { route: r.route ?? '담당자 연결', status: r.status, topic: r.topic, answer: r.answer, error: r.error_message } }];"
+      },
+      "position": [
+        1540,
+        400
+      ],
+      "id": "dc79daf9-8f4d-506b-a68b-00f3fd4d44c9"
+    },
+    {
+      "name": "Send Not found",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1760,
+        400
+      ],
+      "id": "df1457bb-ec41-5c08-b3ff-f2284a6e1401"
+    },
+    {
+      "name": "Log Failed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/logs",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ items: [(({ answer, ...rest }) => rest)($json)] }) }}"
+      },
+      "position": [
+        1320,
+        600
+      ],
+      "id": "760aaaca-e80d-5fe4-9e01-c3772483123d"
+    },
+    {
+      "name": "Reply Failed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Failed').first().json;\nreturn [{ json: { route: r.route ?? '담당자 연결', status: r.status, topic: r.topic, answer: r.answer, error: r.error_message } }];"
+      },
+      "position": [
+        1540,
+        600
+      ],
+      "id": "addce3eb-ad29-54ac-95c4-87fd3aafb3fc"
+    },
+    {
+      "name": "Send Failed",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1760,
+        600
+      ],
+      "id": "3a330204-2c41-5c6c-93f1-f39b0b04dc0d"
+    }
+  ],
+  "connections": {
+    "Question webhook": {
+      "main": [
+        [
+          {
+            "node": "Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic": {
+      "main": [
+        [
+          {
+            "node": "Search FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search FAQ": {
+      "main": [
+        [
+          {
+            "node": "FAQ done",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Found?": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Not found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "Answered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answered": {
+      "main": [
+        [
+          {
+            "node": "Log Answered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Answered": {
+      "main": [
+        [
+          {
+            "node": "Reply Answered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Answered": {
+      "main": [
+        [
+          {
+            "node": "Send Answered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Not found": {
+      "main": [
+        [
+          {
+            "node": "Log Not found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Not found": {
+      "main": [
+        [
+          {
+            "node": "Reply Not found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Not found": {
+      "main": [
+        [
+          {
+            "node": "Send Not found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Failed": {
+      "main": [
+        [
+          {
+            "node": "Log Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Failed": {
+      "main": [
+        [
+          {
+            "node": "Reply Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Failed": {
+      "main": [
+        [
+          {
+            "node": "Send Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ done": {
+      "main": [
+        [
+          {
+            "node": "Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

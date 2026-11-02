@@ -1,0 +1,218 @@
+{
+  "cases": "replay-normal.json",
+  "webhook": "my-helpdesk",
+  "passed": 10,
+  "total": 10,
+  "results": [
+    {
+      "case": "normal · 회의실 와이파이가 안 ",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.3,
+      "status": 200,
+      "request": {
+        "question": "회의실 와이파이가 안 잡혀요",
+        "user": "이준호",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "와이파이",
+        "answer": "회의실에서 와이파이가 잡히지 않으면 가까운 공유기 번호를 IT 포털에 신고해 주세요. 사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · 사내 Wi-Fi 비밀번",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "사내 Wi-Fi 비밀번호가 뭐예요?",
+        "user": "박서연",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "와이파이",
+        "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 비밀번호는 별도로 없으며, 사번으로 인증합니다. 회의실에서 연결이 안 되면 가까운 공유기 번호를 IT 포털에 신고해 주세요.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · 와이파이가 자주 끊겨요",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "와이파이가 자주 끊겨요",
+        "user": "최유진",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "와이파이",
+        "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 회의실 등 특정 장소에서 와이파이가 자주 끊기면 가까운 공유기 번호를 IT 포털에 신고해 주세요.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · 노트북이 와이파이에 연",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "노트북이 와이파이에 연결이 안 돼요",
+        "user": "한지훈",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "와이파이",
+        "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 회의실에서 와이파이가 잡히지 않으면 가까운 공유기 번호를 IT 포털에 신고해 주세요.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · 손님용 wifi도 있나",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "손님용 wifi도 있나요?",
+        "user": "김민지",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "와이파이",
+        "answer": "손님용 와이파이에 대한 안내는 제공되지 않습니다. 사내 와이파이는 'CORP-WIFI'에 사번으로 로그인하여 사용합니다. 추가 문의 사항은 IT 포털에 문의해 주세요.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · VPN이 자꾸 끊겨요",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "VPN이 자꾸 끊겨요",
+        "user": "정우성",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "VPN",
+        "answer": "VPN 클라이언트를 최신 버전으로 업데이트하고, 인증서 만료 여부를 확인한 뒤 다시 접속합니다.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · 비밀번호를 잊어버렸어요",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.8,
+      "status": 200,
+      "request": {
+        "question": "비밀번호를 잊어버렸어요",
+        "user": "오세훈",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "비밀번호",
+        "answer": "사내 포털 로그인 화면의 '비밀번호 찾기'에서 휴대폰 인증 후 새 비밀번호를 설정합니다.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · 프린터 출력이 안 돼요",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.2,
+      "status": 200,
+      "request": {
+        "question": "프린터 출력이 안 돼요",
+        "user": "윤하늘",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "프린터",
+        "answer": "프린터 전원과 네트워크 연결을 확인하고, 인쇄 대기열을 비운 뒤 다시 출력합니다.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · 메일함 용량이 꽉 찼대",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "메일함 용량이 꽉 찼대요",
+        "user": "강민수",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "메일",
+        "answer": "오래된 메일과 큰 첨부 파일을 보관함으로 옮기거나 삭제해 용량을 확보합니다.",
+        "error": null
+      }
+    },
+    {
+      "case": "normal · 새 프로그램 설치는 어",
+      "webhook": "my-helpdesk",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "새 프로그램 설치는 어떻게 신청하나요?",
+        "user": "서지아",
+        "tag": "normal"
+      },
+      "response": {
+        "route": "자동 답변",
+        "status": "success",
+        "topic": "설치",
+        "answer": "새 프로그램 설치는 IT 포털의 '소프트웨어 신청' 메뉴에서 승인 요청을 올리면 승인 후 원격으로 설치됩니다.",
+        "error": null
+      }
+    }
+  ]
+}

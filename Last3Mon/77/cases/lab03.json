@@ -1,0 +1,57 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "고치기 전 · 10건 모두 실패",
+      "body": {
+        "tag": "before",
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "total": 10,
+          "errors": 10
+        }
+      }
+    },
+    {
+      "name": "고치기 전 · FAQ timeout",
+      "body": {
+        "tag": "before",
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "failures.0.node": "Search FAQ",
+          "failures.0.count": 10
+        }
+      }
+    },
+    {
+      "name": "고친 뒤 · 오류 없음",
+      "body": {
+        "tag": "after",
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "total": 10,
+          "errors": 0,
+          "by_route.자동 답변": 10
+        }
+      }
+    },
+    {
+      "name": "고친 뒤 · 답하지 못한 주제 없음",
+      "body": {
+        "tag": "after",
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "unanswered_topics": []
+        }
+      }
+    }
+  ]
+}

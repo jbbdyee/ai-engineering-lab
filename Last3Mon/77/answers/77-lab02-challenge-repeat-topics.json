@@ -1,0 +1,101 @@
+{
+  "name": "77 Log report + repeat topics (answer)",
+  "nodes": [
+    {
+      "name": "Report webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-log-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "name": "Get logs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://data-api:8800/logs/query",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $json.body.from ?? '', to: $json.body.to ?? '', tag: $json.body.tag ?? '', source: $json.body.source ?? 'all' }) }}",
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "name": "Compute metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const pct = (vals, p) => { const s = [...vals].sort((a, b) => a - b); return s.length ? s[Math.max(0, Math.ceil(p * s.length) - 1)] : 0; };\nconst rate = (a, b) => (b ? Math.round((a / b) * 10000) / 10000 : 0);\nconst rows = $json.logs ?? [];\nconst errors = rows.filter((r) => r.status === 'error').length;\nconst by_route = {};\nfor (const r of rows) { const k = r.route ?? '오류'; by_route[k] = (by_route[k] ?? 0) + 1; }\nconst d = rows.map((r) => r.duration_ms);\nconst out = { total: rows.length, errors, error_rate: rate(errors, rows.length), p50_ms: pct(d, 0.5), p95_ms: pct(d, 0.95), by_route };\nconst group = (key) => { const g = {}; for (const r of rows) (g[key(r)] ??= []).push(r); return g; };\nout.by_day = Object.fromEntries(Object.entries(group((r) => r.started_at.slice(0, 10))).sort().map(([k, v]) => {\n  const e = v.filter((r) => r.status === 'error').length; return [k, { total: v.length, errors: e, error_rate: rate(e, v.length) }]; }));\nout.by_release = {};\nfor (const r of rows.filter((x) => x.route === '자동 답변')) { const b = (out.by_release[r.release] ??= { answers: 0, repeats: 0 }); b.answers += 1; if (r.repeat) b.repeats += 1; }\nfor (const b of Object.values(out.by_release)) b.repeat_rate = rate(b.repeats, b.answers);\nout.steps = {};\nfor (const k of ['faq_ms', 'answer_ms']) { const v = rows.map((r) => r.steps?.[k] ?? 0).filter((x) => x > 0); out.steps[k] = { runs: v.length, p50: pct(v, 0.5), p95: pct(v, 0.95) }; }\nout.cost_usd = Math.round(rows.reduce((a, r) => a + (r.cost_usd ?? 0), 0) * 100000) / 100000;\nout.cost_per_run = rows.length ? Math.round((out.cost_usd / rows.length) * 1000000) / 1000000 : 0;\nout.llm_calls = rows.reduce((a, r) => a + (r.llm_calls ?? 0), 0);\nconst fails = {};\nfor (const r of rows.filter((x) => x.status === 'error')) { const k = `${r.error_node}|${r.error_message}`; fails[k] = (fails[k] ?? 0) + 1; }\nout.failures = Object.entries(fails).map(([k, count]) => ({ node: k.split('|')[0], message: k.split('|')[1], count })).sort((a, b) => b.count - a.count);\nconst un = {};\nfor (const r of rows.filter((x) => x.route === '담당자 연결')) un[r.topic] = (un[r.topic] ?? 0) + 1;\nout.unanswered_topics = Object.entries(un).map(([topic, count]) => ({ topic, count })).sort((a, b) => b.count - a.count);\nconst hours = {};\nfor (const r of rows) (hours[r.started_at.slice(0, 13)] ??= []).push(r);\nout.anomalies = Object.entries(hours).sort().map(([hour, v]) => { const e = v.filter((r) => r.status === 'error').length; return { hour, total: v.length, errors: e, error_rate: rate(e, v.length) }; })\n  .filter((h) => h.total >= 5 && h.error_rate >= 3 * out.error_rate && h.errors > 0);\nconst rep = {};\nfor (const r of rows.filter((x) => x.route === '자동 답변')) { const t = (rep[r.topic] ??= { topic: r.topic, answers: 0, repeats: 0 }); t.answers += 1; if (r.repeat) t.repeats += 1; }\nout.repeat_topics = Object.values(rep).filter((t) => t.repeats > 0).map((t) => ({ ...t, repeat_rate: rate(t.repeats, t.answers) }))\n  .sort((a, b) => b.repeat_rate - a.repeat_rate || b.repeats - a.repeats);\nreturn [{ json: out }];"
+      },
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "name": "Send report",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Report webhook": {
+      "main": [
+        [
+          {
+            "node": "Get logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get logs": {
+      "main": [
+        [
+          {
+            "node": "Compute metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute metrics": {
+      "main": [
+        [
+          {
+            "node": "Send report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

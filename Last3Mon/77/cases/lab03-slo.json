@@ -1,0 +1,75 @@
+{
+  "webhook": "my-log-report",
+  "cases": [
+    {
+      "name": "둘째 주 · SLO 못 지킴",
+      "request": "requests/week2.json",
+      "expect": {
+        "equals": {
+          "slo.ok": false,
+          "unanswered_rate": 0.0476
+        },
+        "contains": {
+          "slo": [
+            "\"error_rate\"",
+            "\"unanswered_rate\""
+          ]
+        },
+        "not_contains": {
+          "slo": [
+            "\"p95_ms\"]"
+          ]
+        }
+      }
+    },
+    {
+      "name": "첫 주 · 답 못 함만",
+      "body": {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      },
+      "expect": {
+        "equals": {
+          "slo.ok": false,
+          "slo.breaches": [
+            "unanswered_rate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "기준을 바꾸면 · 첫 주",
+      "body": {
+        "from": "2026-10-19",
+        "to": "2026-10-23",
+        "slo": {
+          "unanswered_rate": 0.06
+        }
+      },
+      "expect": {
+        "equals": {
+          "slo.ok": true
+        }
+      }
+    },
+    {
+      "name": "고친 뒤 · 오류 · 답 못 함 기준은 지킴",
+      "body": {
+        "tag": "after",
+        "source": "live"
+      },
+      "expect": {
+        "equals": {
+          "error_rate": 0,
+          "unanswered_rate": 0
+        },
+        "not_contains": {
+          "slo.breaches": [
+            "error_rate",
+            "unanswered_rate"
+          ]
+        }
+      }
+    }
+  ]
+}

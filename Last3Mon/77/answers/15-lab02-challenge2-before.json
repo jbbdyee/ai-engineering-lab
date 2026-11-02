@@ -1,0 +1,73 @@
+{
+  "cases": "lab02-challenge2.json",
+  "webhook": "my-log-summary",
+  "passed": 0,
+  "total": 3,
+  "results": [
+    {
+      "case": "요약 · 숫자는 통계에 있는 것만",
+      "webhook": "my-log-summary",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "numbers_ok = null (expected true)",
+        "top_topic = null (expected 와이파이)",
+        "worst_hour = null (expected 2026-10-26T09)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-log-summary\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "요약 · 주제와 시간대를 말함",
+      "webhook": "my-log-summary",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "summary has none of ['와이파이']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-log-summary\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "요약 · 날짜",
+      "webhook": "my-log-summary",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "summary has none of ['10월 26일', '10-26', '26일']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-30"
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-log-summary\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}
