@@ -1,0 +1,11 @@
+{
+  "name": "employee",
+  "key": "email",
+  "fields": {
+    "name": {"type": "string", "required": true, "max": 20},
+    "dept": {"type": "enum", "required": true, "values": ["영업팀", "재무팀", "인사팀", "개발팀", "IT팀", "총무팀"]},
+    "email": {"type": "email", "required": true},
+    "phone": {"type": "phone", "required": false},
+    "joined": {"type": "date", "required": true}
+  }
+}

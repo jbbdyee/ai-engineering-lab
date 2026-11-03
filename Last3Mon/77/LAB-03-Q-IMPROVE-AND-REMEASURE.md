@@ -177,6 +177,7 @@ uv run tools/flow.py ops
 ```text
 {"added": "FAQ-007", "size": 7}
 
+✔ before: POST http://localhost:8800/logs-reset · HTTP 200 · 0.0s · {"cleared": 0}
 ✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "slow", …, "slow_seconds": 1.2}
 ✔ after · 회의실 와이파이가 안  · 4.5s
 ✔ after · 사내 Wi-Fi 비밀번 · 2.4s
@@ -205,6 +206,7 @@ added FAQ: 1 (FAQ-007)
 | 한 건 시간 | 1.1~2.1초 | **2.3~4.5초** | FAQ 1.2초를 기다린 뒤 LLM 답 |
 
 - **두 고침이 다 필요했습니다.** timeout만 늘렸다면 와이파이 질문 5개는 FAQ에 없어 `담당자 연결`이 됐을 것이고("답하지 못한 주제 없음" ✘), FAQ만 더했다면 1초에 끊겨 10개 모두 오류였을 것입니다. 하나는 워크플로우(에이전트), 하나는 콘텐츠(나)입니다.
+- **첫 `before` 줄 `logs-reset` · `{"tag": "after"}`:** 테스트가 지난번 `after` 기록**만** 지우고 시작합니다 (`before` 기록 10줄은 그대로). 그래서 고치기 전에 `replay-after`를 한 번 돌려 실패했거나 여러 번 돌려도, 마지막 한 번의 10줄만 남아 `lab03`이 그 10줄로 셉니다. 처음 돌리면 `{"cleared": 0}`, 다시 돌리면 `{"cleared": 10}`. 예제 3의 `replay-normal`도 같은 방식(`tag: normal`)입니다.
 - **`replay-after` 10/10은 `replay-before`와 뜻이 다릅니다.** 이번 테스트는 200만이 아니라 `route: 자동 답변` · `status: success`(와이파이는 답에 `CORP-WIFI`까지)를 확인합니다.
 - **`10 calls · $0.000000`:** 고친 뒤 10건은 LLM을 한 번씩 불렀습니다. 제공 헬프데스크는 기록에 비용을 0으로 남기므로 `$0.000000`입니다 (두 주 기록에는 비용이 있음).
 - **대신 느려졌습니다** (2.3~4.5초). 예제 2의 SLO와 예제 3에서 이 대가를 잽니다.
@@ -428,6 +430,7 @@ uv run tools/flow.py test cases/replay-normal.json -v
 출력 (결과 줄만):
 
 ```text
+✔ before: POST http://localhost:8800/logs-reset · HTTP 200 · 0.0s · {"cleared": 0}
 ✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", …}
 ✔ normal · 회의실 와이파이가 안  · 2.3s
 ✔ normal · 사내 Wi-Fi 비밀번 · 1.1s
@@ -813,7 +816,8 @@ alerts: 1
 | --- | --- |
 | `replay-after`에서 와이파이만 실패 | FAQ를 더했는지 (`curl -s 'localhost:8800/faq?q=와이파이'`, `ops`의 `added FAQ`) |
 | `replay-after`에서 모두 실패 | timeout을 늘렸는지, push했는지 (`fault faq slow`는 테스트가 켬) |
-| `lab03` 숫자가 10이 아님 | 실습 기록이 섞임: `replay-before`를 다시 (처음에 `/logs-reset` · `/faq-reset`을 부름) → FAQ 더하기 → `replay-after` |
+| `lab03`의 "고치기 전" 숫자가 10이 아님 | 실습 기록이 섞임: `replay-before`를 다시 (처음에 `/logs-reset` · `/faq-reset`을 부름) → FAQ 더하기 → `replay-after` |
+| 고치기 전에 `replay-after`를 돌려 실패했다 | 고친 뒤 `replay-after`를 다시 돌리면 됨 — 테스트가 지난 `after` 기록만 지우고 시작 (`{"cleared": 10}`) |
 | `lab03-cost`의 `normal`이 0건 | `replay-normal`을 먼저 돌렸는지 |
 | SLO가 늘 `ok` | 비교가 `>`인지, `limits` 기본값 · 본문 `slo` 덮어쓰기 |
 | 주간 보고가 timeout | 부르는 웹훅 셋(`my-log-report` · `my-log-summary`)이 모두 push돼 있는지, HTTP timeout 30~60초 |

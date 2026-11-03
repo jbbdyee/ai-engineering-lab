@@ -1,0 +1,303 @@
+$ uv run tools/flow.py push reference/lab03-example1-schema-check.json
+✔ pushed '78 Schema check (reference)' (id w6b17d7c76908a6a)
+   POST http://localhost:5678/webhook/my-check
+
+$ uv run tools/flow.py test cases/lab03.json -v
+POST http://localhost:5678/webhook/my-check · 4 case(s) × 1
+✔ 직원 CSV · 9줄 중 4줄 통과 · 0.9s
+    → request  POST /webhook/my-check
+      {
+        "schema": "employee",
+        "batch": "HR-1",
+        "csv": "name,dept,email,phone,joined\n오세훈,영업팀,sehoon.oh@example.com,010-2222-3333,2026-10-01\n윤하늘,재무팀,haneul.yoon@example.com,,2026-10-05\n강민수,개발팀,minsu.kang@example,010-4444-5555,2026-10-06\n서지아,마케팅팀,jia.seo@example.com,010-6666-7777,2026-10-07\n임도윤,인사팀,doyun.lim@example.com,010-8888-9999,2026-13-01\n,IT팀,noname@example.com,,2026-10-09\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n정다은,IT팀,daeun.jung@example.com,010-1111-2222,2026-10-14"
+      }
+    ← response HTTP 200
+      {
+        "schema": "employee",
+        "batch": "HR-1",
+        "total": 9,
+        "valid": 4,
+        "invalid": 5,
+        "rows": [
+          {
+            "row": 1,
+            "key": "sehoon.oh@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 2,
+            "key": "haneul.yoon@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 3,
+            "key": "minsu.kang@example",
+            "ok": false,
+            "errors": [
+              "bad_format:email"
+            ]
+          },
+          {
+            "row": 4,
+            "key": "jia.seo@example.com",
+            "ok": false,
+            "errors": [
+              "not_allowed:dept"
+            ]
+          },
+          {
+            "row": 5,
+            "key": "doyun.lim@example.com",
+            "ok": false,
+            "errors": [
+              "bad_format:joined"
+            ]
+          },
+          {
+            "row": 6,
+            "key": "noname@example.com",
+            "ok": false,
+            "errors": [
+              "missing:name"
+            ]
+          },
+          {
+            "row": 7,
+            "key": "sua.bae@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 8,
+            "key": "sua.bae@example.com",
+            "ok": false,
+            "errors": [
+              "duplicate_in_batch"
+            ]
+          },
+          {
+            "row": 9,
+            "key": "daeun.jung@example.com",
+            "ok": true,
+            "errors": []
+          }
+        ],
+        "codes": {
+          "bad_format:email": 1,
+          "not_allowed:dept": 1,
+          "bad_format:joined": 1,
+          "missing:name": 1,
+          "duplicate_in_batch": 1
+        }
+      }
+✔ 직원 CSV · 줄마다 이유 · 0.0s
+    → request  POST /webhook/my-check
+      {
+        "schema": "employee",
+        "batch": "HR-1",
+        "csv": "name,dept,email,phone,joined\n오세훈,영업팀,sehoon.oh@example.com,010-2222-3333,2026-10-01\n윤하늘,재무팀,haneul.yoon@example.com,,2026-10-05\n강민수,개발팀,minsu.kang@example,010-4444-5555,2026-10-06\n서지아,마케팅팀,jia.seo@example.com,010-6666-7777,2026-10-07\n임도윤,인사팀,doyun.lim@example.com,010-8888-9999,2026-13-01\n,IT팀,noname@example.com,,2026-10-09\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n정다은,IT팀,daeun.jung@example.com,010-1111-2222,2026-10-14"
+      }
+    ← response HTTP 200
+      {
+        "schema": "employee",
+        "batch": "HR-1",
+        "total": 9,
+        "valid": 4,
+        "invalid": 5,
+        "rows": [
+          {
+            "row": 1,
+            "key": "sehoon.oh@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 2,
+            "key": "haneul.yoon@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 3,
+            "key": "minsu.kang@example",
+            "ok": false,
+            "errors": [
+              "bad_format:email"
+            ]
+          },
+          {
+            "row": 4,
+            "key": "jia.seo@example.com",
+            "ok": false,
+            "errors": [
+              "not_allowed:dept"
+            ]
+          },
+          {
+            "row": 5,
+            "key": "doyun.lim@example.com",
+            "ok": false,
+            "errors": [
+              "bad_format:joined"
+            ]
+          },
+          {
+            "row": 6,
+            "key": "noname@example.com",
+            "ok": false,
+            "errors": [
+              "missing:name"
+            ]
+          },
+          {
+            "row": 7,
+            "key": "sua.bae@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 8,
+            "key": "sua.bae@example.com",
+            "ok": false,
+            "errors": [
+              "duplicate_in_batch"
+            ]
+          },
+          {
+            "row": 9,
+            "key": "daeun.jung@example.com",
+            "ok": true,
+            "errors": []
+          }
+        ],
+        "codes": {
+          "bad_format:email": 1,
+          "not_allowed:dept": 1,
+          "bad_format:joined": 1,
+          "missing:name": 1,
+          "duplicate_in_batch": 1
+        }
+      }
+✔ 같은 워크플로우로 FAQ 스키마 · 0.1s
+    → request  POST /webhook/my-check
+      {
+        "schema": "faq",
+        "batch": "B-3",
+        "items": [
+          {
+            "id": "FAQ-301",
+            "title": "택배 수령",
+            "keywords": [
+              "택배"
+            ],
+            "answer": "회사로 온 택배는 1층 안내 데스크에서 사원증을 보여 주고 받습니다."
+          },
+          {
+            "id": "FAQ-302",
+            "title": "주차 등록",
+            "keywords": [
+              "주차"
+            ],
+            "answer": "주차 등록은 총무팀 포털에서 차량 번호를 적어 신청합니다."
+          },
+          {
+            "id": "FAQ-303",
+            "title": "명함 신청",
+            "keywords": [
+              "명함"
+            ],
+            "answer": "명함은 인사 포털에서 신청하면 일주일 안에 자리로 배달됩니다."
+          },
+          {
+            "id": "FAQ-304",
+            "title": "사내 식당 메뉴",
+            "keywords": [
+              "식당",
+              "메뉴"
+            ],
+            "answer": "사내 식당 메뉴는 매주 월요일 아침 사내 게시판에 올라옵니다."
+          },
+          {
+            "id": "FAQ-305",
+            "title": "교육 신청",
+            "keywords": [
+              "교육"
+            ],
+            "answer": "짧"
+          },
+          {
+            "id": "FAQ-306",
+            "title": "건강검진",
+            "keywords": [
+              "건강검진"
+            ],
+            "answer": "건강검진은 매년 9월에 인사팀이 안내하며 지정 병원에서 받습니다."
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "schema": "faq",
+        "batch": "B-3",
+        "total": 6,
+        "valid": 5,
+        "invalid": 1,
+        "rows": [
+          {
+            "row": 1,
+            "key": "FAQ-301",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 2,
+            "key": "FAQ-302",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 3,
+            "key": "FAQ-303",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 4,
+            "key": "FAQ-304",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 5,
+            "key": "FAQ-305",
+            "ok": false,
+            "errors": [
+              "too_short:answer"
+            ]
+          },
+          {
+            "row": 6,
+            "key": "FAQ-306",
+            "ok": true,
+            "errors": []
+          }
+        ],
+        "codes": {
+          "too_short:answer": 1
+        }
+      }
+✔ 모르는 스키마 → 400 · 0.0s
+    → request  POST /webhook/my-check
+      {
+        "schema": "invoice",
+        "items": []
+      }
+    ← response HTTP 400
+      {
+        "error": "unknown schema",
+        "schema": "invoice"
+      }
+Passed 4/4
+report: runs/lab03-20261101-180943.json

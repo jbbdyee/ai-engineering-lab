@@ -1,0 +1,76 @@
+{
+  "webhook": "my-faq-check",
+  "cases": [
+    {
+      "name": "제목 40자는 통과, 41자는 너무 김",
+      "request": "requests/faq-edges.json",
+      "expect": {
+        "equals": {
+          "rows.0.ok": true,
+          "rows.1.ok": false
+        },
+        "contains": {
+          "rows.1.errors": "title_too_long"
+        }
+      }
+    },
+    {
+      "name": "공백만 있는 제목은 빈 값",
+      "request": "requests/faq-edges.json",
+      "expect": {
+        "contains": {
+          "rows.2.errors": "title_missing"
+        }
+      }
+    },
+    {
+      "name": "답 10자는 통과, 9자는 너무 짧음",
+      "request": "requests/faq-edges.json",
+      "expect": {
+        "equals": {
+          "rows.3.ok": true
+        },
+        "contains": {
+          "rows.4.errors": "answer_too_short"
+        }
+      }
+    },
+    {
+      "name": "하이픈 없는 휴대전화도 개인정보, 사무실 번호는 통과",
+      "request": "requests/faq-edges.json",
+      "expect": {
+        "equals": {
+          "rows.6.ok": true
+        },
+        "contains": {
+          "rows.5.errors": "pii"
+        }
+      }
+    },
+    {
+      "name": "사내 주소는 통과, 사내 주소처럼 보이는 바깥 링크는 막음",
+      "request": "requests/faq-edges.json",
+      "expect": {
+        "equals": {
+          "rows.7.ok": true
+        },
+        "contains": {
+          "rows.8.errors": "external_link"
+        }
+      }
+    },
+    {
+      "name": "소문자 id · 합계 10줄 중 4줄 통과",
+      "request": "requests/faq-edges.json",
+      "expect": {
+        "equals": {
+          "total": 10,
+          "valid": 4
+        },
+        "contains": {
+          "rows.9.errors": "id_format"
+        }
+      }
+    }
+  ]
+}

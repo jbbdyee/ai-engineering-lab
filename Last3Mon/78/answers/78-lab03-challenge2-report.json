@@ -1,0 +1,108 @@
+{
+  "name": "78 Quality report + by dataset (answer)",
+  "nodes": [
+    {
+      "name": "Report webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-quality-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "2a4e58b4-7434-5181-9fca-13bc3ba808cf",
+      "webhookId": "e900dd73-cfae-5c26-9e5b-204c1e0867ec"
+    },
+    {
+      "name": "Get log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/quality-log",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "52996b11-04b3-5567-b18f-061a3e1bc213"
+    },
+    {
+      "name": "Make report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const want = $('Report webhook').first().json.body?.dataset;\nconst all = $json.items ?? [];\nconst r4 = (v) => Math.round(v * 10000) / 10000;\nconst summary = (items) => {\n  const batches = items.map((i) => ({ batch: i.batch, score: i.score, rejected: i.rejected === true, total: i.total }));\n  const codes = {};\n  for (const i of items) for (const [k, v] of Object.entries(i.codes ?? {})) codes[k] = (codes[k] ?? 0) + v;\n  const top_codes = Object.entries(codes).map(([code, count]) => ({ code, count })).sort((a, b) => b.count - a.count || (a.code < b.code ? -1 : a.code > b.code ? 1 : 0));\n  const avg = batches.length ? r4(batches.reduce((s, b) => s + b.score, 0) / batches.length) : 0;\n  const worst = batches.reduce((w, b) => (w === null || b.score < w.score ? b : w), null);\n  let trend = '그대로';\n  if (batches.length >= 2) { const d = batches.at(-1).score - batches[0].score; trend = d > 0.05 ? '좋아짐' : d < -0.05 ? '나빠짐' : '그대로'; }\n  return { count: batches.length, batches, avg_score: avg, worst_batch: worst?.batch ?? null, rejected_batches: batches.filter((b) => b.rejected).length, top_codes, trend };\n};\nconst out = summary(all.filter((i) => !want || i.dataset === want));\n\nout.by_dataset = {};\nfor (const name of [...new Set(all.map((i) => i.dataset ?? ''))]) {\n  const s = summary(all.filter((i) => (i.dataset ?? '') === name));\n  out.by_dataset[name] = { count: s.count, avg_score: s.avg_score, worst_batch: s.worst_batch, top_code: s.top_codes[0]?.code ?? null };\n}\nconst names = Object.keys(out.by_dataset);\nout.worst_dataset = names.length ? names.reduce((w, n) => (out.by_dataset[n].avg_score < out.by_dataset[w].avg_score ? n : w)) : null;\nreturn [{ json: out }];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "c4fa7448-4a77-5856-91b6-37ae2d841a7c"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "79bb121c-6ef3-546d-8b1c-9ae6dda0a815"
+    }
+  ],
+  "connections": {
+    "Report webhook": {
+      "main": [
+        [
+          {
+            "node": "Get log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get log": {
+      "main": [
+        [
+          {
+            "node": "Make report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make report": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

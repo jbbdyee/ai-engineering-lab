@@ -1,0 +1,10 @@
+name,dept,email,phone,joined
+오세훈,영업팀,sehoon.oh@example.com,010-2222-3333,2026-10-01
+윤하늘,재무팀,haneul.yoon@example.com,,2026-10-05
+강민수,개발팀,minsu.kang@example,010-4444-5555,2026-10-06
+서지아,마케팅팀,jia.seo@example.com,010-6666-7777,2026-10-07
+임도윤,인사팀,doyun.lim@example.com,010-8888-9999,2026-13-01
+,IT팀,noname@example.com,,2026-10-09
+배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12
+배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12
+정다은,IT팀,daeun.jung@example.com,010-1111-2222,2026-10-14

@@ -1,0 +1,366 @@
+{
+  "cases": "lab03-challenge2.json",
+  "webhook": "my-quality-report",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "검사도 품질 기록 (직원 · 티켓 · FAQ)",
+      "webhook": "http://localhost:8800/quality-log/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 3,
+        "items": [
+          {
+            "batch": "HR-1",
+            "dataset": "employee",
+            "total": 9,
+            "valid": 4,
+            "quarantined": 5,
+            "rejected": false,
+            "score": 0.4444,
+            "codes": {
+              "bad_format:email": 1,
+              "not_allowed:dept": 1,
+              "bad_format:joined": 1,
+              "missing:name": 1,
+              "duplicate_in_batch": 1
+            },
+            "at": "2026-11-01T18:11:30"
+          },
+          {
+            "batch": "TK-1",
+            "dataset": "ticket",
+            "total": 9,
+            "valid": 2,
+            "quarantined": 7,
+            "rejected": false,
+            "score": 0.2222,
+            "codes": {
+              "bad_format:ticket_id": 1,
+              "not_allowed:priority": 1,
+              "bad_format:opened": 1,
+              "too_short:title": 1,
+              "bad_format:contact": 1,
+              "duplicate_in_batch": 1,
+              "missing:requester": 1
+            },
+            "at": "2026-11-01T18:11:30"
+          },
+          {
+            "batch": "B-3",
+            "dataset": "faq",
+            "total": 6,
+            "valid": 5,
+            "quarantined": 1,
+            "rejected": false,
+            "score": 0.8333,
+            "codes": {
+              "answer_too_short": 1
+            },
+            "at": "2026-11-01T18:11:35"
+          }
+        ]
+      }
+    },
+    {
+      "case": "데이터셋마다 나눠 보기",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 3,
+        "batches": [
+          {
+            "batch": "HR-1",
+            "score": 0.4444,
+            "rejected": false,
+            "total": 9
+          },
+          {
+            "batch": "TK-1",
+            "score": 0.2222,
+            "rejected": false,
+            "total": 9
+          },
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          }
+        ],
+        "avg_score": 0.5,
+        "worst_batch": "TK-1",
+        "rejected_batches": 0,
+        "top_codes": [
+          {
+            "code": "duplicate_in_batch",
+            "count": 2
+          },
+          {
+            "code": "answer_too_short",
+            "count": 1
+          },
+          {
+            "code": "bad_format:contact",
+            "count": 1
+          },
+          {
+            "code": "bad_format:email",
+            "count": 1
+          },
+          {
+            "code": "bad_format:joined",
+            "count": 1
+          },
+          {
+            "code": "bad_format:opened",
+            "count": 1
+          },
+          {
+            "code": "bad_format:ticket_id",
+            "count": 1
+          },
+          {
+            "code": "missing:name",
+            "count": 1
+          },
+          {
+            "code": "missing:requester",
+            "count": 1
+          },
+          {
+            "code": "not_allowed:dept",
+            "count": 1
+          },
+          {
+            "code": "not_allowed:priority",
+            "count": 1
+          },
+          {
+            "code": "too_short:title",
+            "count": 1
+          }
+        ],
+        "trend": "좋아짐",
+        "by_dataset": {
+          "employee": {
+            "count": 1,
+            "avg_score": 0.4444,
+            "worst_batch": "HR-1",
+            "top_code": "bad_format:email"
+          },
+          "ticket": {
+            "count": 1,
+            "avg_score": 0.2222,
+            "worst_batch": "TK-1",
+            "top_code": "bad_format:contact"
+          },
+          "faq": {
+            "count": 1,
+            "avg_score": 0.8333,
+            "worst_batch": "B-3",
+            "top_code": "answer_too_short"
+          }
+        },
+        "worst_dataset": "ticket"
+      }
+    },
+    {
+      "case": "가장 나쁜 데이터셋 · 그 이유",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 3,
+        "batches": [
+          {
+            "batch": "HR-1",
+            "score": 0.4444,
+            "rejected": false,
+            "total": 9
+          },
+          {
+            "batch": "TK-1",
+            "score": 0.2222,
+            "rejected": false,
+            "total": 9
+          },
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          }
+        ],
+        "avg_score": 0.5,
+        "worst_batch": "TK-1",
+        "rejected_batches": 0,
+        "top_codes": [
+          {
+            "code": "duplicate_in_batch",
+            "count": 2
+          },
+          {
+            "code": "answer_too_short",
+            "count": 1
+          },
+          {
+            "code": "bad_format:contact",
+            "count": 1
+          },
+          {
+            "code": "bad_format:email",
+            "count": 1
+          },
+          {
+            "code": "bad_format:joined",
+            "count": 1
+          },
+          {
+            "code": "bad_format:opened",
+            "count": 1
+          },
+          {
+            "code": "bad_format:ticket_id",
+            "count": 1
+          },
+          {
+            "code": "missing:name",
+            "count": 1
+          },
+          {
+            "code": "missing:requester",
+            "count": 1
+          },
+          {
+            "code": "not_allowed:dept",
+            "count": 1
+          },
+          {
+            "code": "not_allowed:priority",
+            "count": 1
+          },
+          {
+            "code": "too_short:title",
+            "count": 1
+          }
+        ],
+        "trend": "좋아짐",
+        "by_dataset": {
+          "employee": {
+            "count": 1,
+            "avg_score": 0.4444,
+            "worst_batch": "HR-1",
+            "top_code": "bad_format:email"
+          },
+          "ticket": {
+            "count": 1,
+            "avg_score": 0.2222,
+            "worst_batch": "TK-1",
+            "top_code": "bad_format:contact"
+          },
+          "faq": {
+            "count": 1,
+            "avg_score": 0.8333,
+            "worst_batch": "B-3",
+            "top_code": "answer_too_short"
+          }
+        },
+        "worst_dataset": "ticket"
+      }
+    },
+    {
+      "case": "한 데이터셋만 (앞의 칸은 그대로)",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "dataset": "ticket"
+      },
+      "response": {
+        "count": 1,
+        "batches": [
+          {
+            "batch": "TK-1",
+            "score": 0.2222,
+            "rejected": false,
+            "total": 9
+          }
+        ],
+        "avg_score": 0.2222,
+        "worst_batch": "TK-1",
+        "rejected_batches": 0,
+        "top_codes": [
+          {
+            "code": "bad_format:contact",
+            "count": 1
+          },
+          {
+            "code": "bad_format:opened",
+            "count": 1
+          },
+          {
+            "code": "bad_format:ticket_id",
+            "count": 1
+          },
+          {
+            "code": "duplicate_in_batch",
+            "count": 1
+          },
+          {
+            "code": "missing:requester",
+            "count": 1
+          },
+          {
+            "code": "not_allowed:priority",
+            "count": 1
+          },
+          {
+            "code": "too_short:title",
+            "count": 1
+          }
+        ],
+        "trend": "그대로",
+        "by_dataset": {
+          "employee": {
+            "count": 1,
+            "avg_score": 0.4444,
+            "worst_batch": "HR-1",
+            "top_code": "bad_format:email"
+          },
+          "ticket": {
+            "count": 1,
+            "avg_score": 0.2222,
+            "worst_batch": "TK-1",
+            "top_code": "bad_format:contact"
+          },
+          "faq": {
+            "count": 1,
+            "avg_score": 0.8333,
+            "worst_batch": "B-3",
+            "top_code": "answer_too_short"
+          }
+        },
+        "worst_dataset": "ticket"
+      }
+    }
+  ]
+}

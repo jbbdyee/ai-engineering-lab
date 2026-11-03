@@ -1,0 +1,78 @@
+{
+  "webhook": "my-faq-import",
+  "before": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quarantine-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quality-log-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "webhook": "my-faq-import",
+      "request": "requests/faq-batch-2.json"
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "고친 두 줄 다시 가져오기",
+      "request": "requests/faq-batch-2-fixed.json",
+      "expect": {
+        "equals": {
+          "imported": 2,
+          "quarantined": 0,
+          "score": 1
+        }
+      }
+    },
+    {
+      "name": "격리함이 비었나",
+      "url": "http://localhost:8800/quarantine/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 0
+        }
+      }
+    },
+    {
+      "name": "FAQ에 FAQ-209 · FAQ-210",
+      "url": "http://localhost:8800/faq/list",
+      "body": {},
+      "expect": {
+        "contains": {
+          "faqs": "FAQ-210"
+        },
+        "equals": {
+          "count": 16
+        }
+      }
+    },
+    {
+      "name": "품질 기록 · 점수 1",
+      "url": "http://localhost:8800/quality-log/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 2,
+          "items.1.score": 1
+        }
+      }
+    }
+  ]
+}

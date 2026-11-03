@@ -1,0 +1,10 @@
+{
+  "name": "faq",
+  "key": "id",
+  "fields": {
+    "id": {"type": "pattern", "required": true, "pattern": "^FAQ-\\d{3}$"},
+    "title": {"type": "string", "required": true, "max": 40},
+    "keywords": {"type": "list", "required": true, "min_items": 1, "max_items": 8},
+    "answer": {"type": "string", "required": true, "min": 10, "max": 300}
+  }
+}

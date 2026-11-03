@@ -1,0 +1,71 @@
+{
+  "schema": "ticket",
+  "batch": "TK-1",
+  "items": [
+    {
+      "ticket_id": "T-2001",
+      "title": "모니터가 켜지지 않음",
+      "requester": "박서연",
+      "priority": "normal",
+      "opened": "2026-10-28",
+      "contact": "010-2345-6789"
+    },
+    {
+      "ticket_id": "T-12",
+      "title": "메일 첨부가 안 열림",
+      "requester": "이준호",
+      "priority": "low",
+      "opened": "2026-10-28"
+    },
+    {
+      "ticket_id": "T-2003",
+      "title": "VPN이 계속 끊김",
+      "requester": "최유진",
+      "priority": "urgent",
+      "opened": "2026-10-29"
+    },
+    {
+      "ticket_id": "T-2004",
+      "title": "키보드 교체 요청",
+      "requester": "한지훈",
+      "priority": "low",
+      "opened": "2026-02-30"
+    },
+    {
+      "ticket_id": "T-2005",
+      "title": "프린터",
+      "requester": "김민지",
+      "priority": "normal",
+      "opened": "2026-10-29"
+    },
+    {
+      "ticket_id": "T-2006",
+      "title": "공유 드라이브 권한",
+      "requester": "박서연",
+      "priority": "normal",
+      "opened": "2026-10-30",
+      "contact": "010-12-3456"
+    },
+    {
+      "ticket_id": "T-2001",
+      "title": "모니터가 또 꺼짐",
+      "requester": "박서연",
+      "priority": "high",
+      "opened": "2026-10-30"
+    },
+    {
+      "ticket_id": "T-2008",
+      "title": "화상회의 카메라 대여",
+      "requester": "",
+      "priority": "low",
+      "opened": "2026-10-30"
+    },
+    {
+      "ticket_id": "T-2009",
+      "title": "새 직원 계정 만들기",
+      "requester": "이준호",
+      "priority": "high",
+      "opened": "2026-10-30"
+    }
+  ]
+}

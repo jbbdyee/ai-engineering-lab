@@ -76,7 +76,7 @@ GET  /logs?from=2026-10-19&to=2026-10-30&tag=&source=all|seed|live&limit=
                              -> {"count", "logs": [...]}  dates inclusive (from <= started_at[:10] <= to), empty = all
 POST /logs/query             same filters in the body {"from", "to", "tag", "source"}
 POST /logs                   body {"items": [{... one run ...}]} -> {"stored", "live"}  (started_at = now when missing)
-POST /logs-reset             remove live logs (the seeded two weeks stay) -> {"cleared"}
+POST /logs-reset             remove live logs (the seeded two weeks stay); body {"tag"} removes only that tag -> {"cleared"}
 GET  /faq-extra              -> {"count", "faq": [...]} the FAQ entries added today
 POST /faq/add                body {"id", "title", "keywords": [...], "answer"} -> {"added", "size"};  POST /faq-reset
 """
@@ -392,9 +392,14 @@ class Handler(BaseHTTPRequestHandler):
                     LIVE_LOGS.append({"started_at": now, "source": "live", **item})
                 return self.send_json(200, {"stored": len(items), "live": len(LIVE_LOGS)})
         if url.path == "/logs-reset":
+            tag = body.get("tag") if isinstance(body, dict) else None
             with LOCK:
                 count = len(LIVE_LOGS)
-                LIVE_LOGS.clear()
+                if tag:
+                    LIVE_LOGS[:] = [log for log in LIVE_LOGS if log.get("tag") != tag]
+                else:
+                    LIVE_LOGS.clear()
+                count -= len(LIVE_LOGS)
             return self.send_json(200, {"cleared": count})
         if url.path == "/faq/add":
             if not body.get("id") or not body.get("answer") or not isinstance(body.get("keywords"), list):

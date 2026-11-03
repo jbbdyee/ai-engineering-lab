@@ -2,6 +2,12 @@
   "webhook": "my-helpdesk",
   "before": [
     {
+      "url": "http://localhost:8800/logs-reset",
+      "body": {
+        "tag": "after"
+      }
+    },
+    {
       "url": "http://localhost:8800/admin/fault",
       "body": {
         "faq": "slow",

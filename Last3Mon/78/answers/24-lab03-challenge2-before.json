@@ -1,0 +1,136 @@
+{
+  "cases": "lab03-challenge2.json",
+  "webhook": "my-quality-report",
+  "passed": 0,
+  "total": 4,
+  "results": [
+    {
+      "case": "검사도 품질 기록 (직원 · 티켓 · FAQ)",
+      "webhook": "http://localhost:8800/quality-log/list",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "count = 1 (expected 3)",
+        "items.0.dataset = faq (expected employee)",
+        "items.0.score = 0.8333 (expected 0.4444)",
+        "items.1.dataset = null (expected ticket)",
+        "items.2.dataset = null (expected faq)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 1,
+        "items": [
+          {
+            "batch": "B-3",
+            "dataset": "faq",
+            "total": 6,
+            "valid": 5,
+            "quarantined": 1,
+            "rejected": false,
+            "score": 0.8333,
+            "codes": {
+              "answer_too_short": 1
+            },
+            "at": "2026-11-01T18:11:10"
+          }
+        ]
+      }
+    },
+    {
+      "case": "데이터셋마다 나눠 보기",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "count = 1 (expected 3)",
+        "by_dataset.employee.avg_score = null (expected 0.4444)",
+        "by_dataset.ticket.avg_score = null (expected 0.2222)",
+        "by_dataset.faq.avg_score = null (expected 0.8333)"
+      ],
+      "seconds": 0.2,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 1,
+        "batches": [
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          }
+        ],
+        "avg_score": 0.8333,
+        "worst_batch": "B-3",
+        "rejected_batches": 0,
+        "top_codes": [
+          {
+            "code": "answer_too_short",
+            "count": 1
+          }
+        ],
+        "trend": "그대로"
+      }
+    },
+    {
+      "case": "가장 나쁜 데이터셋 · 그 이유",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "worst_dataset = null (expected ticket)",
+        "by_dataset.employee.top_code = null (expected bad_format:email)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 1,
+        "batches": [
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          }
+        ],
+        "avg_score": 0.8333,
+        "worst_batch": "B-3",
+        "rejected_batches": 0,
+        "top_codes": [
+          {
+            "code": "answer_too_short",
+            "count": 1
+          }
+        ],
+        "trend": "그대로"
+      }
+    },
+    {
+      "case": "한 데이터셋만 (앞의 칸은 그대로)",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "count = 0 (expected 1)",
+        "worst_batch = null (expected TK-1)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "dataset": "ticket"
+      },
+      "response": {
+        "count": 0,
+        "batches": [],
+        "avg_score": 0,
+        "worst_batch": null,
+        "rejected_batches": 0,
+        "top_codes": [],
+        "trend": "그대로"
+      }
+    }
+  ]
+}

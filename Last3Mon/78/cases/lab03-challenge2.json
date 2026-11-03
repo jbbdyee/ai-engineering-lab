@@ -1,0 +1,84 @@
+{
+  "webhook": "my-quality-report",
+  "before": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quarantine-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quality-log-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "webhook": "my-check",
+      "body": "requests/employees-new.json"
+    },
+    {
+      "webhook": "my-check",
+      "body": "requests/tickets-new.json"
+    },
+    {
+      "webhook": "my-faq-import",
+      "body": "requests/faq-batch-3.json"
+    }
+  ],
+  "cases": [
+    {
+      "name": "검사도 품질 기록 (직원 · 티켓 · FAQ)",
+      "url": "http://localhost:8800/quality-log/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 3,
+          "items.0.dataset": "employee",
+          "items.0.score": 0.4444,
+          "items.1.dataset": "ticket",
+          "items.2.dataset": "faq"
+        }
+      }
+    },
+    {
+      "name": "데이터셋마다 나눠 보기",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 3,
+          "by_dataset.employee.avg_score": 0.4444,
+          "by_dataset.ticket.avg_score": 0.2222,
+          "by_dataset.faq.avg_score": 0.8333
+        }
+      }
+    },
+    {
+      "name": "가장 나쁜 데이터셋 · 그 이유",
+      "body": {},
+      "expect": {
+        "equals": {
+          "worst_dataset": "ticket",
+          "by_dataset.employee.top_code": "bad_format:email"
+        }
+      }
+    },
+    {
+      "name": "한 데이터셋만 (앞의 칸은 그대로)",
+      "body": {
+        "dataset": "ticket"
+      },
+      "expect": {
+        "equals": {
+          "count": 1,
+          "worst_batch": "TK-1",
+          "trend": "그대로"
+        }
+      }
+    }
+  ]
+}

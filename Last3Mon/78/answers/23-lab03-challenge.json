@@ -1,0 +1,308 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-quality-report",
+  "passed": 4,
+  "total": 4,
+  "results": [
+    {
+      "case": "배치 네 개 · 평균 · 가장 나쁜 배치",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 4,
+        "batches": [
+          {
+            "batch": "B-1",
+            "score": 0,
+            "rejected": true,
+            "total": 13
+          },
+          {
+            "batch": "B-2",
+            "score": 0.8,
+            "rejected": false,
+            "total": 10
+          },
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          },
+          {
+            "batch": "B-2-fix",
+            "score": 1,
+            "rejected": false,
+            "total": 2
+          }
+        ],
+        "avg_score": 0.6583,
+        "worst_batch": "B-1",
+        "rejected_batches": 1,
+        "top_codes": [
+          {
+            "code": "pii",
+            "count": 2
+          },
+          {
+            "code": "answer_missing",
+            "count": 1
+          },
+          {
+            "code": "answer_too_long",
+            "count": 1
+          },
+          {
+            "code": "answer_too_short",
+            "count": 1
+          },
+          {
+            "code": "duplicate_in_batch",
+            "count": 1
+          },
+          {
+            "code": "exists_id",
+            "count": 1
+          },
+          {
+            "code": "external_link",
+            "count": 1
+          },
+          {
+            "code": "id_format",
+            "count": 1
+          },
+          {
+            "code": "keywords_missing",
+            "count": 1
+          },
+          {
+            "code": "llm_mismatch",
+            "count": 1
+          },
+          {
+            "code": "same_title",
+            "count": 1
+          },
+          {
+            "code": "title_missing",
+            "count": 1
+          }
+        ],
+        "trend": "좋아짐"
+      }
+    },
+    {
+      "case": "가장 많은 이유 · 흐름",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 4,
+        "batches": [
+          {
+            "batch": "B-1",
+            "score": 0,
+            "rejected": true,
+            "total": 13
+          },
+          {
+            "batch": "B-2",
+            "score": 0.8,
+            "rejected": false,
+            "total": 10
+          },
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          },
+          {
+            "batch": "B-2-fix",
+            "score": 1,
+            "rejected": false,
+            "total": 2
+          }
+        ],
+        "avg_score": 0.6583,
+        "worst_batch": "B-1",
+        "rejected_batches": 1,
+        "top_codes": [
+          {
+            "code": "pii",
+            "count": 2
+          },
+          {
+            "code": "answer_missing",
+            "count": 1
+          },
+          {
+            "code": "answer_too_long",
+            "count": 1
+          },
+          {
+            "code": "answer_too_short",
+            "count": 1
+          },
+          {
+            "code": "duplicate_in_batch",
+            "count": 1
+          },
+          {
+            "code": "exists_id",
+            "count": 1
+          },
+          {
+            "code": "external_link",
+            "count": 1
+          },
+          {
+            "code": "id_format",
+            "count": 1
+          },
+          {
+            "code": "keywords_missing",
+            "count": 1
+          },
+          {
+            "code": "llm_mismatch",
+            "count": 1
+          },
+          {
+            "code": "same_title",
+            "count": 1
+          },
+          {
+            "code": "title_missing",
+            "count": 1
+          }
+        ],
+        "trend": "좋아짐"
+      }
+    },
+    {
+      "case": "배치마다 점수 순서",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "count": 4,
+        "batches": [
+          {
+            "batch": "B-1",
+            "score": 0,
+            "rejected": true,
+            "total": 13
+          },
+          {
+            "batch": "B-2",
+            "score": 0.8,
+            "rejected": false,
+            "total": 10
+          },
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          },
+          {
+            "batch": "B-2-fix",
+            "score": 1,
+            "rejected": false,
+            "total": 2
+          }
+        ],
+        "avg_score": 0.6583,
+        "worst_batch": "B-1",
+        "rejected_batches": 1,
+        "top_codes": [
+          {
+            "code": "pii",
+            "count": 2
+          },
+          {
+            "code": "answer_missing",
+            "count": 1
+          },
+          {
+            "code": "answer_too_long",
+            "count": 1
+          },
+          {
+            "code": "answer_too_short",
+            "count": 1
+          },
+          {
+            "code": "duplicate_in_batch",
+            "count": 1
+          },
+          {
+            "code": "exists_id",
+            "count": 1
+          },
+          {
+            "code": "external_link",
+            "count": 1
+          },
+          {
+            "code": "id_format",
+            "count": 1
+          },
+          {
+            "code": "keywords_missing",
+            "count": 1
+          },
+          {
+            "code": "llm_mismatch",
+            "count": 1
+          },
+          {
+            "code": "same_title",
+            "count": 1
+          },
+          {
+            "code": "title_missing",
+            "count": 1
+          }
+        ],
+        "trend": "좋아짐"
+      }
+    },
+    {
+      "case": "다른 데이터셋으로 거르기",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "dataset": "employee"
+      },
+      "response": {
+        "count": 0,
+        "batches": [],
+        "avg_score": 0,
+        "worst_batch": null,
+        "rejected_batches": 0,
+        "top_codes": [],
+        "trend": "그대로"
+      }
+    }
+  ]
+}

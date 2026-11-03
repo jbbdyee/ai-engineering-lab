@@ -6863,6 +6863,8 @@ report: runs/lab03-20261031-075118.json
 
 ### 18 · Lab 03 예제 1 · 고치기 (timeout · FAQ 더하기) → `replay-after` 10/10 · `lab03` 4/4
 
+> 11/02 고침: 이 기록(10/31) 뒤에 `cases/replay-after.json` · `replay-normal.json`의 `before` 맨 앞에 `logs-reset` (`{"tag": "after"}` · `{"tag": "normal"}`)을 더했습니다. 지금 돌리면 결과 줄 맨 위에 `✔ before: POST http://localhost:8800/logs-reset · … · {"cleared": 0}`이 한 줄 더 나옵니다 (다시 돌리면 `{"cleared": 10}`). 나머지 결과는 같습니다.
+
 codex에 입력하는 프롬프트 (터미널 ①, 학생이 만들 파일 `my-work/helpdesk.json` · 이 기록에서 push한 같은 역할의 정답 `reference/lab03-example1-helpdesk-fixed.json`):
 
 ```text
@@ -8298,6 +8300,8 @@ report: runs/lab02-challenge-20261031-075213.json
 - `lab02-challenge` 5/5 그대로. 예상한 결과.
 
 ### 21 · Lab 03 예제 3 · 고친 것의 대가 → `replay-normal` 10/10 · `lab03-cost` 4/4
+
+> 11/02 고침: 이 기록(10/31) 뒤에 `cases/replay-after.json` · `replay-normal.json`의 `before` 맨 앞에 `logs-reset` (`{"tag": "after"}` · `{"tag": "normal"}`)을 더했습니다. 지금 돌리면 결과 줄 맨 위에 `✔ before: POST http://localhost:8800/logs-reset · … · {"cleared": 0}`이 한 줄 더 나옵니다 (다시 돌리면 `{"cleared": 10}`). 나머지 결과는 같습니다.
 
 실행한 명령:
 

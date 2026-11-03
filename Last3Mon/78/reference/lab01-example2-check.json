@@ -1,0 +1,146 @@
+{
+  "name": "78 FAQ check (reference)",
+  "nodes": [
+    {
+      "name": "Check webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-faq-check",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "7f191b41-c9cb-53ba-8811-77f4c563ae66",
+      "webhookId": "32a0de1e-2479-5dbe-8d14-3d95f1e3cb9c"
+    },
+    {
+      "name": "Is a list?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ Array.isArray($json.body.items) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "a43d0f21-b799-5552-a9e0-34296447da2f"
+    },
+    {
+      "name": "Reject body",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"items must be a list\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        560
+      ],
+      "id": "7baa4654-ee8f-597e-887f-ff49602a8280"
+    },
+    {
+      "name": "Check rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Check webhook').first().json.body;\nconst seen = new Set();\nconst rows = body.items.map((r) => {\n  const errors = [], warnings = [];\n  const id = String(r?.id ?? '');\n  const title = String(r?.title ?? '').trim();\n  const answer = String(r?.answer ?? '').trim();\n  if (!/^FAQ-\\d{3}$/.test(id)) errors.push('id_format');\n  if (!title) errors.push('title_missing'); else if (title.length > 40) errors.push('title_too_long');\n  if (!Array.isArray(r?.keywords) || r.keywords.length === 0) errors.push('keywords_missing');\n  if (!answer) errors.push('answer_missing'); else if (answer.length < 10) errors.push('answer_too_short'); else if (answer.length > 300) errors.push('answer_too_long');\n  if (seen.has(id)) errors.push('duplicate_in_batch');\n  seen.add(id);\n  if (/01[016789][-. ]?\\d{3,4}[-. ]?\\d{4}/.test(answer) || /[\\w.+-]+@[\\w-]+\\.[\\w.]+/.test(answer)) errors.push('pii');\n  if (/https?:\\/\\/(?!intra\\.example\\.com(?![\\w.-]))/i.test(answer)) errors.push('external_link');\n  return { id, ok: errors.length === 0, errors, warnings };\n});\nconst codes = {};\nfor (const row of rows) for (const e of row.errors) codes[e] = (codes[e] ?? 0) + 1;\nconst valid = rows.filter((r) => r.ok).length;\nconst out = { batch: body.batch ?? '', total: rows.length, valid, invalid: rows.length - valid,\n  with_warnings: rows.filter((r) => r.warnings.length).length, rows, codes };\nreturn [{ json: out }];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "143f98e1-71b7-5da7-b547-7fd5f9516f92"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "c47d329d-d69b-562e-8383-2538c1c9adf1"
+    }
+  ],
+  "connections": {
+    "Is a list?": {
+      "main": [
+        [
+          {
+            "node": "Check rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check rows": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check webhook": {
+      "main": [
+        [
+          {
+            "node": "Is a list?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

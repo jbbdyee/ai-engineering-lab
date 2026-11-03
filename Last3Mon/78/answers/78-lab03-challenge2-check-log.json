@@ -1,0 +1,236 @@
+{
+  "name": "78 Schema check + quality log (answer)",
+  "nodes": [
+    {
+      "name": "Check webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-check",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "71f637f7-7dd3-5109-b1eb-e41f19084672",
+      "webhookId": "2e73b93d-487c-5d47-abf7-0367dc834812"
+    },
+    {
+      "name": "Get schema",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "=http://data-api:8800/schemas/{{ encodeURIComponent($json.body.schema ?? '') }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "c2e0870e-6d3c-52e5-9eea-c2d612aa9c02"
+    },
+    {
+      "name": "Known schema?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.fields !== undefined }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "5cbdeaec-a7b4-5d52-b1dc-a9652df407f7"
+    },
+    {
+      "name": "Unknown schema",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'unknown schema', schema: $('Check webhook').first().json.body.schema ?? null }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        660,
+        560
+      ],
+      "id": "0f5c53bb-1643-5cab-958d-183709fc78bd"
+    },
+    {
+      "name": "Check rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Check webhook').first().json.body;\nconst schema = $json;\nlet items = body.items;\nif (typeof body.csv === 'string') {\n  const [head, ...lines] = body.csv.trim().split(/\\r?\\n/);\n  const cols = head.split(',').map((c) => c.trim());\n  items = lines.map((line) => Object.fromEntries(line.split(',').map((v, i) => [cols[i], v.trim()])));\n}\nconst isDate = (v) => { if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(v)) return false; const d = new Date(v + 'T00:00:00Z'); return !isNaN(d) && d.toISOString().slice(0, 10) === v; };\nconst seen = new Set();\nconst rows = (Array.isArray(items) ? items : []).map((r, index) => {\n  const errors = [];\n  for (const [name, f] of Object.entries(schema.fields)) {\n    const v = r?.[name];\n    const empty = v === undefined || v === null || (typeof v === 'string' && v.trim() === '') || (Array.isArray(v) && v.length === 0);\n    if (empty) { if (f.required) errors.push(`missing:${name}`); continue; }\n    const s = String(v);\n    if (f.type === 'string') { if (f.max && s.length > f.max) errors.push(`too_long:${name}`); if (f.min && s.length < f.min) errors.push(`too_short:${name}`); }\n    if (f.type === 'enum' && !f.values.includes(s)) errors.push(`not_allowed:${name}`);\n    if (f.type === 'email' && !/^[\\w.+-]+@[\\w-]+(\\.[\\w-]+)+$/.test(s)) errors.push(`bad_format:${name}`);\n    if (f.type === 'phone' && !/^0\\d{1,2}-\\d{3,4}-\\d{4}$/.test(s)) errors.push(`bad_format:${name}`);\n    if (f.type === 'date' && !isDate(s)) errors.push(`bad_format:${name}`);\n    if (f.type === 'pattern' && !new RegExp(f.pattern).test(s)) errors.push(`bad_format:${name}`);\n    if (f.type === 'list') { if (!Array.isArray(v)) errors.push(`bad_format:${name}`); else { if (f.min_items && v.length < f.min_items) errors.push(`too_few:${name}`); if (f.max_items && v.length > f.max_items) errors.push(`too_many:${name}`); } }\n  }\n  const key = String(r?.[schema.key] ?? '');\n  if (key && seen.has(key)) errors.push('duplicate_in_batch');\n  if (key) seen.add(key);\n  return { row: index + 1, key, ok: errors.length === 0, errors };\n});\nconst codes = {};\nfor (const row of rows) for (const e of row.errors) codes[e] = (codes[e] ?? 0) + 1;\nconst valid = rows.filter((r) => r.ok).length;\nreturn [{ json: { schema: schema.name, batch: body.batch ?? '', total: rows.length, valid, invalid: rows.length - valid, rows, codes } }];"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "709a8af9-9764-5bc9-9ba6-832437e37d66"
+    },
+    {
+      "name": "Log quality",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/quality-log",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ batch: $('Check rows').first().json.batch, dataset: $('Check rows').first().json.schema, total: $('Check rows').first().json.total, valid: $('Check rows').first().json.valid, quarantined: $('Check rows').first().json.invalid, rejected: false, score: $('Check rows').first().json.total ? Math.round($('Check rows').first().json.valid / $('Check rows').first().json.total * 10000) / 10000 : 0, codes: $('Check rows').first().json.codes }) }}"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "6b7a1222-281c-5a0b-8e5d-ce8340bace06"
+    },
+    {
+      "name": "Result again",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: $('Check rows').first().json }];"
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "44b28b34-d252-5957-8be7-db1828cfe536"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "bde5ad2b-cfad-55b6-893b-1110d25c6d0b"
+    }
+  ],
+  "connections": {
+    "Check webhook": {
+      "main": [
+        [
+          {
+            "node": "Get schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get schema": {
+      "main": [
+        [
+          {
+            "node": "Known schema?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known schema?": {
+      "main": [
+        [
+          {
+            "node": "Check rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unknown schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check rows": {
+      "main": [
+        [
+          {
+            "node": "Log quality",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log quality": {
+      "main": [
+        [
+          {
+            "node": "Result again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result again": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

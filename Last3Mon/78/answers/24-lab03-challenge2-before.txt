@@ -1,0 +1,447 @@
+$ uv run tools/flow.py test cases/lab03-challenge2.json -v
+✔ before: POST http://localhost:8800/faq-reset · HTTP 200 · 0.0s · {"cleared": 0}
+    → request  POST http://localhost:8800/faq-reset
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 0
+      }
+✔ before: POST http://localhost:8800/quarantine-clear · HTTP 200 · 0.0s · {"cleared": 1}
+    → request  POST http://localhost:8800/quarantine-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 1
+      }
+✔ before: POST http://localhost:8800/quality-log-clear · HTTP 200 · 0.0s · {"cleared": 4}
+    → request  POST http://localhost:8800/quality-log-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 4
+      }
+✔ before: POST http://localhost:8800/alerts-clear · HTTP 200 · 0.0s · {"cleared": 3}
+    → request  POST http://localhost:8800/alerts-clear
+      {}
+    ← response HTTP 200
+      {
+        "cleared": 3
+      }
+✔ before: POST /webhook/my-check · HTTP 200 · 0.1s · {"schema": "employee", "batch": "HR-1", "total": 9, "valid": 4, "invalid": 5, "rows": [{"row": 1, "key": "sehoon.oh@exam
+    → request  POST /webhook/my-check
+      {
+        "schema": "employee",
+        "batch": "HR-1",
+        "csv": "name,dept,email,phone,joined\n오세훈,영업팀,sehoon.oh@example.com,010-2222-3333,2026-10-01\n윤하늘,재무팀,haneul.yoon@example.com,,2026-10-05\n강민수,개발팀,minsu.kang@example,010-4444-5555,2026-10-06\n서지아,마케팅팀,jia.seo@example.com,010-6666-7777,2026-10-07\n임도윤,인사팀,doyun.lim@example.com,010-8888-9999,2026-13-01\n,IT팀,noname@example.com,,2026-10-09\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n정다은,IT팀,daeun.jung@example.com,010-1111-2222,2026-10-14"
+      }
+    ← response HTTP 200
+      {
+        "schema": "employee",
+        "batch": "HR-1",
+        "total": 9,
+        "valid": 4,
+        "invalid": 5,
+        "rows": [
+          {
+            "row": 1,
+            "key": "sehoon.oh@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 2,
+            "key": "haneul.yoon@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 3,
+            "key": "minsu.kang@example",
+            "ok": false,
+            "errors": [
+              "bad_format:email"
+            ]
+          },
+          {
+            "row": 4,
+            "key": "jia.seo@example.com",
+            "ok": false,
+            "errors": [
+              "not_allowed:dept"
+            ]
+          },
+          {
+            "row": 5,
+            "key": "doyun.lim@example.com",
+            "ok": false,
+            "errors": [
+              "bad_format:joined"
+            ]
+          },
+          {
+            "row": 6,
+            "key": "noname@example.com",
+            "ok": false,
+            "errors": [
+              "missing:name"
+            ]
+          },
+          {
+            "row": 7,
+            "key": "sua.bae@example.com",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 8,
+            "key": "sua.bae@example.com",
+            "ok": false,
+            "errors": [
+              "duplicate_in_batch"
+            ]
+          },
+          {
+            "row": 9,
+            "key": "daeun.jung@example.com",
+            "ok": true,
+            "errors": []
+          }
+        ],
+        "codes": {
+          "bad_format:email": 1,
+          "not_allowed:dept": 1,
+          "bad_format:joined": 1,
+          "missing:name": 1,
+          "duplicate_in_batch": 1
+        }
+      }
+✔ before: POST /webhook/my-check · HTTP 200 · 0.1s · {"schema": "ticket", "batch": "TK-1", "total": 9, "valid": 2, "invalid": 7, "rows": [{"row": 1, "key": "T-2001", "ok": t
+    → request  POST /webhook/my-check
+      {
+        "schema": "ticket",
+        "batch": "TK-1",
+        "items": [
+          {
+            "ticket_id": "T-2001",
+            "title": "모니터가 켜지지 않음",
+            "requester": "박서연",
+            "priority": "normal",
+            "opened": "2026-10-28",
+            "contact": "010-2345-6789"
+          },
+          {
+            "ticket_id": "T-12",
+            "title": "메일 첨부가 안 열림",
+            "requester": "이준호",
+            "priority": "low",
+            "opened": "2026-10-28"
+          },
+          {
+            "ticket_id": "T-2003",
+            "title": "VPN이 계속 끊김",
+            "requester": "최유진",
+            "priority": "urgent",
+            "opened": "2026-10-29"
+          },
+          {
+            "ticket_id": "T-2004",
+            "title": "키보드 교체 요청",
+            "requester": "한지훈",
+            "priority": "low",
+            "opened": "2026-02-30"
+          },
+          {
+            "ticket_id": "T-2005",
+            "title": "프린터",
+            "requester": "김민지",
+            "priority": "normal",
+            "opened": "2026-10-29"
+          },
+          {
+            "ticket_id": "T-2006",
+            "title": "공유 드라이브 권한",
+            "requester": "박서연",
+            "priority": "normal",
+            "opened": "2026-10-30",
+            "contact": "010-12-3456"
+          },
+          {
+            "ticket_id": "T-2001",
+            "title": "모니터가 또 꺼짐",
+            "requester": "박서연",
+            "priority": "high",
+            "opened": "2026-10-30"
+          },
+          {
+            "ticket_id": "T-2008",
+            "title": "화상회의 카메라 대여",
+            "requester": "",
+            "priority": "low",
+            "opened": "2026-10-30"
+          },
+          {
+            "ticket_id": "T-2009",
+            "title": "새 직원 계정 만들기",
+            "requester": "이준호",
+            "priority": "high",
+            "opened": "2026-10-30"
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "schema": "ticket",
+        "batch": "TK-1",
+        "total": 9,
+        "valid": 2,
+        "invalid": 7,
+        "rows": [
+          {
+            "row": 1,
+            "key": "T-2001",
+            "ok": true,
+            "errors": []
+          },
+          {
+            "row": 2,
+            "key": "T-12",
+            "ok": false,
+            "errors": [
+              "bad_format:ticket_id"
+            ]
+          },
+          {
+            "row": 3,
+            "key": "T-2003",
+            "ok": false,
+            "errors": [
+              "not_allowed:priority"
+            ]
+          },
+          {
+            "row": 4,
+            "key": "T-2004",
+            "ok": false,
+            "errors": [
+              "bad_format:opened"
+            ]
+          },
+          {
+            "row": 5,
+            "key": "T-2005",
+            "ok": false,
+            "errors": [
+              "too_short:title"
+            ]
+          },
+          {
+            "row": 6,
+            "key": "T-2006",
+            "ok": false,
+            "errors": [
+              "bad_format:contact"
+            ]
+          },
+          {
+            "row": 7,
+            "key": "T-2001",
+            "ok": false,
+            "errors": [
+              "duplicate_in_batch"
+            ]
+          },
+          {
+            "row": 8,
+            "key": "T-2008",
+            "ok": false,
+            "errors": [
+              "missing:requester"
+            ]
+          },
+          {
+            "row": 9,
+            "key": "T-2009",
+            "ok": true,
+            "errors": []
+          }
+        ],
+        "codes": {
+          "bad_format:ticket_id": 1,
+          "not_allowed:priority": 1,
+          "bad_format:opened": 1,
+          "too_short:title": 1,
+          "bad_format:contact": 1,
+          "duplicate_in_batch": 1,
+          "missing:requester": 1
+        }
+      }
+✔ before: POST /webhook/my-faq-import · HTTP 200 · 4.0s · {"batch": "B-3", "total": 6, "imported": 5, "quarantined": 1, "rejected": false, "score": 0.8333, "max_invalid_ratio": 0
+    → request  POST /webhook/my-faq-import
+      {
+        "batch": "B-3",
+        "items": [
+          {
+            "id": "FAQ-301",
+            "title": "택배 수령",
+            "keywords": [
+              "택배"
+            ],
+            "answer": "회사로 온 택배는 1층 안내 데스크에서 사원증을 보여 주고 받습니다."
+          },
+          {
+            "id": "FAQ-302",
+            "title": "주차 등록",
+            "keywords": [
+              "주차"
+            ],
+            "answer": "주차 등록은 총무팀 포털에서 차량 번호를 적어 신청합니다."
+          },
+          {
+            "id": "FAQ-303",
+            "title": "명함 신청",
+            "keywords": [
+              "명함"
+            ],
+            "answer": "명함은 인사 포털에서 신청하면 일주일 안에 자리로 배달됩니다."
+          },
+          {
+            "id": "FAQ-304",
+            "title": "사내 식당 메뉴",
+            "keywords": [
+              "식당",
+              "메뉴"
+            ],
+            "answer": "사내 식당 메뉴는 매주 월요일 아침 사내 게시판에 올라옵니다."
+          },
+          {
+            "id": "FAQ-305",
+            "title": "교육 신청",
+            "keywords": [
+              "교육"
+            ],
+            "answer": "짧"
+          },
+          {
+            "id": "FAQ-306",
+            "title": "건강검진",
+            "keywords": [
+              "건강검진"
+            ],
+            "answer": "건강검진은 매년 9월에 인사팀이 안내하며 지정 병원에서 받습니다."
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "batch": "B-3",
+        "total": 6,
+        "imported": 5,
+        "quarantined": 1,
+        "rejected": false,
+        "score": 0.8333,
+        "max_invalid_ratio": 0.3,
+        "codes": {
+          "answer_too_short": 1
+        },
+        "imported_ids": [
+          "FAQ-301",
+          "FAQ-302",
+          "FAQ-303",
+          "FAQ-304",
+          "FAQ-306"
+        ],
+        "quarantined_ids": [
+          "FAQ-305"
+        ],
+        "llm_calls": 5
+      }
+POST http://localhost:5678/webhook/my-quality-report · 4 case(s) × 1
+✘ 검사도 품질 기록 (직원 · 티켓 · FAQ) · 0.0s · count = 1 (expected 3); items.0.dataset = faq (expected employee); items.0.score = 0.8333 (expected 0.4444); items.1.dataset = null (expected ticket); items.2.dataset = null (expected faq)
+    → request  POST http://localhost:8800/quality-log/list
+      {}
+    ← response HTTP 200
+      {
+        "count": 1,
+        "items": [
+          {
+            "batch": "B-3",
+            "dataset": "faq",
+            "total": 6,
+            "valid": 5,
+            "quarantined": 1,
+            "rejected": false,
+            "score": 0.8333,
+            "codes": {
+              "answer_too_short": 1
+            },
+            "at": "2026-11-01T18:11:10"
+          }
+        ]
+      }
+✘ 데이터셋마다 나눠 보기 · 0.2s · count = 1 (expected 3); by_dataset.employee.avg_score = null (expected 0.4444); by_dataset.ticket.avg_score = null (expected 0.2222); by_dataset.faq.avg_score = null (expected 0.8333)
+    → request  POST /webhook/my-quality-report
+      {}
+    ← response HTTP 200
+      {
+        "count": 1,
+        "batches": [
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          }
+        ],
+        "avg_score": 0.8333,
+        "worst_batch": "B-3",
+        "rejected_batches": 0,
+        "top_codes": [
+          {
+            "code": "answer_too_short",
+            "count": 1
+          }
+        ],
+        "trend": "그대로"
+      }
+✘ 가장 나쁜 데이터셋 · 그 이유 · 0.1s · worst_dataset = null (expected ticket); by_dataset.employee.top_code = null (expected bad_format:email)
+    → request  POST /webhook/my-quality-report
+      {}
+    ← response HTTP 200
+      {
+        "count": 1,
+        "batches": [
+          {
+            "batch": "B-3",
+            "score": 0.8333,
+            "rejected": false,
+            "total": 6
+          }
+        ],
+        "avg_score": 0.8333,
+        "worst_batch": "B-3",
+        "rejected_batches": 0,
+        "top_codes": [
+          {
+            "code": "answer_too_short",
+            "count": 1
+          }
+        ],
+        "trend": "그대로"
+      }
+✘ 한 데이터셋만 (앞의 칸은 그대로) · 0.0s · count = 0 (expected 1); worst_batch = null (expected TK-1)
+    → request  POST /webhook/my-quality-report
+      {
+        "dataset": "ticket"
+      }
+    ← response HTTP 200
+      {
+        "count": 0,
+        "batches": [],
+        "avg_score": 0,
+        "worst_batch": null,
+        "rejected_batches": 0,
+        "top_codes": [],
+        "trend": "그대로"
+      }
+Passed 0/4
+report: runs/lab03-challenge2-20261101-181110.json

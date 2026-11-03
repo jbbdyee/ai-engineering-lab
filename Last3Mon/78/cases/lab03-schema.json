@@ -1,0 +1,63 @@
+{
+  "webhook": "my-check",
+  "cases": [
+    {
+      "name": "스키마 목록에 ticket이 있다",
+      "url": "http://localhost:8800/schemas/list",
+      "body": {},
+      "expect": {
+        "contains": {
+          "schemas": "ticket"
+        }
+      }
+    },
+    {
+      "name": "새 스키마 ticket · 워크플로우는 그대로 · 9줄 중 2줄 통과",
+      "request": "requests/tickets-new.json",
+      "expect": {
+        "equals": {
+          "schema": "ticket",
+          "total": 9,
+          "valid": 2,
+          "rows.0.ok": true
+        }
+      }
+    },
+    {
+      "name": "형식 · 목록 · 날짜 · 길이",
+      "request": "requests/tickets-new.json",
+      "expect": {
+        "contains": {
+          "rows.1.errors": "bad_format:ticket_id",
+          "rows.2.errors": "not_allowed:priority",
+          "rows.3.errors": "bad_format:opened",
+          "rows.4.errors": "too_short:title"
+        }
+      }
+    },
+    {
+      "name": "선택 칸 형식 · 중복 · 빈 칸, 선택 칸이 없어도 통과",
+      "request": "requests/tickets-new.json",
+      "expect": {
+        "equals": {
+          "rows.8.ok": true
+        },
+        "contains": {
+          "rows.5.errors": "bad_format:contact",
+          "rows.6.errors": "duplicate_in_batch",
+          "rows.7.errors": "missing:requester"
+        }
+      }
+    },
+    {
+      "name": "직원 CSV는 그대로 9줄 중 4줄",
+      "request": "requests/employees-new.json",
+      "expect": {
+        "equals": {
+          "schema": "employee",
+          "valid": 4
+        }
+      }
+    }
+  ]
+}

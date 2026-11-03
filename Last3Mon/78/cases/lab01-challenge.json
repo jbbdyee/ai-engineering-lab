@@ -1,0 +1,71 @@
+{
+  "webhook": "my-faq-check",
+  "before": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "이미 있는 id (FAQ-003)",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "contains": {
+          "rows.10.errors": "exists_id"
+        }
+      }
+    },
+    {
+      "name": "이미 있는 제목 · 쓰인 키워드는 경고",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "contains": {
+          "rows.11.errors": "same_title",
+          "rows.11.warnings": "keyword_used:vpn"
+        }
+      }
+    },
+    {
+      "name": "배치 1 · 통과 3건",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "equals": {
+          "valid": 3,
+          "invalid": 10
+        }
+      }
+    },
+    {
+      "name": "막 더한 FAQ도 기존 데이터",
+      "before": [
+        {
+          "url": "http://localhost:8800/faq/add",
+          "body": {
+            "id": "FAQ-201",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 예약합니다."
+          }
+        }
+      ],
+      "request": "requests/faq-batch-2.json",
+      "expect": {
+        "contains": {
+          "rows.0.errors": "exists_id"
+        },
+        "equals": {
+          "rows.1.ok": true
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "webhook": "my-check",
+  "cases": [
+    {
+      "name": "직원 CSV · 9줄 중 4줄 통과",
+      "request": "requests/employees-new.json",
+      "expect": {
+        "equals": {
+          "schema": "employee",
+          "total": 9,
+          "valid": 4,
+          "rows.6.ok": true
+        }
+      }
+    },
+    {
+      "name": "직원 CSV · 줄마다 이유",
+      "request": "requests/employees-new.json",
+      "expect": {
+        "contains": {
+          "rows.2.errors": "bad_format:email",
+          "rows.3.errors": "not_allowed:dept",
+          "rows.4.errors": "bad_format:joined",
+          "rows.5.errors": "missing:name",
+          "rows.7.errors": "duplicate_in_batch"
+        }
+      }
+    },
+    {
+      "name": "같은 워크플로우로 FAQ 스키마",
+      "body": {
+        "schema": "faq",
+        "batch": "B-3",
+        "items": [
+          {
+            "id": "FAQ-301",
+            "title": "택배 수령",
+            "keywords": [
+              "택배"
+            ],
+            "answer": "회사로 온 택배는 1층 안내 데스크에서 사원증을 보여 주고 받습니다."
+          },
+          {
+            "id": "FAQ-302",
+            "title": "주차 등록",
+            "keywords": [
+              "주차"
+            ],
+            "answer": "주차 등록은 총무팀 포털에서 차량 번호를 적어 신청합니다."
+          },
+          {
+            "id": "FAQ-303",
+            "title": "명함 신청",
+            "keywords": [
+              "명함"
+            ],
+            "answer": "명함은 인사 포털에서 신청하면 일주일 안에 자리로 배달됩니다."
+          },
+          {
+            "id": "FAQ-304",
+            "title": "사내 식당 메뉴",
+            "keywords": [
+              "식당",
+              "메뉴"
+            ],
+            "answer": "사내 식당 메뉴는 매주 월요일 아침 사내 게시판에 올라옵니다."
+          },
+          {
+            "id": "FAQ-305",
+            "title": "교육 신청",
+            "keywords": [
+              "교육"
+            ],
+            "answer": "짧"
+          },
+          {
+            "id": "FAQ-306",
+            "title": "건강검진",
+            "keywords": [
+              "건강검진"
+            ],
+            "answer": "건강검진은 매년 9월에 인사팀이 안내하며 지정 병원에서 받습니다."
+          }
+        ]
+      },
+      "expect": {
+        "equals": {
+          "schema": "faq",
+          "total": 6,
+          "valid": 5
+        },
+        "contains": {
+          "rows.4.errors": "too_short:answer"
+        }
+      }
+    },
+    {
+      "name": "모르는 스키마 → 400",
+      "body": {
+        "schema": "invoice",
+        "items": []
+      },
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "name": "78 FAQ import (team baseline)",
+  "nodes": [
+    {
+      "name": "Import webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "base-faq-import",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "43f87175-3a0a-573c-b690-db9ee8f98200",
+      "webhookId": "14d69cee-d6ad-5163-b231-403811afe39d"
+    },
+    {
+      "name": "Split rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Import webhook').first().json.body;\n// team baseline: put every row in, the data API will complain if something is really wrong\nreturn body.items.map((row) => ({ json: { row, batch: body.batch ?? '' } }));"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "a9733297-069f-5009-8455-7dbe7ca59923"
+    },
+    {
+      "name": "Add FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq/add",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.row) }}"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "f2026680-4cfd-551d-bc90-827b8a136c3f"
+    },
+    {
+      "name": "Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const rows = $('Split rows').all().map((i) => i.json);\nconst answers = $('Add FAQ').all().map((i) => i.json);\nconst imported = rows.filter((r, i) => answers[i]?.added !== undefined);\nreturn [{ json: { batch: rows[0]?.batch ?? '', total: rows.length, imported: imported.length, quarantined: 0, rejected: false,\n  score: rows.length ? Math.round(imported.length / rows.length * 10000) / 10000 : 0,\n  imported_ids: imported.map((r) => String(r.row.id)), quarantined_ids: [] } }];"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "e758bb72-6ab3-577f-b05f-46e5c117d634"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "42bdf7fe-b73c-5c8c-b599-277a48f829b0"
+    }
+  ],
+  "connections": {
+    "Import webhook": {
+      "main": [
+        [
+          {
+            "node": "Split rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split rows": {
+      "main": [
+        [
+          {
+            "node": "Add FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add FAQ": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

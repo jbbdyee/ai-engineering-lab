@@ -1,0 +1,790 @@
+{
+  "cases": "lab02-gate.json",
+  "webhook": "my-faq-import",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "case": "B-1 · 기본 기준 0.3 → 거절",
+      "webhook": "my-faq-import",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 422,
+      "request": {
+        "batch": "B-1",
+        "items": [
+          {
+            "id": "FAQ-101",
+            "title": "사내 와이파이 연결",
+            "keywords": [
+              "와이파이",
+              "wifi",
+              "무선"
+            ],
+            "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 잡히지 않으면 공유기 번호를 IT 포털에 신고합니다."
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-103",
+            "title": "",
+            "keywords": [
+              "출입증"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-10",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북을 반납합니다."
+          },
+          {
+            "id": "FAQ-105",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터"
+            ],
+            "answer": ""
+          },
+          {
+            "id": "FAQ-106",
+            "title": "회의실 예약 규칙",
+            "keywords": [
+              "회의실 규칙"
+            ],
+            "answer": "회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. "
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약 (중복)",
+            "keywords": [
+              "회의실"
+            ],
+            "answer": "사내 포털에서 회의실을 예약합니다. 취소도 같은 메뉴에서 합니다."
+          },
+          {
+            "id": "FAQ-108",
+            "title": "화상회의 장비",
+            "keywords": [],
+            "answer": "화상회의 장비는 각 층 비품실에서 빌릴 수 있습니다."
+          },
+          {
+            "id": "FAQ-109",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 IT팀 김민지(010-1234-5678)에게 바로 전화해 주세요."
+          },
+          {
+            "id": "FAQ-110",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 http://bit.ly/corp-msg 에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-003",
+            "title": "VPN 접속 오류 (새 판)",
+            "keywords": [
+              "재택근무"
+            ],
+            "answer": "VPN 클라이언트를 최신으로 업데이트하고 인증서를 확인합니다."
+          },
+          {
+            "id": "FAQ-112",
+            "title": "VPN 접속 오류",
+            "keywords": [
+              "vpn",
+              "재택근무"
+            ],
+            "answer": "재택근무 중 VPN이 끊기면 클라이언트를 다시 시작하고 인증서 만료일을 확인합니다."
+          },
+          {
+            "id": "FAQ-113",
+            "title": "프린터 토너 교체",
+            "keywords": [
+              "토너"
+            ],
+            "answer": "메일함 용량이 꽉 차면 오래된 메일을 보관함으로 옮겨 용량을 확보합니다."
+          }
+        ]
+      },
+      "response": {
+        "error": "batch rejected",
+        "batch": "B-1",
+        "invalid_ratio": 0.7692,
+        "max_invalid_ratio": 0.3,
+        "codes": {
+          "title_missing": 1,
+          "id_format": 1,
+          "answer_missing": 1,
+          "answer_too_long": 1,
+          "duplicate_in_batch": 1,
+          "keywords_missing": 1,
+          "pii": 1,
+          "external_link": 1,
+          "exists_id": 1,
+          "same_title": 1
+        }
+      }
+    },
+    {
+      "case": "B-1 · 기준을 0.8로 풀면 → 받음, 넣는 것은 2줄",
+      "webhook": "my-faq-import",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 9.0,
+      "status": 200,
+      "request": {
+        "max_invalid_ratio": 0.8,
+        "batch": "B-1",
+        "items": [
+          {
+            "id": "FAQ-101",
+            "title": "사내 와이파이 연결",
+            "keywords": [
+              "와이파이",
+              "wifi",
+              "무선"
+            ],
+            "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 잡히지 않으면 공유기 번호를 IT 포털에 신고합니다."
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-103",
+            "title": "",
+            "keywords": [
+              "출입증"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-10",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북을 반납합니다."
+          },
+          {
+            "id": "FAQ-105",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터"
+            ],
+            "answer": ""
+          },
+          {
+            "id": "FAQ-106",
+            "title": "회의실 예약 규칙",
+            "keywords": [
+              "회의실 규칙"
+            ],
+            "answer": "회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. "
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약 (중복)",
+            "keywords": [
+              "회의실"
+            ],
+            "answer": "사내 포털에서 회의실을 예약합니다. 취소도 같은 메뉴에서 합니다."
+          },
+          {
+            "id": "FAQ-108",
+            "title": "화상회의 장비",
+            "keywords": [],
+            "answer": "화상회의 장비는 각 층 비품실에서 빌릴 수 있습니다."
+          },
+          {
+            "id": "FAQ-109",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 IT팀 김민지(010-1234-5678)에게 바로 전화해 주세요."
+          },
+          {
+            "id": "FAQ-110",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 http://bit.ly/corp-msg 에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-003",
+            "title": "VPN 접속 오류 (새 판)",
+            "keywords": [
+              "재택근무"
+            ],
+            "answer": "VPN 클라이언트를 최신으로 업데이트하고 인증서를 확인합니다."
+          },
+          {
+            "id": "FAQ-112",
+            "title": "VPN 접속 오류",
+            "keywords": [
+              "vpn",
+              "재택근무"
+            ],
+            "answer": "재택근무 중 VPN이 끊기면 클라이언트를 다시 시작하고 인증서 만료일을 확인합니다."
+          },
+          {
+            "id": "FAQ-113",
+            "title": "프린터 토너 교체",
+            "keywords": [
+              "토너"
+            ],
+            "answer": "메일함 용량이 꽉 차면 오래된 메일을 보관함으로 옮겨 용량을 확보합니다."
+          }
+        ]
+      },
+      "response": {
+        "batch": "B-1",
+        "total": 13,
+        "imported": 2,
+        "quarantined": 11,
+        "rejected": false,
+        "score": 0.1538,
+        "max_invalid_ratio": 0.8,
+        "codes": {
+          "title_missing": 1,
+          "id_format": 1,
+          "answer_missing": 1,
+          "answer_too_long": 1,
+          "duplicate_in_batch": 1,
+          "keywords_missing": 1,
+          "pii": 1,
+          "external_link": 1,
+          "exists_id": 1,
+          "same_title": 1,
+          "llm_mismatch": 1
+        },
+        "imported_ids": [
+          "FAQ-101",
+          "FAQ-102"
+        ],
+        "quarantined_ids": [
+          "FAQ-103",
+          "FAQ-10",
+          "FAQ-105",
+          "FAQ-106",
+          "FAQ-102",
+          "FAQ-108",
+          "FAQ-109",
+          "FAQ-110",
+          "FAQ-003",
+          "FAQ-112",
+          "FAQ-113"
+        ]
+      }
+    },
+    {
+      "case": "FAQ만 처음으로 (B-1이 넣은 2줄을 비움, 격리함은 그대로)",
+      "webhook": "http://localhost:8800/faq-reset",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "cleared": 2
+      }
+    },
+    {
+      "case": "B-2 · 기준 0.05 → 거절",
+      "webhook": "my-faq-import",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 422,
+      "request": {
+        "max_invalid_ratio": 0.05,
+        "batch": "B-2",
+        "items": [
+          {
+            "id": "FAQ-201",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-202",
+            "title": "출입증 재발급",
+            "keywords": [
+              "출입증",
+              "재발급"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 신분증을 가지고 가서 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-203",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북과 충전기를 반납합니다."
+          },
+          {
+            "id": "FAQ-204",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터",
+              "추가"
+            ],
+            "answer": "IT 포털의 '장비 신청'에서 모니터 추가를 신청하면 재고 확인 뒤 지급합니다."
+          },
+          {
+            "id": "FAQ-205",
+            "title": "윈도우 업데이트",
+            "keywords": [
+              "업데이트",
+              "윈도우"
+            ],
+            "answer": "윈도우 업데이트는 매달 둘째 주 수요일 밤에 자동으로 설치됩니다. 끝나면 다시 시작합니다."
+          },
+          {
+            "id": "FAQ-206",
+            "title": "화상회의 장비 대여",
+            "keywords": [
+              "화상회의",
+              "카메라"
+            ],
+            "answer": "화상회의 카메라와 마이크는 각 층 비품실에서 빌리고 같은 날 돌려줍니다."
+          },
+          {
+            "id": "FAQ-207",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 IT 포털(https://intra.example.com/msg)에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-208",
+            "title": "공유 드라이브 권한",
+            "keywords": [
+              "공유 드라이브",
+              "권한"
+            ],
+            "answer": "공유 드라이브 권한은 팀장이 IT 포털에서 신청하면 하루 안에 열립니다."
+          },
+          {
+            "id": "FAQ-209",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 security.desk@example.com 으로 바로 메일을 보내 주세요."
+          },
+          {
+            "id": "FAQ-210",
+            "title": "모니터 밝기 조절",
+            "keywords": [
+              "밝기"
+            ],
+            "answer": "연차 휴가는 입사 1년 뒤부터 15일이며 인사 포털에서 신청합니다."
+          }
+        ]
+      },
+      "response": {
+        "error": "batch rejected",
+        "batch": "B-2",
+        "invalid_ratio": 0.1,
+        "max_invalid_ratio": 0.05,
+        "codes": {
+          "pii": 1
+        }
+      }
+    },
+    {
+      "case": "B-2 · 기준 0.1 · 나쁜 줄이 딱 10% → 받음",
+      "webhook": "my-faq-import",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 8.7,
+      "status": 200,
+      "request": {
+        "max_invalid_ratio": 0.1,
+        "batch": "B-2",
+        "items": [
+          {
+            "id": "FAQ-201",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-202",
+            "title": "출입증 재발급",
+            "keywords": [
+              "출입증",
+              "재발급"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 신분증을 가지고 가서 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-203",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북과 충전기를 반납합니다."
+          },
+          {
+            "id": "FAQ-204",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터",
+              "추가"
+            ],
+            "answer": "IT 포털의 '장비 신청'에서 모니터 추가를 신청하면 재고 확인 뒤 지급합니다."
+          },
+          {
+            "id": "FAQ-205",
+            "title": "윈도우 업데이트",
+            "keywords": [
+              "업데이트",
+              "윈도우"
+            ],
+            "answer": "윈도우 업데이트는 매달 둘째 주 수요일 밤에 자동으로 설치됩니다. 끝나면 다시 시작합니다."
+          },
+          {
+            "id": "FAQ-206",
+            "title": "화상회의 장비 대여",
+            "keywords": [
+              "화상회의",
+              "카메라"
+            ],
+            "answer": "화상회의 카메라와 마이크는 각 층 비품실에서 빌리고 같은 날 돌려줍니다."
+          },
+          {
+            "id": "FAQ-207",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 IT 포털(https://intra.example.com/msg)에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-208",
+            "title": "공유 드라이브 권한",
+            "keywords": [
+              "공유 드라이브",
+              "권한"
+            ],
+            "answer": "공유 드라이브 권한은 팀장이 IT 포털에서 신청하면 하루 안에 열립니다."
+          },
+          {
+            "id": "FAQ-209",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 security.desk@example.com 으로 바로 메일을 보내 주세요."
+          },
+          {
+            "id": "FAQ-210",
+            "title": "모니터 밝기 조절",
+            "keywords": [
+              "밝기"
+            ],
+            "answer": "연차 휴가는 입사 1년 뒤부터 15일이며 인사 포털에서 신청합니다."
+          }
+        ]
+      },
+      "response": {
+        "batch": "B-2",
+        "total": 10,
+        "imported": 8,
+        "quarantined": 2,
+        "rejected": false,
+        "score": 0.8,
+        "max_invalid_ratio": 0.1,
+        "codes": {
+          "pii": 1,
+          "llm_mismatch": 1
+        },
+        "imported_ids": [
+          "FAQ-201",
+          "FAQ-202",
+          "FAQ-203",
+          "FAQ-204",
+          "FAQ-205",
+          "FAQ-206",
+          "FAQ-207",
+          "FAQ-208"
+        ],
+        "quarantined_ids": [
+          "FAQ-209",
+          "FAQ-210"
+        ]
+      }
+    },
+    {
+      "case": "격리함이 13줄 (B-1 11 + B-2 2)",
+      "webhook": "http://localhost:8800/quarantine/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "size": 13,
+        "items": [
+          {
+            "row_id": "FAQ-103",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-103",
+              "title": "",
+              "keywords": [
+                "출입증"
+              ],
+              "answer": "출입증을 잃어버렸으면 총무팀에 재발급을 신청합니다."
+            },
+            "errors": [
+              "title_missing"
+            ],
+            "at": "2026-11-01T18:12:39"
+          },
+          {
+            "row_id": "FAQ-10",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-10",
+              "title": "노트북 반납",
+              "keywords": [
+                "노트북",
+                "반납"
+              ],
+              "answer": "퇴사 5영업일 전까지 IT팀에 노트북을 반납합니다."
+            },
+            "errors": [
+              "id_format"
+            ],
+            "at": "2026-11-01T18:12:39"
+          },
+          {
+            "row_id": "FAQ-105",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-105",
+              "title": "모니터 추가 신청",
+              "keywords": [
+                "모니터"
+              ],
+              "answer": ""
+            },
+            "errors": [
+              "answer_missing"
+            ],
+            "at": "2026-11-01T18:12:39"
+          },
+          {
+            "row_id": "FAQ-106",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-106",
+              "title": "회의실 예약 규칙",
+              "keywords": [
+                "회의실 규칙"
+              ],
+              "answer": "회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. "
+            },
+            "errors": [
+              "answer_too_long"
+            ],
+            "at": "2026-11-01T18:12:39"
+          },
+          {
+            "row_id": "FAQ-113",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-113",
+              "title": "프린터 토너 교체",
+              "keywords": [
+                "토너"
+              ],
+              "answer": "메일함 용량이 꽉 차면 오래된 메일을 보관함으로 옮겨 용량을 확보합니다."
+            },
+            "errors": [
+              "llm_mismatch"
+            ],
+            "at": "2026-11-01T18:12:40"
+          },
+          {
+            "row_id": "FAQ-108",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-108",
+              "title": "화상회의 장비",
+              "keywords": [],
+              "answer": "화상회의 장비는 각 층 비품실에서 빌릴 수 있습니다."
+            },
+            "errors": [
+              "keywords_missing"
+            ],
+            "at": "2026-11-01T18:12:40"
+          },
+          {
+            "row_id": "FAQ-003",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-003",
+              "title": "VPN 접속 오류 (새 판)",
+              "keywords": [
+                "재택근무"
+              ],
+              "answer": "VPN 클라이언트를 최신으로 업데이트하고 인증서를 확인합니다."
+            },
+            "errors": [
+              "exists_id"
+            ],
+            "at": "2026-11-01T18:12:40"
+          },
+          {
+            "row_id": "FAQ-109",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-109",
+              "title": "보안 사고 신고",
+              "keywords": [
+                "보안",
+                "신고"
+              ],
+              "answer": "보안 사고는 IT팀 김민지(010-1234-5678)에게 바로 전화해 주세요."
+            },
+            "errors": [
+              "pii"
+            ],
+            "at": "2026-11-01T18:12:40"
+          },
+          {
+            "row_id": "FAQ-110",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-110",
+              "title": "사내 메신저 설치",
+              "keywords": [
+                "메신저"
+              ],
+              "answer": "사내 메신저는 http://bit.ly/corp-msg 에서 받아 설치합니다."
+            },
+            "errors": [
+              "external_link"
+            ],
+            "at": "2026-11-01T18:12:40"
+          },
+          {
+            "row_id": "FAQ-112",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-112",
+              "title": "VPN 접속 오류",
+              "keywords": [
+                "vpn",
+                "재택근무"
+              ],
+              "answer": "재택근무 중 VPN이 끊기면 클라이언트를 다시 시작하고 인증서 만료일을 확인합니다."
+            },
+            "errors": [
+              "same_title"
+            ],
+            "at": "2026-11-01T18:12:40"
+          },
+          {
+            "row_id": "FAQ-102",
+            "batch": "B-1",
+            "row": {
+              "id": "FAQ-102",
+              "title": "회의실 예약 (중복)",
+              "keywords": [
+                "회의실"
+              ],
+              "answer": "사내 포털에서 회의실을 예약합니다. 취소도 같은 메뉴에서 합니다."
+            },
+            "errors": [
+              "duplicate_in_batch"
+            ],
+            "at": "2026-11-01T18:12:40"
+          },
+          {
+            "row_id": "FAQ-210",
+            "batch": "B-2",
+            "row": {
+              "id": "FAQ-210",
+              "title": "모니터 밝기 조절",
+              "keywords": [
+                "밝기"
+              ],
+              "answer": "연차 휴가는 입사 1년 뒤부터 15일이며 인사 포털에서 신청합니다."
+            },
+            "errors": [
+              "llm_mismatch"
+            ],
+            "at": "2026-11-01T18:12:48"
+          },
+          {
+            "row_id": "FAQ-209",
+            "batch": "B-2",
+            "row": {
+              "id": "FAQ-209",
+              "title": "보안 사고 신고",
+              "keywords": [
+                "보안",
+                "신고"
+              ],
+              "answer": "보안 사고는 security.desk@example.com 으로 바로 메일을 보내 주세요."
+            },
+            "errors": [
+              "pii"
+            ],
+            "at": "2026-11-01T18:12:49"
+          }
+        ]
+      }
+    }
+  ]
+}

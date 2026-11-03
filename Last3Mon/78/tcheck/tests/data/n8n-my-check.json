@@ -1,0 +1,218 @@
+{
+ "employee": {
+  "schema": "employee",
+  "batch": "HR-1",
+  "total": 9,
+  "valid": 4,
+  "invalid": 5,
+  "rows": [
+   {
+    "row": 1,
+    "key": "sehoon.oh@example.com",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "row": 2,
+    "key": "haneul.yoon@example.com",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "row": 3,
+    "key": "minsu.kang@example",
+    "ok": false,
+    "errors": [
+     "bad_format:email"
+    ]
+   },
+   {
+    "row": 4,
+    "key": "jia.seo@example.com",
+    "ok": false,
+    "errors": [
+     "not_allowed:dept"
+    ]
+   },
+   {
+    "row": 5,
+    "key": "doyun.lim@example.com",
+    "ok": false,
+    "errors": [
+     "bad_format:joined"
+    ]
+   },
+   {
+    "row": 6,
+    "key": "noname@example.com",
+    "ok": false,
+    "errors": [
+     "missing:name"
+    ]
+   },
+   {
+    "row": 7,
+    "key": "sua.bae@example.com",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "row": 8,
+    "key": "sua.bae@example.com",
+    "ok": false,
+    "errors": [
+     "duplicate_in_batch"
+    ]
+   },
+   {
+    "row": 9,
+    "key": "daeun.jung@example.com",
+    "ok": true,
+    "errors": []
+   }
+  ],
+  "codes": {
+   "bad_format:email": 1,
+   "not_allowed:dept": 1,
+   "bad_format:joined": 1,
+   "missing:name": 1,
+   "duplicate_in_batch": 1
+  }
+ },
+ "faq": {
+  "schema": "faq",
+  "batch": "B-3",
+  "total": 6,
+  "valid": 5,
+  "invalid": 1,
+  "rows": [
+   {
+    "row": 1,
+    "key": "FAQ-301",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "row": 2,
+    "key": "FAQ-302",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "row": 3,
+    "key": "FAQ-303",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "row": 4,
+    "key": "FAQ-304",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "row": 5,
+    "key": "FAQ-305",
+    "ok": false,
+    "errors": [
+     "too_short:answer"
+    ]
+   },
+   {
+    "row": 6,
+    "key": "FAQ-306",
+    "ok": true,
+    "errors": []
+   }
+  ],
+  "codes": {
+   "too_short:answer": 1
+  }
+ },
+ "ticket": {
+  "schema": "ticket",
+  "batch": "TK-1",
+  "total": 9,
+  "valid": 2,
+  "invalid": 7,
+  "rows": [
+   {
+    "row": 1,
+    "key": "T-2001",
+    "ok": true,
+    "errors": []
+   },
+   {
+    "row": 2,
+    "key": "T-12",
+    "ok": false,
+    "errors": [
+     "bad_format:ticket_id"
+    ]
+   },
+   {
+    "row": 3,
+    "key": "T-2003",
+    "ok": false,
+    "errors": [
+     "not_allowed:priority"
+    ]
+   },
+   {
+    "row": 4,
+    "key": "T-2004",
+    "ok": false,
+    "errors": [
+     "bad_format:opened"
+    ]
+   },
+   {
+    "row": 5,
+    "key": "T-2005",
+    "ok": false,
+    "errors": [
+     "too_short:title"
+    ]
+   },
+   {
+    "row": 6,
+    "key": "T-2006",
+    "ok": false,
+    "errors": [
+     "bad_format:contact"
+    ]
+   },
+   {
+    "row": 7,
+    "key": "T-2001",
+    "ok": false,
+    "errors": [
+     "duplicate_in_batch"
+    ]
+   },
+   {
+    "row": 8,
+    "key": "T-2008",
+    "ok": false,
+    "errors": [
+     "missing:requester"
+    ]
+   },
+   {
+    "row": 9,
+    "key": "T-2009",
+    "ok": true,
+    "errors": []
+   }
+  ],
+  "codes": {
+   "bad_format:ticket_id": 1,
+   "not_allowed:priority": 1,
+   "bad_format:opened": 1,
+   "too_short:title": 1,
+   "bad_format:contact": 1,
+   "duplicate_in_batch": 1,
+   "missing:requester": 1
+  }
+ }
+}

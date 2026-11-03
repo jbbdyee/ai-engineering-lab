@@ -35,7 +35,7 @@
 | `POST /logs/query` 본문 `{"from": "2026-10-26", "to": "2026-10-30", "tag": "", "source": "all"}` | `{"count", "logs": [...]}` — 날짜는 **포함**(`from ≤ 날짜 ≤ to`), 비우면 전체. `source`: `all` · `seed`(두 주 기록) · `live`(오늘 실습) |
 | `GET /logs?from=&to=&tag=&source=&limit=` | 같음 |
 | `POST /logs` 본문 `{"items": [{...}]}` | 실행 기록 더하기 (`started_at`이 없으면 지금) |
-| `POST /logs-reset` | 오늘 실습 기록(`live`)만 지움 (두 주 기록은 그대로) |
+| `POST /logs-reset` | 오늘 실습 기록(`live`)만 지움 (두 주 기록은 그대로). 본문 `{"tag": "after"}`면 그 `tag`의 기록만 |
 | `POST /faq/add` 본문 `{"id", "title", "keywords": [...], "answer"}` · `POST /faq-reset` | FAQ 더하기 · 되돌리기 (**사람이**) |
 | `GET /faq-extra` | 오늘 더한 FAQ `{"count", "faq"}` |
 | `POST /alerts` · `POST /alerts/list` · `POST /alerts/latest` | 알림 남기기 · 거르기 `{"workflow", "reason", "within": 초}` · 가장 최근 (76일차와 같음) |

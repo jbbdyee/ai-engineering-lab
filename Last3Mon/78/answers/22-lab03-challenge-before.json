@@ -1,0 +1,90 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-quality-report",
+  "passed": 0,
+  "total": 4,
+  "results": [
+    {
+      "case": "배치 네 개 · 평균 · 가장 나쁜 배치",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "count = null (expected 4)",
+        "avg_score = null (expected 0.6583)",
+        "worst_batch = null (expected B-1)",
+        "rejected_batches = null (expected 1)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-quality-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "가장 많은 이유 · 흐름",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "top_codes.0.code = null (expected pii)",
+        "top_codes.0.count = null (expected 2)",
+        "trend = null (expected 좋아짐)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-quality-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "배치마다 점수 순서",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "batches.1.score = null (expected 0.8)",
+        "batches.2.score = null (expected 0.8333)",
+        "batches.3.batch = null (expected B-2-fix)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-quality-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "다른 데이터셋으로 거르기",
+      "webhook": "my-quality-report",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "count = null (expected 0)",
+        "avg_score = null (expected 0)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "dataset": "employee"
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-quality-report\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}

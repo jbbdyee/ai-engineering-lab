@@ -1,0 +1,92 @@
+{
+  "webhook": "my-quality-report",
+  "before": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quarantine-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quality-log-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    },
+    {
+      "webhook": "my-faq-import",
+      "request": "requests/faq-batch-1.json",
+      "allow_fail": true
+    },
+    {
+      "webhook": "my-faq-import",
+      "request": "requests/faq-batch-2.json"
+    },
+    {
+      "webhook": "my-faq-import",
+      "request": "requests/faq-batch-3.json"
+    },
+    {
+      "webhook": "my-faq-import",
+      "request": "requests/faq-batch-2-fixed.json"
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "배치 네 개 · 평균 · 가장 나쁜 배치",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 4,
+          "avg_score": 0.6583,
+          "worst_batch": "B-1",
+          "rejected_batches": 1
+        }
+      }
+    },
+    {
+      "name": "가장 많은 이유 · 흐름",
+      "body": {},
+      "expect": {
+        "equals": {
+          "top_codes.0.code": "pii",
+          "top_codes.0.count": 2,
+          "trend": "좋아짐"
+        }
+      }
+    },
+    {
+      "name": "배치마다 점수 순서",
+      "body": {},
+      "expect": {
+        "equals": {
+          "batches.1.score": 0.8,
+          "batches.2.score": 0.8333,
+          "batches.3.batch": "B-2-fix"
+        }
+      }
+    },
+    {
+      "name": "다른 데이터셋으로 거르기",
+      "body": {
+        "dataset": "employee"
+      },
+      "expect": {
+        "equals": {
+          "count": 0,
+          "avg_score": 0
+        }
+      }
+    }
+  ]
+}

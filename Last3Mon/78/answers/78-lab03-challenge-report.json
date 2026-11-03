@@ -1,0 +1,108 @@
+{
+  "name": "78 Quality report (answer)",
+  "nodes": [
+    {
+      "name": "Report webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-quality-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "d39880e6-d916-5d87-a2d7-39a1f1201094",
+      "webhookId": "2b2b3919-d93a-579c-ae38-a51266677926"
+    },
+    {
+      "name": "Get log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/quality-log",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "ddba6f7c-251f-5309-87dd-cdaf072aa5c8"
+    },
+    {
+      "name": "Make report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const want = $('Report webhook').first().json.body?.dataset;\nconst all = $json.items ?? [];\nconst r4 = (v) => Math.round(v * 10000) / 10000;\nconst summary = (items) => {\n  const batches = items.map((i) => ({ batch: i.batch, score: i.score, rejected: i.rejected === true, total: i.total }));\n  const codes = {};\n  for (const i of items) for (const [k, v] of Object.entries(i.codes ?? {})) codes[k] = (codes[k] ?? 0) + v;\n  const top_codes = Object.entries(codes).map(([code, count]) => ({ code, count })).sort((a, b) => b.count - a.count || (a.code < b.code ? -1 : a.code > b.code ? 1 : 0));\n  const avg = batches.length ? r4(batches.reduce((s, b) => s + b.score, 0) / batches.length) : 0;\n  const worst = batches.reduce((w, b) => (w === null || b.score < w.score ? b : w), null);\n  let trend = '그대로';\n  if (batches.length >= 2) { const d = batches.at(-1).score - batches[0].score; trend = d > 0.05 ? '좋아짐' : d < -0.05 ? '나빠짐' : '그대로'; }\n  return { count: batches.length, batches, avg_score: avg, worst_batch: worst?.batch ?? null, rejected_batches: batches.filter((b) => b.rejected).length, top_codes, trend };\n};\nconst out = summary(all.filter((i) => !want || i.dataset === want));\nreturn [{ json: out }];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "e4e4147a-061c-5ef0-8ada-d588ef283c8c"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "61076c2a-8679-511f-877a-f16b8e7983e4"
+    }
+  ],
+  "connections": {
+    "Report webhook": {
+      "main": [
+        [
+          {
+            "node": "Get log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get log": {
+      "main": [
+        [
+          {
+            "node": "Make report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make report": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

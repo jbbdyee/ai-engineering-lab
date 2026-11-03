@@ -1,0 +1,1581 @@
+{
+  "cases": "lab01-challenge2.json",
+  "webhook": "my-faq-check",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "case": "B-1 · 고칠 줄 10개, 줄 순서대로",
+      "webhook": "my-faq-check",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "batch": "B-1",
+        "items": [
+          {
+            "id": "FAQ-101",
+            "title": "사내 와이파이 연결",
+            "keywords": [
+              "와이파이",
+              "wifi",
+              "무선"
+            ],
+            "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 잡히지 않으면 공유기 번호를 IT 포털에 신고합니다."
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-103",
+            "title": "",
+            "keywords": [
+              "출입증"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-10",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북을 반납합니다."
+          },
+          {
+            "id": "FAQ-105",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터"
+            ],
+            "answer": ""
+          },
+          {
+            "id": "FAQ-106",
+            "title": "회의실 예약 규칙",
+            "keywords": [
+              "회의실 규칙"
+            ],
+            "answer": "회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. "
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약 (중복)",
+            "keywords": [
+              "회의실"
+            ],
+            "answer": "사내 포털에서 회의실을 예약합니다. 취소도 같은 메뉴에서 합니다."
+          },
+          {
+            "id": "FAQ-108",
+            "title": "화상회의 장비",
+            "keywords": [],
+            "answer": "화상회의 장비는 각 층 비품실에서 빌릴 수 있습니다."
+          },
+          {
+            "id": "FAQ-109",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 IT팀 김민지(010-1234-5678)에게 바로 전화해 주세요."
+          },
+          {
+            "id": "FAQ-110",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 http://bit.ly/corp-msg 에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-003",
+            "title": "VPN 접속 오류 (새 판)",
+            "keywords": [
+              "재택근무"
+            ],
+            "answer": "VPN 클라이언트를 최신으로 업데이트하고 인증서를 확인합니다."
+          },
+          {
+            "id": "FAQ-112",
+            "title": "VPN 접속 오류",
+            "keywords": [
+              "vpn",
+              "재택근무"
+            ],
+            "answer": "재택근무 중 VPN이 끊기면 클라이언트를 다시 시작하고 인증서 만료일을 확인합니다."
+          },
+          {
+            "id": "FAQ-113",
+            "title": "프린터 토너 교체",
+            "keywords": [
+              "토너"
+            ],
+            "answer": "메일함 용량이 꽉 차면 오래된 메일을 보관함으로 옮겨 용량을 확보합니다."
+          }
+        ]
+      },
+      "response": {
+        "batch": "B-1",
+        "total": 13,
+        "valid": 3,
+        "invalid": 10,
+        "with_warnings": 1,
+        "rows": [
+          {
+            "id": "FAQ-101",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-102",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-103",
+            "ok": false,
+            "errors": [
+              "title_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-10",
+            "ok": false,
+            "errors": [
+              "id_format"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-105",
+            "ok": false,
+            "errors": [
+              "answer_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-106",
+            "ok": false,
+            "errors": [
+              "answer_too_long"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-102",
+            "ok": false,
+            "errors": [
+              "duplicate_in_batch"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-108",
+            "ok": false,
+            "errors": [
+              "keywords_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-109",
+            "ok": false,
+            "errors": [
+              "pii"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-110",
+            "ok": false,
+            "errors": [
+              "external_link"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-003",
+            "ok": false,
+            "errors": [
+              "exists_id"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-112",
+            "ok": false,
+            "errors": [
+              "same_title"
+            ],
+            "warnings": [
+              "keyword_used:vpn"
+            ]
+          },
+          {
+            "id": "FAQ-113",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          }
+        ],
+        "codes": {
+          "title_missing": 1,
+          "id_format": 1,
+          "answer_missing": 1,
+          "answer_too_long": 1,
+          "duplicate_in_batch": 1,
+          "keywords_missing": 1,
+          "pii": 1,
+          "external_link": 1,
+          "exists_id": 1,
+          "same_title": 1
+        },
+        "fix_list": [
+          {
+            "row": 3,
+            "id": "FAQ-103",
+            "codes": [
+              "title_missing"
+            ],
+            "fix": [
+              "제목을 써 주세요"
+            ]
+          },
+          {
+            "row": 4,
+            "id": "FAQ-10",
+            "codes": [
+              "id_format"
+            ],
+            "fix": [
+              "id를 FAQ-숫자 3자리로 (예: FAQ-104)"
+            ]
+          },
+          {
+            "row": 5,
+            "id": "FAQ-105",
+            "codes": [
+              "answer_missing"
+            ],
+            "fix": [
+              "답을 써 주세요"
+            ]
+          },
+          {
+            "row": 6,
+            "id": "FAQ-106",
+            "codes": [
+              "answer_too_long"
+            ],
+            "fix": [
+              "답을 300자 이내로 줄여 주세요"
+            ]
+          },
+          {
+            "row": 7,
+            "id": "FAQ-102",
+            "codes": [
+              "duplicate_in_batch"
+            ],
+            "fix": [
+              "같은 배치에 같은 id가 또 있습니다. 하나만 남겨 주세요"
+            ]
+          },
+          {
+            "row": 8,
+            "id": "FAQ-108",
+            "codes": [
+              "keywords_missing"
+            ],
+            "fix": [
+              "키워드를 하나 이상 넣어 주세요"
+            ]
+          },
+          {
+            "row": 9,
+            "id": "FAQ-109",
+            "codes": [
+              "pii"
+            ],
+            "fix": [
+              "개인 전화번호 · 메일 주소를 빼고 IT 포털 안내로 바꿔 주세요"
+            ]
+          },
+          {
+            "row": 10,
+            "id": "FAQ-110",
+            "codes": [
+              "external_link"
+            ],
+            "fix": [
+              "바깥 링크 대신 사내 주소(intra.example.com)를 써 주세요"
+            ]
+          },
+          {
+            "row": 11,
+            "id": "FAQ-003",
+            "codes": [
+              "exists_id"
+            ],
+            "fix": [
+              "이미 있는 id입니다. 새 id를 쓰거나, 고치려는 것이면 FAQ 담당자에게 알려 주세요"
+            ]
+          },
+          {
+            "row": 12,
+            "id": "FAQ-112",
+            "codes": [
+              "same_title"
+            ],
+            "fix": [
+              "같은 제목의 FAQ가 이미 있습니다. 제목을 바꾸거나 기존 FAQ와 합쳐 주세요"
+            ]
+          }
+        ],
+        "message": "B-1: 13줄 중 3줄 통과, 10줄 고칠 것"
+      }
+    },
+    {
+      "case": "고칠 것은 사람이 읽는 말로",
+      "webhook": "my-faq-check",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "batch": "B-1",
+        "items": [
+          {
+            "id": "FAQ-101",
+            "title": "사내 와이파이 연결",
+            "keywords": [
+              "와이파이",
+              "wifi",
+              "무선"
+            ],
+            "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 잡히지 않으면 공유기 번호를 IT 포털에 신고합니다."
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-103",
+            "title": "",
+            "keywords": [
+              "출입증"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-10",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북을 반납합니다."
+          },
+          {
+            "id": "FAQ-105",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터"
+            ],
+            "answer": ""
+          },
+          {
+            "id": "FAQ-106",
+            "title": "회의실 예약 규칙",
+            "keywords": [
+              "회의실 규칙"
+            ],
+            "answer": "회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. "
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약 (중복)",
+            "keywords": [
+              "회의실"
+            ],
+            "answer": "사내 포털에서 회의실을 예약합니다. 취소도 같은 메뉴에서 합니다."
+          },
+          {
+            "id": "FAQ-108",
+            "title": "화상회의 장비",
+            "keywords": [],
+            "answer": "화상회의 장비는 각 층 비품실에서 빌릴 수 있습니다."
+          },
+          {
+            "id": "FAQ-109",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 IT팀 김민지(010-1234-5678)에게 바로 전화해 주세요."
+          },
+          {
+            "id": "FAQ-110",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 http://bit.ly/corp-msg 에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-003",
+            "title": "VPN 접속 오류 (새 판)",
+            "keywords": [
+              "재택근무"
+            ],
+            "answer": "VPN 클라이언트를 최신으로 업데이트하고 인증서를 확인합니다."
+          },
+          {
+            "id": "FAQ-112",
+            "title": "VPN 접속 오류",
+            "keywords": [
+              "vpn",
+              "재택근무"
+            ],
+            "answer": "재택근무 중 VPN이 끊기면 클라이언트를 다시 시작하고 인증서 만료일을 확인합니다."
+          },
+          {
+            "id": "FAQ-113",
+            "title": "프린터 토너 교체",
+            "keywords": [
+              "토너"
+            ],
+            "answer": "메일함 용량이 꽉 차면 오래된 메일을 보관함으로 옮겨 용량을 확보합니다."
+          }
+        ]
+      },
+      "response": {
+        "batch": "B-1",
+        "total": 13,
+        "valid": 3,
+        "invalid": 10,
+        "with_warnings": 1,
+        "rows": [
+          {
+            "id": "FAQ-101",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-102",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-103",
+            "ok": false,
+            "errors": [
+              "title_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-10",
+            "ok": false,
+            "errors": [
+              "id_format"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-105",
+            "ok": false,
+            "errors": [
+              "answer_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-106",
+            "ok": false,
+            "errors": [
+              "answer_too_long"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-102",
+            "ok": false,
+            "errors": [
+              "duplicate_in_batch"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-108",
+            "ok": false,
+            "errors": [
+              "keywords_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-109",
+            "ok": false,
+            "errors": [
+              "pii"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-110",
+            "ok": false,
+            "errors": [
+              "external_link"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-003",
+            "ok": false,
+            "errors": [
+              "exists_id"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-112",
+            "ok": false,
+            "errors": [
+              "same_title"
+            ],
+            "warnings": [
+              "keyword_used:vpn"
+            ]
+          },
+          {
+            "id": "FAQ-113",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          }
+        ],
+        "codes": {
+          "title_missing": 1,
+          "id_format": 1,
+          "answer_missing": 1,
+          "answer_too_long": 1,
+          "duplicate_in_batch": 1,
+          "keywords_missing": 1,
+          "pii": 1,
+          "external_link": 1,
+          "exists_id": 1,
+          "same_title": 1
+        },
+        "fix_list": [
+          {
+            "row": 3,
+            "id": "FAQ-103",
+            "codes": [
+              "title_missing"
+            ],
+            "fix": [
+              "제목을 써 주세요"
+            ]
+          },
+          {
+            "row": 4,
+            "id": "FAQ-10",
+            "codes": [
+              "id_format"
+            ],
+            "fix": [
+              "id를 FAQ-숫자 3자리로 (예: FAQ-104)"
+            ]
+          },
+          {
+            "row": 5,
+            "id": "FAQ-105",
+            "codes": [
+              "answer_missing"
+            ],
+            "fix": [
+              "답을 써 주세요"
+            ]
+          },
+          {
+            "row": 6,
+            "id": "FAQ-106",
+            "codes": [
+              "answer_too_long"
+            ],
+            "fix": [
+              "답을 300자 이내로 줄여 주세요"
+            ]
+          },
+          {
+            "row": 7,
+            "id": "FAQ-102",
+            "codes": [
+              "duplicate_in_batch"
+            ],
+            "fix": [
+              "같은 배치에 같은 id가 또 있습니다. 하나만 남겨 주세요"
+            ]
+          },
+          {
+            "row": 8,
+            "id": "FAQ-108",
+            "codes": [
+              "keywords_missing"
+            ],
+            "fix": [
+              "키워드를 하나 이상 넣어 주세요"
+            ]
+          },
+          {
+            "row": 9,
+            "id": "FAQ-109",
+            "codes": [
+              "pii"
+            ],
+            "fix": [
+              "개인 전화번호 · 메일 주소를 빼고 IT 포털 안내로 바꿔 주세요"
+            ]
+          },
+          {
+            "row": 10,
+            "id": "FAQ-110",
+            "codes": [
+              "external_link"
+            ],
+            "fix": [
+              "바깥 링크 대신 사내 주소(intra.example.com)를 써 주세요"
+            ]
+          },
+          {
+            "row": 11,
+            "id": "FAQ-003",
+            "codes": [
+              "exists_id"
+            ],
+            "fix": [
+              "이미 있는 id입니다. 새 id를 쓰거나, 고치려는 것이면 FAQ 담당자에게 알려 주세요"
+            ]
+          },
+          {
+            "row": 12,
+            "id": "FAQ-112",
+            "codes": [
+              "same_title"
+            ],
+            "fix": [
+              "같은 제목의 FAQ가 이미 있습니다. 제목을 바꾸거나 기존 FAQ와 합쳐 주세요"
+            ]
+          }
+        ],
+        "message": "B-1: 13줄 중 3줄 통과, 10줄 고칠 것"
+      }
+    },
+    {
+      "case": "한 줄 요약",
+      "webhook": "my-faq-check",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "batch": "B-1",
+        "items": [
+          {
+            "id": "FAQ-101",
+            "title": "사내 와이파이 연결",
+            "keywords": [
+              "와이파이",
+              "wifi",
+              "무선"
+            ],
+            "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 잡히지 않으면 공유기 번호를 IT 포털에 신고합니다."
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-103",
+            "title": "",
+            "keywords": [
+              "출입증"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-10",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북을 반납합니다."
+          },
+          {
+            "id": "FAQ-105",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터"
+            ],
+            "answer": ""
+          },
+          {
+            "id": "FAQ-106",
+            "title": "회의실 예약 규칙",
+            "keywords": [
+              "회의실 규칙"
+            ],
+            "answer": "회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. "
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약 (중복)",
+            "keywords": [
+              "회의실"
+            ],
+            "answer": "사내 포털에서 회의실을 예약합니다. 취소도 같은 메뉴에서 합니다."
+          },
+          {
+            "id": "FAQ-108",
+            "title": "화상회의 장비",
+            "keywords": [],
+            "answer": "화상회의 장비는 각 층 비품실에서 빌릴 수 있습니다."
+          },
+          {
+            "id": "FAQ-109",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 IT팀 김민지(010-1234-5678)에게 바로 전화해 주세요."
+          },
+          {
+            "id": "FAQ-110",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 http://bit.ly/corp-msg 에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-003",
+            "title": "VPN 접속 오류 (새 판)",
+            "keywords": [
+              "재택근무"
+            ],
+            "answer": "VPN 클라이언트를 최신으로 업데이트하고 인증서를 확인합니다."
+          },
+          {
+            "id": "FAQ-112",
+            "title": "VPN 접속 오류",
+            "keywords": [
+              "vpn",
+              "재택근무"
+            ],
+            "answer": "재택근무 중 VPN이 끊기면 클라이언트를 다시 시작하고 인증서 만료일을 확인합니다."
+          },
+          {
+            "id": "FAQ-113",
+            "title": "프린터 토너 교체",
+            "keywords": [
+              "토너"
+            ],
+            "answer": "메일함 용량이 꽉 차면 오래된 메일을 보관함으로 옮겨 용량을 확보합니다."
+          }
+        ]
+      },
+      "response": {
+        "batch": "B-1",
+        "total": 13,
+        "valid": 3,
+        "invalid": 10,
+        "with_warnings": 1,
+        "rows": [
+          {
+            "id": "FAQ-101",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-102",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-103",
+            "ok": false,
+            "errors": [
+              "title_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-10",
+            "ok": false,
+            "errors": [
+              "id_format"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-105",
+            "ok": false,
+            "errors": [
+              "answer_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-106",
+            "ok": false,
+            "errors": [
+              "answer_too_long"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-102",
+            "ok": false,
+            "errors": [
+              "duplicate_in_batch"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-108",
+            "ok": false,
+            "errors": [
+              "keywords_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-109",
+            "ok": false,
+            "errors": [
+              "pii"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-110",
+            "ok": false,
+            "errors": [
+              "external_link"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-003",
+            "ok": false,
+            "errors": [
+              "exists_id"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-112",
+            "ok": false,
+            "errors": [
+              "same_title"
+            ],
+            "warnings": [
+              "keyword_used:vpn"
+            ]
+          },
+          {
+            "id": "FAQ-113",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          }
+        ],
+        "codes": {
+          "title_missing": 1,
+          "id_format": 1,
+          "answer_missing": 1,
+          "answer_too_long": 1,
+          "duplicate_in_batch": 1,
+          "keywords_missing": 1,
+          "pii": 1,
+          "external_link": 1,
+          "exists_id": 1,
+          "same_title": 1
+        },
+        "fix_list": [
+          {
+            "row": 3,
+            "id": "FAQ-103",
+            "codes": [
+              "title_missing"
+            ],
+            "fix": [
+              "제목을 써 주세요"
+            ]
+          },
+          {
+            "row": 4,
+            "id": "FAQ-10",
+            "codes": [
+              "id_format"
+            ],
+            "fix": [
+              "id를 FAQ-숫자 3자리로 (예: FAQ-104)"
+            ]
+          },
+          {
+            "row": 5,
+            "id": "FAQ-105",
+            "codes": [
+              "answer_missing"
+            ],
+            "fix": [
+              "답을 써 주세요"
+            ]
+          },
+          {
+            "row": 6,
+            "id": "FAQ-106",
+            "codes": [
+              "answer_too_long"
+            ],
+            "fix": [
+              "답을 300자 이내로 줄여 주세요"
+            ]
+          },
+          {
+            "row": 7,
+            "id": "FAQ-102",
+            "codes": [
+              "duplicate_in_batch"
+            ],
+            "fix": [
+              "같은 배치에 같은 id가 또 있습니다. 하나만 남겨 주세요"
+            ]
+          },
+          {
+            "row": 8,
+            "id": "FAQ-108",
+            "codes": [
+              "keywords_missing"
+            ],
+            "fix": [
+              "키워드를 하나 이상 넣어 주세요"
+            ]
+          },
+          {
+            "row": 9,
+            "id": "FAQ-109",
+            "codes": [
+              "pii"
+            ],
+            "fix": [
+              "개인 전화번호 · 메일 주소를 빼고 IT 포털 안내로 바꿔 주세요"
+            ]
+          },
+          {
+            "row": 10,
+            "id": "FAQ-110",
+            "codes": [
+              "external_link"
+            ],
+            "fix": [
+              "바깥 링크 대신 사내 주소(intra.example.com)를 써 주세요"
+            ]
+          },
+          {
+            "row": 11,
+            "id": "FAQ-003",
+            "codes": [
+              "exists_id"
+            ],
+            "fix": [
+              "이미 있는 id입니다. 새 id를 쓰거나, 고치려는 것이면 FAQ 담당자에게 알려 주세요"
+            ]
+          },
+          {
+            "row": 12,
+            "id": "FAQ-112",
+            "codes": [
+              "same_title"
+            ],
+            "fix": [
+              "같은 제목의 FAQ가 이미 있습니다. 제목을 바꾸거나 기존 FAQ와 합쳐 주세요"
+            ]
+          }
+        ],
+        "message": "B-1: 13줄 중 3줄 통과, 10줄 고칠 것"
+      }
+    },
+    {
+      "case": "B-2 · 메일 주소 한 줄만",
+      "webhook": "my-faq-check",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "batch": "B-2",
+        "items": [
+          {
+            "id": "FAQ-201",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-202",
+            "title": "출입증 재발급",
+            "keywords": [
+              "출입증",
+              "재발급"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 신분증을 가지고 가서 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-203",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북과 충전기를 반납합니다."
+          },
+          {
+            "id": "FAQ-204",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터",
+              "추가"
+            ],
+            "answer": "IT 포털의 '장비 신청'에서 모니터 추가를 신청하면 재고 확인 뒤 지급합니다."
+          },
+          {
+            "id": "FAQ-205",
+            "title": "윈도우 업데이트",
+            "keywords": [
+              "업데이트",
+              "윈도우"
+            ],
+            "answer": "윈도우 업데이트는 매달 둘째 주 수요일 밤에 자동으로 설치됩니다. 끝나면 다시 시작합니다."
+          },
+          {
+            "id": "FAQ-206",
+            "title": "화상회의 장비 대여",
+            "keywords": [
+              "화상회의",
+              "카메라"
+            ],
+            "answer": "화상회의 카메라와 마이크는 각 층 비품실에서 빌리고 같은 날 돌려줍니다."
+          },
+          {
+            "id": "FAQ-207",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 IT 포털(https://intra.example.com/msg)에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-208",
+            "title": "공유 드라이브 권한",
+            "keywords": [
+              "공유 드라이브",
+              "권한"
+            ],
+            "answer": "공유 드라이브 권한은 팀장이 IT 포털에서 신청하면 하루 안에 열립니다."
+          },
+          {
+            "id": "FAQ-209",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 security.desk@example.com 으로 바로 메일을 보내 주세요."
+          },
+          {
+            "id": "FAQ-210",
+            "title": "모니터 밝기 조절",
+            "keywords": [
+              "밝기"
+            ],
+            "answer": "연차 휴가는 입사 1년 뒤부터 15일이며 인사 포털에서 신청합니다."
+          }
+        ]
+      },
+      "response": {
+        "batch": "B-2",
+        "total": 10,
+        "valid": 9,
+        "invalid": 1,
+        "with_warnings": 0,
+        "rows": [
+          {
+            "id": "FAQ-201",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-202",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-203",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-204",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-205",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-206",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-207",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-208",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-209",
+            "ok": false,
+            "errors": [
+              "pii"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-210",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          }
+        ],
+        "codes": {
+          "pii": 1
+        },
+        "fix_list": [
+          {
+            "row": 9,
+            "id": "FAQ-209",
+            "codes": [
+              "pii"
+            ],
+            "fix": [
+              "개인 전화번호 · 메일 주소를 빼고 IT 포털 안내로 바꿔 주세요"
+            ]
+          }
+        ],
+        "message": "B-2: 10줄 중 9줄 통과, 1줄 고칠 것"
+      }
+    },
+    {
+      "case": "앞의 칸은 그대로",
+      "webhook": "my-faq-check",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.2,
+      "status": 200,
+      "request": {
+        "batch": "B-1",
+        "items": [
+          {
+            "id": "FAQ-101",
+            "title": "사내 와이파이 연결",
+            "keywords": [
+              "와이파이",
+              "wifi",
+              "무선"
+            ],
+            "answer": "사내 와이파이는 'CORP-WIFI'에 사번으로 로그인합니다. 잡히지 않으면 공유기 번호를 IT 포털에 신고합니다."
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약",
+            "keywords": [
+              "회의실",
+              "예약"
+            ],
+            "answer": "사내 포털의 '회의실 예약' 메뉴에서 날짜 · 시간 · 인원을 적어 예약합니다."
+          },
+          {
+            "id": "FAQ-103",
+            "title": "",
+            "keywords": [
+              "출입증"
+            ],
+            "answer": "출입증을 잃어버렸으면 총무팀에 재발급을 신청합니다."
+          },
+          {
+            "id": "FAQ-10",
+            "title": "노트북 반납",
+            "keywords": [
+              "노트북",
+              "반납"
+            ],
+            "answer": "퇴사 5영업일 전까지 IT팀에 노트북을 반납합니다."
+          },
+          {
+            "id": "FAQ-105",
+            "title": "모니터 추가 신청",
+            "keywords": [
+              "모니터"
+            ],
+            "answer": ""
+          },
+          {
+            "id": "FAQ-106",
+            "title": "회의실 예약 규칙",
+            "keywords": [
+              "회의실 규칙"
+            ],
+            "answer": "회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. 회의실은 사내 포털의 '회의실 예약' 메뉴에서 날짜와 시간을 고른 뒤 인원과 목적을 적어 예약합니다. "
+          },
+          {
+            "id": "FAQ-102",
+            "title": "회의실 예약 (중복)",
+            "keywords": [
+              "회의실"
+            ],
+            "answer": "사내 포털에서 회의실을 예약합니다. 취소도 같은 메뉴에서 합니다."
+          },
+          {
+            "id": "FAQ-108",
+            "title": "화상회의 장비",
+            "keywords": [],
+            "answer": "화상회의 장비는 각 층 비품실에서 빌릴 수 있습니다."
+          },
+          {
+            "id": "FAQ-109",
+            "title": "보안 사고 신고",
+            "keywords": [
+              "보안",
+              "신고"
+            ],
+            "answer": "보안 사고는 IT팀 김민지(010-1234-5678)에게 바로 전화해 주세요."
+          },
+          {
+            "id": "FAQ-110",
+            "title": "사내 메신저 설치",
+            "keywords": [
+              "메신저"
+            ],
+            "answer": "사내 메신저는 http://bit.ly/corp-msg 에서 받아 설치합니다."
+          },
+          {
+            "id": "FAQ-003",
+            "title": "VPN 접속 오류 (새 판)",
+            "keywords": [
+              "재택근무"
+            ],
+            "answer": "VPN 클라이언트를 최신으로 업데이트하고 인증서를 확인합니다."
+          },
+          {
+            "id": "FAQ-112",
+            "title": "VPN 접속 오류",
+            "keywords": [
+              "vpn",
+              "재택근무"
+            ],
+            "answer": "재택근무 중 VPN이 끊기면 클라이언트를 다시 시작하고 인증서 만료일을 확인합니다."
+          },
+          {
+            "id": "FAQ-113",
+            "title": "프린터 토너 교체",
+            "keywords": [
+              "토너"
+            ],
+            "answer": "메일함 용량이 꽉 차면 오래된 메일을 보관함으로 옮겨 용량을 확보합니다."
+          }
+        ]
+      },
+      "response": {
+        "batch": "B-1",
+        "total": 13,
+        "valid": 3,
+        "invalid": 10,
+        "with_warnings": 1,
+        "rows": [
+          {
+            "id": "FAQ-101",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-102",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-103",
+            "ok": false,
+            "errors": [
+              "title_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-10",
+            "ok": false,
+            "errors": [
+              "id_format"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-105",
+            "ok": false,
+            "errors": [
+              "answer_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-106",
+            "ok": false,
+            "errors": [
+              "answer_too_long"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-102",
+            "ok": false,
+            "errors": [
+              "duplicate_in_batch"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-108",
+            "ok": false,
+            "errors": [
+              "keywords_missing"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-109",
+            "ok": false,
+            "errors": [
+              "pii"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-110",
+            "ok": false,
+            "errors": [
+              "external_link"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-003",
+            "ok": false,
+            "errors": [
+              "exists_id"
+            ],
+            "warnings": []
+          },
+          {
+            "id": "FAQ-112",
+            "ok": false,
+            "errors": [
+              "same_title"
+            ],
+            "warnings": [
+              "keyword_used:vpn"
+            ]
+          },
+          {
+            "id": "FAQ-113",
+            "ok": true,
+            "errors": [],
+            "warnings": []
+          }
+        ],
+        "codes": {
+          "title_missing": 1,
+          "id_format": 1,
+          "answer_missing": 1,
+          "answer_too_long": 1,
+          "duplicate_in_batch": 1,
+          "keywords_missing": 1,
+          "pii": 1,
+          "external_link": 1,
+          "exists_id": 1,
+          "same_title": 1
+        },
+        "fix_list": [
+          {
+            "row": 3,
+            "id": "FAQ-103",
+            "codes": [
+              "title_missing"
+            ],
+            "fix": [
+              "제목을 써 주세요"
+            ]
+          },
+          {
+            "row": 4,
+            "id": "FAQ-10",
+            "codes": [
+              "id_format"
+            ],
+            "fix": [
+              "id를 FAQ-숫자 3자리로 (예: FAQ-104)"
+            ]
+          },
+          {
+            "row": 5,
+            "id": "FAQ-105",
+            "codes": [
+              "answer_missing"
+            ],
+            "fix": [
+              "답을 써 주세요"
+            ]
+          },
+          {
+            "row": 6,
+            "id": "FAQ-106",
+            "codes": [
+              "answer_too_long"
+            ],
+            "fix": [
+              "답을 300자 이내로 줄여 주세요"
+            ]
+          },
+          {
+            "row": 7,
+            "id": "FAQ-102",
+            "codes": [
+              "duplicate_in_batch"
+            ],
+            "fix": [
+              "같은 배치에 같은 id가 또 있습니다. 하나만 남겨 주세요"
+            ]
+          },
+          {
+            "row": 8,
+            "id": "FAQ-108",
+            "codes": [
+              "keywords_missing"
+            ],
+            "fix": [
+              "키워드를 하나 이상 넣어 주세요"
+            ]
+          },
+          {
+            "row": 9,
+            "id": "FAQ-109",
+            "codes": [
+              "pii"
+            ],
+            "fix": [
+              "개인 전화번호 · 메일 주소를 빼고 IT 포털 안내로 바꿔 주세요"
+            ]
+          },
+          {
+            "row": 10,
+            "id": "FAQ-110",
+            "codes": [
+              "external_link"
+            ],
+            "fix": [
+              "바깥 링크 대신 사내 주소(intra.example.com)를 써 주세요"
+            ]
+          },
+          {
+            "row": 11,
+            "id": "FAQ-003",
+            "codes": [
+              "exists_id"
+            ],
+            "fix": [
+              "이미 있는 id입니다. 새 id를 쓰거나, 고치려는 것이면 FAQ 담당자에게 알려 주세요"
+            ]
+          },
+          {
+            "row": 12,
+            "id": "FAQ-112",
+            "codes": [
+              "same_title"
+            ],
+            "fix": [
+              "같은 제목의 FAQ가 이미 있습니다. 제목을 바꾸거나 기존 FAQ와 합쳐 주세요"
+            ]
+          }
+        ],
+        "message": "B-1: 13줄 중 3줄 통과, 10줄 고칠 것"
+      }
+    }
+  ]
+}

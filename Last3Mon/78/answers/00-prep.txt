@@ -1,0 +1,36 @@
+$ uv run tools/flow.py ops --reset
+✔ live run logs, added FAQ, quarantine, quality log, created tickets, DLQ and alerts emptied, fault switch all ok
+
+$ uv run tools/flow.py off my-faq-check my-faq-import my-check my-quality-report
+✔ unpublished my-faq-check (id weecbf2cc21d6fd2)
+✔ unpublished my-faq-import (id we9ca88e4f314222)
+✔ unpublished my-check (id wf4c2f04db13849f)
+✔ unpublished my-quality-report (id we40b9a92abbf7fd)
+✔ n8n restarted. Turn it back on with: uv run tools/flow.py push <the workflow file>
+
+$ uv run tools/flow.py push reference/baseline-faq-check.json reference/baseline-faq-import.json
+✔ pushed '78 FAQ check (team baseline)' (id w2d09b3af4461197)
+   POST http://localhost:5678/webhook/base-faq-check
+✔ pushed '78 FAQ import (team baseline)' (id w45c6472ffd87501)
+   POST http://localhost:5678/webhook/base-faq-import
+
+$ uv run tools/flow.py quality
+FAQ: 6  (nothing added)
+quarantine: 0
+quality log: 0
+alerts: 0
+
+$ uv run tools/flow.py doctor
+! n8n install folder /Users/[USER]/day65-n8n
+   → day 65 SETUP-N8N 5단계 (get.n8n.io 설치). 다른 곳에 설치했다면 Last3Mon/65/n8n/.env 에 N8N_HOME=<폴더>
+✔ n8n container day65-n8n-n8n-1
+✔ n8n http://localhost:5678
+✔ data API http://localhost:8800
+✔ dead letter queue /dlq · alerts · fault switch dlq (day 76 data API)
+✔ run logs /logs (666 seeded runs) · FAQ additions /faq-extra (day 77 data API)
+✔ schemas faq · employee · ticket, quarantine, quality log (day 78 data API)
+✔ n8n → http://data-api:8800
+✔ credential 'OpenAI (.env)' (openAiCourse0001)
+✔ node catalog (for check)
+✔ CLI coding agent: codex, claude, agy
+ready

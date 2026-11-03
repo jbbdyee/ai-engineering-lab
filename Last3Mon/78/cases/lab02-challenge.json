@@ -1,0 +1,82 @@
+{
+  "webhook": "my-faq-import",
+  "before": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quarantine-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quality-log-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "거절도 품질 기록",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "status": 422
+      }
+    },
+    {
+      "name": "배치 2 가져오기",
+      "request": "requests/faq-batch-2.json",
+      "expect": {
+        "equals": {
+          "score": 0.8
+        }
+      }
+    },
+    {
+      "name": "품질 기록 두 줄 (거절 · 0.8)",
+      "url": "http://localhost:8800/quality-log/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 2,
+          "items.0.rejected": true,
+          "items.1.score": 0.8,
+          "items.1.valid": 8,
+          "items.1.quarantined": 2
+        }
+      }
+    },
+    {
+      "name": "알림 두 건 (거절 · 낮은 점수)",
+      "url": "http://localhost:8800/alerts/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "count": 2
+        },
+        "contains": {
+          "alerts": "batch_rejected"
+        }
+      }
+    },
+    {
+      "name": "알림에 낮은 점수",
+      "url": "http://localhost:8800/alerts/list",
+      "body": {},
+      "expect": {
+        "contains": {
+          "alerts": "low_quality"
+        }
+      }
+    }
+  ]
+}

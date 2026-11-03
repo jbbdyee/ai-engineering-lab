@@ -1,0 +1,68 @@
+{
+  "webhook": "my-faq-check",
+  "before": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "B-1 · 고칠 줄 10개, 줄 순서대로",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "equals": {
+          "fix_list.0.row": 3,
+          "fix_list.0.id": "FAQ-103",
+          "fix_list.9.id": "FAQ-112",
+          "fix_list.10": null
+        }
+      }
+    },
+    {
+      "name": "고칠 것은 사람이 읽는 말로",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "contains": {
+          "fix_list.0.fix": "제목을 써 주세요",
+          "fix_list.6.fix": "개인 전화번호",
+          "fix_list.8.fix": "이미 있는 id"
+        }
+      }
+    },
+    {
+      "name": "한 줄 요약",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "equals": {
+          "message": "B-1: 13줄 중 3줄 통과, 10줄 고칠 것"
+        }
+      }
+    },
+    {
+      "name": "B-2 · 메일 주소 한 줄만",
+      "request": "requests/faq-batch-2.json",
+      "expect": {
+        "equals": {
+          "fix_list.0.id": "FAQ-209",
+          "fix_list.0.codes.0": "pii",
+          "fix_list.1": null,
+          "message": "B-2: 10줄 중 9줄 통과, 1줄 고칠 것"
+        }
+      }
+    },
+    {
+      "name": "앞의 칸은 그대로",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "equals": {
+          "valid": 3,
+          "invalid": 10
+        },
+        "contains": {
+          "rows.10.errors": "exists_id"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "cases": "lab03.json",
+  "webhook": "my-check",
+  "passed": 0,
+  "total": 4,
+  "results": [
+    {
+      "case": "직원 CSV · 9줄 중 4줄 통과",
+      "webhook": "my-check",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "schema = null (expected employee)",
+        "total = null (expected 9)",
+        "valid = null (expected 4)",
+        "rows.6.ok = null (expected true)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "schema": "employee",
+        "batch": "HR-1",
+        "csv": "name,dept,email,phone,joined\n오세훈,영업팀,sehoon.oh@example.com,010-2222-3333,2026-10-01\n윤하늘,재무팀,haneul.yoon@example.com,,2026-10-05\n강민수,개발팀,minsu.kang@example,010-4444-5555,2026-10-06\n서지아,마케팅팀,jia.seo@example.com,010-6666-7777,2026-10-07\n임도윤,인사팀,doyun.lim@example.com,010-8888-9999,2026-13-01\n,IT팀,noname@example.com,,2026-10-09\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n정다은,IT팀,daeun.jung@example.com,010-1111-2222,2026-10-14"
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-check\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "직원 CSV · 줄마다 이유",
+      "webhook": "my-check",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "rows.2.errors has none of ['bad_format:email']",
+        "rows.3.errors has none of ['not_allowed:dept']",
+        "rows.4.errors has none of ['bad_format:joined']",
+        "rows.5.errors has none of ['missing:name']",
+        "rows.7.errors has none of ['duplicate_in_batch']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "schema": "employee",
+        "batch": "HR-1",
+        "csv": "name,dept,email,phone,joined\n오세훈,영업팀,sehoon.oh@example.com,010-2222-3333,2026-10-01\n윤하늘,재무팀,haneul.yoon@example.com,,2026-10-05\n강민수,개발팀,minsu.kang@example,010-4444-5555,2026-10-06\n서지아,마케팅팀,jia.seo@example.com,010-6666-7777,2026-10-07\n임도윤,인사팀,doyun.lim@example.com,010-8888-9999,2026-13-01\n,IT팀,noname@example.com,,2026-10-09\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n배수아,총무팀,sua.bae@example.com,02-123-4567,2026-10-12\n정다은,IT팀,daeun.jung@example.com,010-1111-2222,2026-10-14"
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-check\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "같은 워크플로우로 FAQ 스키마",
+      "webhook": "my-check",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "schema = null (expected faq)",
+        "total = null (expected 6)",
+        "valid = null (expected 5)",
+        "rows.4.errors has none of ['too_short:answer']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "schema": "faq",
+        "batch": "B-3",
+        "items": [
+          {
+            "id": "FAQ-301",
+            "title": "택배 수령",
+            "keywords": [
+              "택배"
+            ],
+            "answer": "회사로 온 택배는 1층 안내 데스크에서 사원증을 보여 주고 받습니다."
+          },
+          {
+            "id": "FAQ-302",
+            "title": "주차 등록",
+            "keywords": [
+              "주차"
+            ],
+            "answer": "주차 등록은 총무팀 포털에서 차량 번호를 적어 신청합니다."
+          },
+          {
+            "id": "FAQ-303",
+            "title": "명함 신청",
+            "keywords": [
+              "명함"
+            ],
+            "answer": "명함은 인사 포털에서 신청하면 일주일 안에 자리로 배달됩니다."
+          },
+          {
+            "id": "FAQ-304",
+            "title": "사내 식당 메뉴",
+            "keywords": [
+              "식당",
+              "메뉴"
+            ],
+            "answer": "사내 식당 메뉴는 매주 월요일 아침 사내 게시판에 올라옵니다."
+          },
+          {
+            "id": "FAQ-305",
+            "title": "교육 신청",
+            "keywords": [
+              "교육"
+            ],
+            "answer": "짧"
+          },
+          {
+            "id": "FAQ-306",
+            "title": "건강검진",
+            "keywords": [
+              "건강검진"
+            ],
+            "answer": "건강검진은 매년 9월에 인사팀이 안내하며 지정 병원에서 받습니다."
+          }
+        ]
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-check\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "모르는 스키마 → 400",
+      "webhook": "my-check",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 400)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "schema": "invoice",
+        "items": []
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-check\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}

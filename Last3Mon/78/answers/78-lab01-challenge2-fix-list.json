@@ -1,0 +1,177 @@
+{
+  "name": "78 FAQ check + fix list (answer)",
+  "nodes": [
+    {
+      "name": "Check webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-faq-check",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "7ded9091-d32b-514c-9bba-8cc9010cd8c5",
+      "webhookId": "cf6a2ab6-8e06-511c-b239-ef1a5207977f"
+    },
+    {
+      "name": "Is a list?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ Array.isArray($json.body.items) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "4485bb43-0e0f-5736-9855-cf88dc66cdef"
+    },
+    {
+      "name": "Reject body",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"items must be a list\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        560
+      ],
+      "id": "b2273143-7dc4-52c9-b1f3-36fd45b4a595"
+    },
+    {
+      "name": "Get FAQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/faq-all",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "eac0cc92-5d69-5d2a-b999-7a071a4cd7e5"
+    },
+    {
+      "name": "Check rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Check webhook').first().json.body;\n\nconst existing = $('Get FAQ').first().json.faqs ?? [];\nconst existingIds = new Set(existing.map((f) => f.id));\nconst existingTitles = new Set(existing.map((f) => String(f.title).trim()));\nconst existingKeywords = new Set(existing.flatMap((f) => (f.keywords ?? []).map((k) => String(k).toLowerCase())));\nconst seen = new Set();\nconst rows = body.items.map((r) => {\n  const errors = [], warnings = [];\n  const id = String(r?.id ?? '');\n  const title = String(r?.title ?? '').trim();\n  const answer = String(r?.answer ?? '').trim();\n  if (!/^FAQ-\\d{3}$/.test(id)) errors.push('id_format');\n  if (!title) errors.push('title_missing'); else if (title.length > 40) errors.push('title_too_long');\n  if (!Array.isArray(r?.keywords) || r.keywords.length === 0) errors.push('keywords_missing');\n  if (!answer) errors.push('answer_missing'); else if (answer.length < 10) errors.push('answer_too_short'); else if (answer.length > 300) errors.push('answer_too_long');\n  if (seen.has(id)) errors.push('duplicate_in_batch');\n  seen.add(id);\n  if (/01[016789][-. ]?\\d{3,4}[-. ]?\\d{4}/.test(answer) || /[\\w.+-]+@[\\w-]+\\.[\\w.]+/.test(answer)) errors.push('pii');\n  if (/https?:\\/\\/(?!intra\\.example\\.com(?![\\w.-]))/i.test(answer)) errors.push('external_link');\n\n  if (existingIds.has(id)) errors.push('exists_id');\n  if (title && existingTitles.has(title)) errors.push('same_title');\n  for (const k of (Array.isArray(r?.keywords) ? r.keywords : [])) if (existingKeywords.has(String(k).toLowerCase())) warnings.push(`keyword_used:${k}`);\n  return { id, ok: errors.length === 0, errors, warnings };\n});\nconst codes = {};\nfor (const row of rows) for (const e of row.errors) codes[e] = (codes[e] ?? 0) + 1;\nconst valid = rows.filter((r) => r.ok).length;\nconst out = { batch: body.batch ?? '', total: rows.length, valid, invalid: rows.length - valid,\n  with_warnings: rows.filter((r) => r.warnings.length).length, rows, codes };\n\nconst FIX = {\n  id_format: 'id를 FAQ-숫자 3자리로 (예: FAQ-104)',\n  title_missing: '제목을 써 주세요',\n  title_too_long: '제목을 40자 이내로 줄여 주세요',\n  keywords_missing: '키워드를 하나 이상 넣어 주세요',\n  answer_missing: '답을 써 주세요',\n  answer_too_short: '답을 10자 이상으로 써 주세요',\n  answer_too_long: '답을 300자 이내로 줄여 주세요',\n  duplicate_in_batch: '같은 배치에 같은 id가 또 있습니다. 하나만 남겨 주세요',\n  pii: '개인 전화번호 · 메일 주소를 빼고 IT 포털 안내로 바꿔 주세요',\n  external_link: '바깥 링크 대신 사내 주소(intra.example.com)를 써 주세요',\n  exists_id: '이미 있는 id입니다. 새 id를 쓰거나, 고치려는 것이면 FAQ 담당자에게 알려 주세요',\n  same_title: '같은 제목의 FAQ가 이미 있습니다. 제목을 바꾸거나 기존 FAQ와 합쳐 주세요',\n};\nout.fix_list = rows.map((r, i) => ({ row: i + 1, id: r.id, codes: r.errors, fix: r.errors.map((e) => FIX[e] ?? e) })).filter((r) => r.codes.length);\nout.message = `${out.batch}: ${out.total}줄 중 ${out.valid}줄 통과, ${out.invalid}줄 고칠 것`;\nreturn [{ json: out }];"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "71deee57-d95f-500e-87cc-e352362e221a"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "26ac83fd-b10f-56ae-8669-52a14deafc35"
+    }
+  ],
+  "connections": {
+    "Is a list?": {
+      "main": [
+        [
+          {
+            "node": "Get FAQ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get FAQ": {
+      "main": [
+        [
+          {
+            "node": "Check rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check rows": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check webhook": {
+      "main": [
+        [
+          {
+            "node": "Is a list?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

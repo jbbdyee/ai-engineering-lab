@@ -1,0 +1,87 @@
+{
+  "webhook": "my-faq-import",
+  "before": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quarantine-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quality-log-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "B-1 · 기본 기준 0.3 → 거절",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "status": 422,
+        "equals": {
+          "max_invalid_ratio": 0.3,
+          "invalid_ratio": 0.7692
+        }
+      }
+    },
+    {
+      "name": "B-1 · 기준을 0.8로 풀면 → 받음, 넣는 것은 2줄",
+      "request": "requests/faq-batch-1-loose.json",
+      "expect": {
+        "equals": {
+          "rejected": false,
+          "max_invalid_ratio": 0.8,
+          "imported": 2,
+          "quarantined": 11
+        }
+      }
+    },
+    {
+      "name": "FAQ만 처음으로 (B-1이 넣은 2줄을 비움, 격리함은 그대로)",
+      "url": "http://localhost:8800/faq-reset",
+      "body": {},
+      "expect": {
+        "equals": {
+          "cleared": 2
+        }
+      }
+    },
+    {
+      "name": "B-2 · 기준 0.05 → 거절",
+      "request": "requests/faq-batch-2-strict.json",
+      "expect": {
+        "status": 422,
+        "equals": {
+          "invalid_ratio": 0.1,
+          "max_invalid_ratio": 0.05
+        }
+      }
+    },
+    {
+      "name": "B-2 · 기준 0.1 · 나쁜 줄이 딱 10% → 받음",
+      "request": "requests/faq-batch-2-limit-0.1.json",
+      "expect": {
+        "equals": {
+          "rejected": false,
+          "max_invalid_ratio": 0.1
+        }
+      }
+    },
+    {
+      "name": "격리함이 13줄 (B-1 11 + B-2 2)",
+      "url": "http://localhost:8800/quarantine/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "size": 13
+        }
+      }
+    }
+  ]
+}

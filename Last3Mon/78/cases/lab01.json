@@ -1,0 +1,61 @@
+{
+  "webhook": "my-faq-check",
+  "cases": [
+    {
+      "name": "빈 값 (제목 · 답 · 키워드)",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "contains": {
+          "rows.2.errors": "title_missing",
+          "rows.4.errors": "answer_missing",
+          "rows.7.errors": "keywords_missing"
+        }
+      }
+    },
+    {
+      "name": "형식 (id · 답 길이)",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "contains": {
+          "rows.3.errors": "id_format",
+          "rows.5.errors": "answer_too_long"
+        }
+      }
+    },
+    {
+      "name": "배치 안 중복 · 개인정보 · 바깥 링크",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "contains": {
+          "rows.6.errors": "duplicate_in_batch",
+          "rows.8.errors": "pii",
+          "rows.9.errors": "external_link"
+        },
+        "equals": {
+          "rows.0.ok": true,
+          "total": 13
+        }
+      }
+    },
+    {
+      "name": "배치 2 · 메일 주소만 걸림, 사내 링크는 통과",
+      "request": "requests/faq-batch-2.json",
+      "expect": {
+        "equals": {
+          "total": 10,
+          "valid": 9,
+          "codes.pii": 1,
+          "rows.8.ok": false,
+          "rows.6.ok": true
+        }
+      }
+    },
+    {
+      "name": "목록이 아닌 본문 → 400",
+      "request": "requests/not-a-list.json",
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

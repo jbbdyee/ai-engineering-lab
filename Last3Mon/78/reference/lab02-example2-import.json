@@ -1,0 +1,425 @@
+{
+  "name": "78 FAQ import + LLM check (reference)",
+  "nodes": [
+    {
+      "name": "Import webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-faq-import",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "0c06837b-c353-5d57-87a3-9902cc7cb89b",
+      "webhookId": "5df7e654-f73a-5bd7-a684-9c0125bb37a0"
+    },
+    {
+      "name": "Run check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://localhost:5678/webhook/my-faq-check",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "113c3307-ae38-53f2-b868-6836377ce3de"
+    },
+    {
+      "name": "Checked?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ Array.isArray($json.rows) && $json.rows.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "5cebd576-bdd0-5d87-8d21-50dedd8f7330"
+    },
+    {
+      "name": "Reject body",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: $json.error ?? 'check failed' }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        660,
+        760
+      ],
+      "id": "28279a25-ff11-545e-8665-853b391d4cc2"
+    },
+    {
+      "name": "Batch ok?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.invalid / $json.total <= ($('Import webhook').first().json.body.max_invalid_ratio ?? 0.3) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "79dafedb-7560-5604-92df-e74301c2e851"
+    },
+    {
+      "name": "Reject batch",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: 'batch rejected', batch: $('Run check').first().json.batch, invalid_ratio: Math.round($('Run check').first().json.invalid / $('Run check').first().json.total * 10000) / 10000, max_invalid_ratio: ($('Import webhook').first().json.body.max_invalid_ratio ?? 0.3), codes: $('Run check').first().json.codes }) }}",
+        "options": {
+          "responseCode": 422
+        }
+      },
+      "position": [
+        880,
+        560
+      ],
+      "id": "0fe0e610-b892-5a76-bf63-7d8e0bb39480"
+    },
+    {
+      "name": "Split rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const c = $('Run check').first().json;\nconst items = $('Import webhook').first().json.body.items;\nreturn c.rows.map((r, i) => ({ json: { ...r, row: items[i], batch: c.batch } }));"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "7a40a393-288a-53ae-a82e-b98d947ee93b"
+    },
+    {
+      "name": "Only passed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return $input.all().filter((i) => i.json.ok);"
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "eb586a0d-12f4-5fde-9d68-043c55aef1f4"
+    },
+    {
+      "name": "Judge",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=제목: {{ $json.row.title }}\n답: {{ $json.row.answer }}",
+        "options": {
+          "systemMessage": "You check a company IT FAQ entry before it is published. Does the answer actually answer the title's topic? Ignore style. Return only JSON, no code fence: {\"match\": true, \"reason\": \"short reason in Korean\"}",
+          "maxIterations": 1
+        }
+      },
+      "onError": "continueRegularOutput",
+      "position": [
+        1320,
+        300
+      ],
+      "id": "00774c60-9e1b-5b13-9372-05bfff2c5e5f"
+    },
+    {
+      "name": "Judge model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        1320,
+        520
+      ],
+      "id": "b9d81b74-5416-5c1f-83d5-27198a9c3e4c"
+    },
+    {
+      "name": "Decide",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const judged = $('Only passed').all().map((item, i) => {\n  let v = { match: false, reason: 'judge unreadable' };\n  try { v = JSON.parse(String($('Judge').all()[i].json.output ?? '').replace(/^```(json)?\\s*|```$/g, '')); } catch (e) {}\n  return { ...item.json, ok: v.match === true, errors: v.match === true ? [] : ['llm_mismatch'], reason: String(v.reason ?? '') };\n});\nlet k = 0;\nreturn $('Split rows').all().map((i) => ({ json: i.json.ok ? judged[k++] : i.json }));"
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "efbd675d-b385-598c-8d25-59047ac9b1ec"
+    },
+    {
+      "name": "Store row",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "={{ $json.ok ? 'http://data-api:8800/faq/add' : 'http://data-api:8800/quarantine' }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.ok ? $json.row : { items: [{ batch: $json.batch, row: $json.row, errors: $json.errors }] }) }}"
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "31549ecc-3322-5f92-a41e-c3006f0b0421"
+    },
+    {
+      "name": "Summarize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const c = $('Run check').first().json;\nconst rows = $('Decide').all().map((i) => i.json);\nconst imported = rows.filter((r) => r.ok);\nconst quarantined = rows.filter((r) => !r.ok);\nconst codes = { ...c.codes };\nfor (const r of quarantined) for (const e of r.errors) if (e === 'llm_mismatch') codes[e] = (codes[e] ?? 0) + 1;\nreturn [{ json: { batch: c.batch, total: c.total, imported: imported.length, quarantined: quarantined.length, rejected: false,\n  score: Math.round(imported.length / c.total * 10000) / 10000, max_invalid_ratio: ($('Import webhook').first().json.body.max_invalid_ratio ?? 0.3),\n  codes, imported_ids: imported.map((r) => r.id), quarantined_ids: quarantined.map((r) => r.id) } }];"
+      },
+      "position": [
+        1980,
+        300
+      ],
+      "id": "b07acdff-4b76-5814-84cc-bd6011916683"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        2200,
+        300
+      ],
+      "id": "e1ac883e-0b0e-5106-b01e-7fb7363f9c74"
+    }
+  ],
+  "connections": {
+    "Import webhook": {
+      "main": [
+        [
+          {
+            "node": "Run check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run check": {
+      "main": [
+        [
+          {
+            "node": "Checked?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checked?": {
+      "main": [
+        [
+          {
+            "node": "Batch ok?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batch ok?": {
+      "main": [
+        [
+          {
+            "node": "Split rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject batch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split rows": {
+      "main": [
+        [
+          {
+            "node": "Only passed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only passed": {
+      "main": [
+        [
+          {
+            "node": "Judge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Judge": {
+      "main": [
+        [
+          {
+            "node": "Decide",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Judge model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Judge",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide": {
+      "main": [
+        [
+          {
+            "node": "Store row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store row": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

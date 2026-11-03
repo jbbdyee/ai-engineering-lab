@@ -1,0 +1,99 @@
+$ uv run tools/flow.py call base-faq-check requests/faq-batch-1.json
+HTTP 200 · 0.9s
+{
+  "batch": "B-1",
+  "total": 13,
+  "valid": 10,
+  "invalid": 3,
+  "rows": [
+    {
+      "id": "FAQ-101",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-102",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-103",
+      "ok": false,
+      "errors": [
+        "title_missing"
+      ],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-10",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-105",
+      "ok": false,
+      "errors": [
+        "answer_missing"
+      ],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-106",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-102",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-108",
+      "ok": false,
+      "errors": [
+        "keywords_missing"
+      ],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-109",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-110",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-003",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-112",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "id": "FAQ-113",
+      "ok": true,
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "codes": {
+    "title_missing": 1,
+    "answer_missing": 1,
+    "keywords_missing": 1
+  }
+}

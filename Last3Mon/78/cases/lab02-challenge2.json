@@ -1,0 +1,56 @@
+{
+  "webhook": "my-faq-import",
+  "before": [
+    {
+      "url": "http://localhost:8800/faq-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quarantine-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/quality-log-clear",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/alerts-clear",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "거절된 배치는 LLM을 부르지 않음",
+      "request": "requests/faq-batch-1.json",
+      "expect": {
+        "status": 422,
+        "equals": {
+          "llm_calls": 0
+        }
+      }
+    },
+    {
+      "name": "B-2 · 규칙을 통과한 9줄만 LLM에",
+      "request": "requests/faq-batch-2.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 9,
+          "imported": 8
+        },
+        "contains": {
+          "quarantined_ids": "FAQ-210"
+        }
+      }
+    },
+    {
+      "name": "B-3 · 5줄만 LLM에",
+      "request": "requests/faq-batch-3.json",
+      "expect": {
+        "equals": {
+          "llm_calls": 5,
+          "imported": 5
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "name": "78 FAQ check (team baseline)",
+  "nodes": [
+    {
+      "name": "Check webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "base-faq-check",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "154bbb29-0cd9-55c8-a318-872a5690cb25",
+      "webhookId": "879f1ed6-94a8-57f2-9cc3-8dfa0880a80a"
+    },
+    {
+      "name": "Check rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Check webhook').first().json.body;\n// team baseline: only empty values (written in a hurry last month)\nconst rows = body.items.map((r) => {\n  const errors = [];\n  if (!r.title) errors.push('title_missing');\n  if (!r.answer) errors.push('answer_missing');\n  if (!r.keywords || r.keywords.length === 0) errors.push('keywords_missing');\n  return { id: String(r.id ?? ''), ok: errors.length === 0, errors, warnings: [] };\n});\nconst codes = {};\nfor (const row of rows) for (const e of row.errors) codes[e] = (codes[e] ?? 0) + 1;\nconst valid = rows.filter((r) => r.ok).length;\nreturn [{ json: { batch: body.batch ?? '', total: rows.length, valid, invalid: rows.length - valid, rows, codes } }];"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "072e3548-3d37-52bc-816a-4f5e6c8e795b"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "4707a40b-6783-5666-bb73-227a848955ac"
+    }
+  ],
+  "connections": {
+    "Check webhook": {
+      "main": [
+        [
+          {
+            "node": "Check rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check rows": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
