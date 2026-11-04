@@ -1,0 +1,37 @@
+$ uv run tools/flow.py morning
+seeded morning 2026-11-04T08:30:00 · {"alerts": 6, "dlq": 3, "quality_log": 4, "quarantine": 1, "usage": 192}
+alerts: 6 (high 3)
+  [high] helpdesk/Search FAQ · timeout · timeout of 1000ms exceeded
+  [high] helpdesk/Answer · rate_limit · 429 Rate limit reached for requests
+  [high] faq-import/Batch ok? · batch_rejected · B-1 rejected
+  [medium] faq-import/Low score? · low_quality · B-2 quality 0.8
+  [medium] faq-import/Low score? · low_quality · B-3 quality 0.8333
+  [medium] intake/Create ticket · api_error · tickets API 503
+DLQ: 3 (parked 2)
+  #1  attempts 3  parked True  tickets API 503
+  #2  attempts 3  parked True  tickets API 503
+  #3  attempts 1  parked False  timeout
+quality log: 4 (scores [0, 0.8, 0.8333, 1]) · quarantine 1
+usage: 156 requests · 192 calls · $0.073604
+budget: used $0.073604 of $0.08
+release: active 1.1.0 · canary {"release": "1.2.0", "percent": 20}
+
+$ uv run tools/flow.py call base-ops-facts requests/week2.json
+HTTP 200 · 1.4s
+{
+  "runs": {
+    "total": 666,
+    "errors": 21,
+    "error_rate": 3.153153153153153
+  },
+  "alerts": {
+    "count": 6
+  },
+  "dlq": {
+    "size": 3
+  },
+  "cost": {
+    "used_usd": 0.073604,
+    "daily_usd": 0.08
+  }
+}

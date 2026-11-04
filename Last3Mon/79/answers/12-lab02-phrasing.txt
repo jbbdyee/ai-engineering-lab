@@ -1,0 +1,109 @@
+$ uv run tools/flow.py test cases/lab02-phrasing.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-ask · 6 case(s) × 1
+✔ '에러' → 실행 · 1.2s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "에러 많이 났어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "에러 많이 났어?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "2026년 10월 26일부터 30일까지 총 357회 실행 중 21회 에러가 발생하여 에러율은 5.88%입니다. 주요 실패 원인은 \"Search FAQ\" 노드에서 1000ms 타임아웃 초과로 16회 발생했습니다. 현재 시스템 상태는 빨간색(위험)입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ '장애' 는 낱말 목록에 없음 → 운영 밖으로 거절 · 0.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "장애 났어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "장애 났어?",
+        "area": "unknown",
+        "router": "keyword",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+✔ 두 영역이 한 번씩 → 앞의 영역 (알림) · 1.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "알림이랑 DLQ 둘 다 알려 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "알림이랑 DLQ 둘 다 알려 줘",
+        "area": "alerts",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "알림은 총 6건이며, 그중 3건은 높은 심각도입니다. DLQ 관련 정보는 제공된 사실에 포함되어 있지 않습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ '꺼 줘' → 작업 요청으로 거절 · 0.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "카나리 꺼 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "카나리 꺼 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+✔ '배포'(1) 보다 '상태 · 요약'(2) → 전체 · 1.7s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "배포 상태 요약해 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "배포 상태 요약해 줘",
+        "area": "overview",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "2026년 10월 26일부터 30일까지 총 357회 실행 중 오류율은 5.88%이며, 주요 실패 원인은 'Search FAQ' 노드에서 1000ms 타임아웃 초과로 16건 발생했습니다. 경고는 총 6건으로 고위험 3건, 낮은 품질과 API 오류 등이 포함되어 있고, DLQ에는 3건이 대기 중입니다. 전체 배포 상태는 실행, DLQ, 릴리스가 빨간색으로 심각하며, 경고, 품질, 비용은 노란색으로 나타나 전체적으로는 빨간색 상태입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ 낱말 없는 비용 질문 → 거절 (과제 1에서 LLM 라우터로) · 0.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "AI 쓰는 데 얼마나 나갔어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "AI 쓰는 데 얼마나 나갔어?",
+        "area": "unknown",
+        "router": "keyword",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+Passed 6/6
+report: runs/lab02-phrasing-20261101-185309.json

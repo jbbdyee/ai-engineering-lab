@@ -1,0 +1,12 @@
+{
+  "name": "ticket",
+  "key": "ticket_id",
+  "fields": {
+    "ticket_id": {"type": "pattern", "required": true, "pattern": "^T-\\d{4}$"},
+    "title": {"type": "string", "required": true, "min": 4, "max": 40},
+    "requester": {"type": "string", "required": true, "max": 20},
+    "priority": {"type": "enum", "required": true, "values": ["low", "normal", "high"]},
+    "opened": {"type": "date", "required": true},
+    "contact": {"type": "phone", "required": false}
+  }
+}

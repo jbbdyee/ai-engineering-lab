@@ -1,0 +1,59 @@
+{
+  "webhook": "my-ops-eval",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "골든 질문 8개",
+      "request": "requests/ops-golden.json",
+      "expect": {
+        "equals": {
+          "total": 8,
+          "area_ok": 8,
+          "refused_ok": 8
+        },
+        "range": {
+          "score": [
+            0.875,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "틀린 기대는 잡아냄",
+      "body": {
+        "cases": [
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "cost",
+            "numbers": [
+              "6"
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "equals": {
+          "total": 1,
+          "passed": 0,
+          "failed.0.area": "alerts",
+          "failed.0.area_ok": false
+        }
+      }
+    },
+    {
+      "name": "빈 목록 → 400",
+      "body": {
+        "cases": []
+      },
+      "expect": {
+        "status": 400
+      }
+    }
+  ]
+}

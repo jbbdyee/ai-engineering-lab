@@ -1,0 +1,431 @@
+$ uv run tools/flow.py push reference/lab01-example2-facts.json
+✔ pushed '79 Ops facts (reference)' (id w91aa244110abf96)
+   POST http://localhost:5678/webhook/my-ops-facts
+
+$ uv run tools/flow.py test cases/lab01.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-facts · 5 case(s) × 1
+✔ 지난주 실행 (기본 기간) · 1.1s
+    → request  POST /webhook/my-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        }
+      }
+✔ 지금 상태 · 알림 · DLQ · 품질 · 0.4s
+    → request  POST /webhook/my-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        }
+      }
+✔ 비용 · 릴리스 · 0.1s
+    → request  POST /webhook/my-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        }
+      }
+✔ 첫 주 (기간을 바꾸면 실행만 바뀜) · 0.1s
+    → request  POST /webhook/my-ops-facts
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "period": {
+          "from": "2026-10-19",
+          "to": "2026-10-23"
+        },
+        "runs": {
+          "total": 309,
+          "errors": 0,
+          "error_rate": 0,
+          "p95_ms": 2525,
+          "unanswered_rate": 0.055,
+          "top_failure": null
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": null,
+          "canary_repeat_rate": null
+        }
+      }
+✔ before: POST http://localhost:8800/dlq/update · HTTP 200 · 0.0s · {"removed": true, "size": 2}
+    → request  POST http://localhost:8800/dlq/update
+      {
+        "dlq_id": 3,
+        "remove": true
+      }
+    ← response HTTP 200
+      {
+        "removed": true,
+        "size": 2
+      }
+✔ 상태가 바뀌면 숫자도 (DLQ #3 처리) · 0.1s
+    → request  POST /webhook/my-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 2,
+          "parked": 2,
+          "waiting": 0
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        }
+      }
+Passed 5/5
+report: runs/lab01-20261101-185125.json
+✔ after: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+
+$ uv run tools/flow.py call my-ops-facts requests/week2.json
+HTTP 200 · 0.1s
+{
+  "period": {
+    "from": "2026-10-26",
+    "to": "2026-10-30"
+  },
+  "runs": {
+    "total": 357,
+    "errors": 21,
+    "error_rate": 0.0588,
+    "p95_ms": 2598,
+    "unanswered_rate": 0.0476,
+    "top_failure": {
+      "node": "Search FAQ",
+      "message": "timeout of 1000ms exceeded",
+      "count": 16
+    }
+  },
+  "alerts": {
+    "count": 6,
+    "high": 3,
+    "by_reason": {
+      "timeout": 1,
+      "rate_limit": 1,
+      "batch_rejected": 1,
+      "low_quality": 2,
+      "api_error": 1
+    }
+  },
+  "dlq": {
+    "size": 3,
+    "parked": 2,
+    "waiting": 1
+  },
+  "quality": {
+    "batches": 4,
+    "avg_score": 0.6583,
+    "last_score": 1,
+    "rejected_batches": 1,
+    "quarantine": 1
+  },
+  "cost": {
+    "requests": 156,
+    "calls": 192,
+    "cost_usd": 0.073604,
+    "daily_usd": 0.08,
+    "used_ratio": 0.9201,
+    "top_user": {
+      "user": "test-bot",
+      "cost_usd": 0.027228,
+      "share": 0.3699
+    }
+  },
+  "release": {
+    "active": "1.1.0",
+    "canary_release": "1.2.0",
+    "canary_percent": 20,
+    "active_repeat_rate": 0.0773,
+    "canary_repeat_rate": 0.625
+  }
+}

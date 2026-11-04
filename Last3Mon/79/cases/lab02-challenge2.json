@@ -1,0 +1,80 @@
+{
+  "webhook": "my-ops-ask",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "작업 요청",
+      "body": {
+        "question": "DLQ 1번 다시 돌려 줘"
+      },
+      "expect": {
+        "equals": {
+          "refused": true,
+          "reason": "read_only"
+        }
+      }
+    },
+    {
+      "name": "운영 밖",
+      "body": {
+        "question": "점심 메뉴 추천해 줘"
+      },
+      "expect": {
+        "equals": {
+          "refused": true,
+          "reason": "out_of_scope"
+        }
+      }
+    },
+    {
+      "name": "답한 질문",
+      "body": {
+        "question": "지난주 오류율이 얼마야?"
+      },
+      "expect": {
+        "equals": {
+          "area": "runs",
+          "refused": false
+        }
+      }
+    },
+    {
+      "name": "감사 기록 세 줄 · 거절 이유와 함께",
+      "url": "http://localhost:8800/audit/list",
+      "body": {},
+      "expect": {
+        "equals": {
+          "events.0.kind": "ops-ask",
+          "events.0.reason": "read_only",
+          "events.0.area": "action",
+          "events.1.reason": "out_of_scope",
+          "events.1.router": "llm",
+          "events.2.area": "runs",
+          "events.2.refused": false,
+          "events.2.numbers_ok": true,
+          "events.3": null
+        }
+      }
+    },
+    {
+      "name": "응답은 그대로 (감사는 곁가지)",
+      "body": {
+        "question": "DLQ 1번 다시 돌려 줘"
+      },
+      "expect": {
+        "equals": {
+          "area": "action",
+          "router": "keyword"
+        },
+        "contains": {
+          "answer": "읽기만"
+        }
+      }
+    }
+  ]
+}

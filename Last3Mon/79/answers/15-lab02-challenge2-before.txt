@@ -1,0 +1,84 @@
+$ uv run tools/flow.py test cases/lab02-challenge2.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-ask · 5 case(s) × 1
+✔ 작업 요청 · 0.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "DLQ 1번 다시 돌려 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+✔ 운영 밖 · 0.7s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "점심 메뉴 추천해 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "점심 메뉴 추천해 줘",
+        "area": "unknown",
+        "router": "llm",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+✔ 답한 질문 · 1.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "지난주 오류율이 얼마야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "지난주 오류율이 얼마야?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✘ 감사 기록 세 줄 · 거절 이유와 함께 · 0.0s · events.0.kind = null (expected ops-ask); events.0.reason = null (expected read_only); events.0.area = null (expected action); events.1.reason = null (expected out_of_scope); events.1.router = null (expected llm); events.2.area = null (expected runs); events.2.refused = null (expected false); events.2.numbers_ok = null (expected true)
+    → request  POST http://localhost:8800/audit/list
+      {}
+    ← response HTTP 200
+      {
+        "events": []
+      }
+✔ 응답은 그대로 (감사는 곁가지) · 0.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "DLQ 1번 다시 돌려 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+Passed 4/5
+report: runs/lab02-challenge2-20261101-185349.json

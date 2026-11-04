@@ -1,0 +1,317 @@
+{
+  "name": "79 Ops assistant eval + gate (answer)",
+  "nodes": [
+    {
+      "name": "Eval webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-ops-eval",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "b9e92341-ff71-5352-9909-618024a18357",
+      "position": [
+        0,
+        300
+      ],
+      "id": "79dec3c9-bffe-5565-8228-bb186d76ab2d"
+    },
+    {
+      "name": "Has cases?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ Array.isArray($json.body.cases) && $json.body.cases.length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "f8f0ded2-67fd-5079-be71-51cf8352a46e"
+    },
+    {
+      "name": "No cases",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"error\": \"cases must be a non-empty list\" }",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "position": [
+        440,
+        520
+      ],
+      "id": "4d2e4cbd-d282-5859-9b7c-09d10a1f52d2"
+    },
+    {
+      "name": "Split cases",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return $('Eval webhook').first().json.body.cases.map((c) => ({ json: c }));"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "c7d458a8-2b05-5b5d-8622-a449fc96947f"
+    },
+    {
+      "name": "Ask",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://localhost:5678/webhook/my-ops-ask",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 60000
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ question: $json.question }) }}"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "637c2a81-6496-51a3-96ea-e1e7746a3e79"
+    },
+    {
+      "name": "Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const cases = $('Eval webhook').first().json.body.cases;\nconst answers = $input.all().map((i) => i.json);\nconst results = cases.map((c, i) => {\n  const a = answers[i] ?? {};\n  const areaOk = a.area === c.area;\n  const refusedOk = Boolean(a.refused) === Boolean(c.refused);\n  const numberOk = !c.numbers || c.numbers.some((n) => String(a.answer ?? '').includes(n));\n  const grounded = a.refused ? true : a.numbers_ok === true;\n  return { question: c.question, area: a.area ?? null, ok: areaOk && refusedOk && numberOk && grounded, area_ok: areaOk, refused_ok: refusedOk, number_ok: numberOk, grounded, answer: a.answer ?? null };\n});\nconst n = results.length, cnt = (k) => results.filter((r) => r[k]).length;\nconst min = Number($('Eval webhook').first().json.body.min_score ?? 0.9);\nconst sc = n ? Math.round(cnt('ok') / n * 10000) / 10000 : 0;\nreturn [{ json: { total: n, passed: cnt('ok'), score: n ? Math.round(cnt('ok') / n * 10000) / 10000 : 0,\n  area_ok: cnt('area_ok'), refused_ok: cnt('refused_ok'), number_ok: cnt('number_ok'), grounded: cnt('grounded'),\n  failed: results.filter((r) => !r.ok), min_score: min, gate: sc >= min ? 'pass' : 'fail' } }];"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "97e3d80b-97c6-534c-b854-247fbb2d3aa1"
+    },
+    {
+      "name": "Send score",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "fe6103e3-3723-502b-ba34-f95ea2aacfd0"
+    },
+    {
+      "name": "Below?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1100,
+        300
+      ],
+      "id": "ef1a28a4-8753-597e-ae45-334233921758",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.gate === 'fail' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Alert eval",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        160
+      ],
+      "id": "acd6f4e0-0aa0-5f71-9a62-defe5e28d3a2",
+      "parameters": {
+        "url": "http://data-api:8800/alerts",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ workflow: 'ops-eval', node: 'Below?', severity: 'medium', reason: 'eval_below', score: $('Score').first().json.score, min_score: $('Score').first().json.min_score, message: 'ops assistant eval ' + $('Score').first().json.score + ' < ' + $('Score').first().json.min_score }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Result again",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        300
+      ],
+      "id": "679d16cb-7d8c-5d14-9b02-b0132a5a38e1",
+      "parameters": {
+        "jsCode": "return [{ json: $('Score').first().json }];"
+      }
+    }
+  ],
+  "connections": {
+    "Eval webhook": {
+      "main": [
+        [
+          {
+            "node": "Has cases?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has cases?": {
+      "main": [
+        [
+          {
+            "node": "Split cases",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split cases": {
+      "main": [
+        [
+          {
+            "node": "Ask",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask": {
+      "main": [
+        [
+          {
+            "node": "Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score": {
+      "main": [
+        [
+          {
+            "node": "Below?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Below?": {
+      "main": [
+        [
+          {
+            "node": "Alert eval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Result again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert eval": {
+      "main": [
+        [
+          {
+            "node": "Result again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result again": {
+      "main": [
+        [
+          {
+            "node": "Send score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

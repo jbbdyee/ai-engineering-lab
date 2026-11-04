@@ -1,0 +1,86 @@
+{
+  "cases": "lab03.json",
+  "webhook": "my-ops-brief",
+  "passed": 0,
+  "total": 4,
+  "results": [
+    {
+      "case": "전체 · 먼저 볼 것 셋",
+      "webhook": "my-ops-brief",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "overall = null (expected red)",
+        "red = null (expected [\"runs\", \"dlq\", \"release\"])",
+        "actions.0.area = null (expected runs)",
+        "actions.1.area = null (expected dlq)",
+        "actions.2.area = null (expected release)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-brief\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "표에 숫자",
+      "webhook": "my-ops-brief",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "markdown has none of ['| DLQ | 🔴 | 3건 (parked 2) |']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-brief\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "할 일은 규칙에서",
+      "webhook": "my-ops-brief",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "markdown has none of ['카나리 끄기 · 되돌리기 검토 (74일차)']",
+        "actions.1.action has none of ['parked']"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-brief\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "DLQ를 비운 뒤",
+      "webhook": "my-ops-brief",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "red = null (expected [\"runs\", \"release\"])",
+        "actions.2.area = null (expected alerts)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {},
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-brief\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}

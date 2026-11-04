@@ -1,0 +1,289 @@
+{
+  "name": "79 Ops ask (reference)",
+  "nodes": [
+    {
+      "name": "Ask webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-ops-ask",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "e0cc9a1d-38cf-580a-b52e-3f6d8bb1cab2",
+      "position": [
+        0,
+        300
+      ],
+      "id": "5bab6bdc-b287-574f-bfc6-713e57603960"
+    },
+    {
+      "name": "Route",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const q = String($('Ask webhook').first().json.body?.question ?? '').trim();\nconst lower = q.toLowerCase();\nconst words = {\n  runs: ['오류', '에러', '실패율', '느려', '느린', '응답 시간', 'p95', '실행'],\n  alerts: ['알림', '경보'],\n  dlq: ['dlq', '재처리', '쌓인', 'parked', '접수 실패'],\n  quality: ['품질', '배치', '격리'],\n  cost: ['비용', '돈', '예산', '토큰', '요금'],\n  release: ['릴리스', '버전', '카나리', '배포'],\n  overview: ['괜찮', '상태', '요약', '전체', '브리핑'],\n};\n\nlet area = 'unknown', best = 0;\nfor (const [k, list] of Object.entries(words)) {\n  const n = list.filter((w) => lower.includes(w)).length;\n  if (n > best) { best = n; area = k; }\n}\nreturn [{ json: { question: q, area, router: 'keyword' } }];"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "454883f1-d845-5ef3-8ac0-2273b7b626f8"
+    },
+    {
+      "name": "Known area?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.area !== 'unknown' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "79d63d99-7ccf-589f-b573-0494c689fddf"
+    },
+    {
+      "name": "Out of scope",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ question: $json.question, area: 'unknown', router: $json.router, refused: true, reason: 'out_of_scope', answer: '운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다.' }) }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        560
+      ],
+      "id": "d350c7de-a80a-5f09-8fa6-bbb42b78784d"
+    },
+    {
+      "name": "Get facts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://localhost:5678/webhook/my-ops-facts",
+        "options": {
+          "timeout": 30000
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $('Ask webhook').first().json.body?.from ?? '', to: $('Ask webhook').first().json.body?.to ?? '' }) }}"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "7c08a9c6-99a6-5967-a699-678a1fd11701"
+    },
+    {
+      "name": "Pick facts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Route').first().json;\nconst f = $('Get facts').first().json;\nconst part = r.area === 'overview' ? f : { period: f.period, [r.area]: f[r.area], ...(f.health ? { health: f.health[r.area] } : {}) };\nreturn [{ json: { ...r, facts: part } }];"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "d7524d66-8ab6-5122-bd66-bce5849d9f09"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $json.question }}\n사실(JSON): {{ JSON.stringify($json.facts) }}",
+        "options": {
+          "systemMessage": "You are the operations assistant of a company IT helpdesk team. Answer the operator's question in Korean, 2-3 sentences, using only the facts JSON you are given. Use only numbers that appear in the facts (a ratio like 0.0588 may be written as 5.88%). Do not guess causes that are not in the facts. Do not offer to run any action; you can only read.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "f049e910-3871-5073-bbdb-63ce3e969af5"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        1100,
+        520
+      ],
+      "id": "05b19df9-03bd-5ba0-bb97-58a5433ddf1e"
+    },
+    {
+      "name": "Make answer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Pick facts').first().json;\nreturn [{ json: { question: r.question, area: r.area, router: r.router, refused: false, reason: null, answer: String($json.output ?? '').trim() } }];"
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "d8e2b63f-ecb2-5934-b1ee-d7685e3d0a50"
+    },
+    {
+      "name": "Send answer",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "3b97fc93-c615-5711-a0a6-210980ab11d7"
+    }
+  ],
+  "connections": {
+    "Ask webhook": {
+      "main": [
+        [
+          {
+            "node": "Route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route": {
+      "main": [
+        [
+          {
+            "node": "Known area?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known area?": {
+      "main": [
+        [
+          {
+            "node": "Get facts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Out of scope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get facts": {
+      "main": [
+        [
+          {
+            "node": "Pick facts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick facts": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "Make answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make answer": {
+      "main": [
+        [
+          {
+            "node": "Send answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

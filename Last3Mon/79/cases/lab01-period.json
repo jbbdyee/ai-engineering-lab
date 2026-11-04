@@ -1,0 +1,72 @@
+{
+  "webhook": "my-ops-facts",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "두 주 (10/19~10/30)",
+      "request": "requests/two-weeks.json",
+      "expect": {
+        "equals": {
+          "runs.total": 666,
+          "runs.errors": 21,
+          "runs.error_rate": 0.0315,
+          "runs.top_failure.count": 16
+        }
+      }
+    },
+    {
+      "name": "하루 (10/26)",
+      "request": "requests/monday.json",
+      "expect": {
+        "equals": {
+          "runs.total": 70,
+          "runs.errors": 16,
+          "runs.top_failure.node": "Search FAQ"
+        }
+      }
+    },
+    {
+      "name": "빈 기간 (11/02~11/06) · 0건이어도 200",
+      "request": "requests/empty-week.json",
+      "expect": {
+        "equals": {
+          "runs.total": 0,
+          "runs.error_rate": 0,
+          "runs.p95_ms": 0,
+          "runs.top_failure": null,
+          "release.active_repeat_rate": null,
+          "release.canary_repeat_rate": null
+        }
+      }
+    },
+    {
+      "name": "기간을 비우면 지난주 (기본)",
+      "body": {},
+      "expect": {
+        "equals": {
+          "period.from": "2026-10-26",
+          "period.to": "2026-10-30",
+          "runs.total": 357
+        }
+      }
+    },
+    {
+      "name": "기간과 상관없는 '지금' 숫자는 그대로",
+      "request": "requests/empty-week.json",
+      "expect": {
+        "equals": {
+          "alerts.count": 6,
+          "dlq.size": 3,
+          "quality.avg_score": 0.6583,
+          "cost.used_ratio": 0.9201,
+          "release.active": "1.1.0"
+        }
+      }
+    }
+  ]
+}

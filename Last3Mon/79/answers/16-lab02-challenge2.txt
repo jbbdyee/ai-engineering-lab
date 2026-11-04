@@ -1,0 +1,143 @@
+$ uv run tools/flow.py push answers/79-lab02-challenge2-audit.json
+! unpublished '79 Ops ask + LLM router (answer)' (wea68a09a2860083): it used the same webhook path
+✔ pushed '79 Ops ask + audit (answer)' (id w06fbfa6c9a05e92)
+   POST http://localhost:5678/webhook/my-ops-ask
+
+$ uv run tools/flow.py test cases/lab02-challenge2.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-ask · 5 case(s) × 1
+✔ 작업 요청 · 1.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "DLQ 1번 다시 돌려 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+✔ 운영 밖 · 1.6s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "점심 메뉴 추천해 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "점심 메뉴 추천해 줘",
+        "area": "unknown",
+        "router": "llm",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+✔ 답한 질문 · 1.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "지난주 오류율이 얼마야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "지난주 오류율이 얼마야?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ 감사 기록 세 줄 · 거절 이유와 함께 · 0.0s
+    → request  POST http://localhost:8800/audit/list
+      {}
+    ← response HTTP 200
+      {
+        "events": [
+          {
+            "t": 1793526843.503,
+            "kind": "ops-ask",
+            "question": "DLQ 1번 다시 돌려 줘",
+            "area": "action",
+            "router": "keyword",
+            "refused": true,
+            "reason": "read_only",
+            "numbers_ok": null
+          },
+          {
+            "t": 1793526845.149,
+            "kind": "ops-ask",
+            "question": "점심 메뉴 추천해 줘",
+            "area": "unknown",
+            "router": "llm",
+            "refused": true,
+            "reason": "out_of_scope",
+            "numbers_ok": null
+          },
+          {
+            "t": 1793526846.297,
+            "kind": "ops-ask",
+            "question": "지난주 오류율이 얼마야?",
+            "area": "runs",
+            "router": "keyword",
+            "refused": false,
+            "reason": null,
+            "numbers_ok": true
+          }
+        ]
+      }
+✔ 응답은 그대로 (감사는 곁가지) · 0.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "DLQ 1번 다시 돌려 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+Passed 5/5
+report: runs/lab02-challenge2-20261101-185406.json
+
+$ uv run tools/flow.py test cases/lab02.json
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+POST http://localhost:5678/webhook/my-ops-ask · 6 case(s) × 1
+✔ 실행 · 오류율 · 1.0s
+✔ DLQ · parked · 1.2s
+✔ 운영과 상관없는 질문은 거절 · 0.8s
+✔ 작업 요청은 거절 (읽기만) · 0.1s
+✔ 비용 · 숫자 확인 · 1.2s
+✔ 릴리스 · 숫자 확인 · 1.6s
+Passed 6/6
+report: runs/lab02-20261101-185412.json
+
+$ uv run tools/flow.py test cases/lab02-challenge.json
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+POST http://localhost:5678/webhook/my-ops-ask · 5 case(s) × 1
+✔ 낱말이 없는 비용 질문 · 2.3s
+✔ 낱말이 없는 DLQ 질문 · 1.7s
+✔ 낱말이 없는 릴리스 질문 · 1.6s
+✔ LLM도 운영 밖이면 거절 · 0.7s
+✔ 낱말이 있으면 LLM을 부르지 않음 · 1.2s
+Passed 5/5
+report: runs/lab02-challenge-20261101-185419.json

@@ -1,0 +1,136 @@
+{
+  "cases": "lab02.json",
+  "webhook": "my-ops-ask",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "case": "실행 · 오류율",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 2.7,
+      "status": 200,
+      "request": {
+        "question": "지난주 오류율이 얼마야?"
+      },
+      "response": {
+        "question": "지난주 오류율이 얼마야?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    },
+    {
+      "case": "DLQ · parked",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "DLQ에 parked 된 건 몇 건이야?"
+      },
+      "response": {
+        "question": "DLQ에 parked 된 건 몇 건이야?",
+        "area": "dlq",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "DLQ에 parked 된 건은 2건입니다. 전체 DLQ 크기는 3건이며, 대기 중인 건은 1건입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    },
+    {
+      "case": "운영과 상관없는 질문은 거절",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "question": "점심 메뉴 추천해 줘"
+      },
+      "response": {
+        "question": "점심 메뉴 추천해 줘",
+        "area": "unknown",
+        "router": "keyword",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+    },
+    {
+      "case": "작업 요청은 거절 (읽기만)",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "question": "DLQ 1번 다시 돌려 줘"
+      },
+      "response": {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+    },
+    {
+      "case": "비용 · 숫자 확인",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?"
+      },
+      "response": {
+        "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?",
+        "area": "cost",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "오늘 LLM 비용은 예산의 92.01%에 해당합니다. 일일 비용은 0.08달러이며, 현재 사용 비율은 0.9201입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    },
+    {
+      "case": "릴리스 · 숫자 확인",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.5,
+      "status": 200,
+      "request": {
+        "question": "카나리 버전 문제 있어?"
+      },
+      "response": {
+        "question": "카나리 버전 문제 있어?",
+        "area": "release",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "카나리 버전 1.2.0의 반복 발생률은 62.5%로 매우 높아 문제가 있는 것으로 보입니다. 현재 전체 시스템 상태는 빨간색(위험)입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    }
+  ]
+}

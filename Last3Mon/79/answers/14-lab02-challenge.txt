@@ -1,0 +1,228 @@
+$ uv run tools/flow.py push answers/79-lab02-challenge-llm-router.json
+! unpublished '79 Ops ask + refuse + number check (reference)' (w48289056bc6d55d): it used the same webhook path
+✔ pushed '79 Ops ask + LLM router (answer)' (id wea68a09a2860083)
+   POST http://localhost:5678/webhook/my-ops-ask
+
+$ uv run tools/flow.py test cases/lab02-challenge.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-ask · 5 case(s) × 1
+✔ 낱말이 없는 비용 질문 · 4.9s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "이번 주에 AI 쓰는 데 얼마나 나갔어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "이번 주에 AI 쓰는 데 얼마나 나갔어?",
+        "area": "cost",
+        "router": "llm",
+        "refused": false,
+        "reason": null,
+        "answer": "이번 주 AI 사용 비용은 총 0.073604달러입니다. 일일 평균 비용은 약 0.08달러이며, 사용 비율은 92.01%입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ 낱말이 없는 DLQ 질문 · 1.7s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "어젯밤에 접수 못 하고 남은 건 몇 건이야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "어젯밤에 접수 못 하고 남은 건 몇 건이야?",
+        "area": "dlq",
+        "router": "llm",
+        "refused": false,
+        "reason": null,
+        "answer": "어젯밤에 접수 못 하고 남은 건은 총 3건입니다. 이 중 2건은 대기 중이고 1건은 주차 상태입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ 낱말이 없는 릴리스 질문 · 1.8s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "새 판을 일부 사용자에게 먼저 내보낸 거 어떻게 되고 있어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "새 판을 일부 사용자에게 먼저 내보낸 거 어떻게 되고 있어?",
+        "area": "release",
+        "router": "llm",
+        "refused": false,
+        "reason": null,
+        "answer": "새 판 1.2.0은 일부 사용자 20%에게 먼저 내보내졌으며, 이 버전의 재사용률은 62.5%로 나타났습니다. 현재 전체 시스템 상태는 빨간색(문제 있음)입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ LLM도 운영 밖이면 거절 · 0.9s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "점심 메뉴 추천해 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "점심 메뉴 추천해 줘",
+        "area": "unknown",
+        "router": "llm",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+✔ 낱말이 있으면 LLM을 부르지 않음 · 1.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "지난주 오류율이 얼마야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "지난주 오류율이 얼마야?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+Passed 5/5
+report: runs/lab02-challenge-20261101-185333.json
+
+$ uv run tools/flow.py test cases/lab02.json
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+POST http://localhost:5678/webhook/my-ops-ask · 6 case(s) × 1
+✔ 실행 · 오류율 · 1.0s
+✔ DLQ · parked · 1.1s
+✔ 운영과 상관없는 질문은 거절 · 0.9s
+✔ 작업 요청은 거절 (읽기만) · 0.0s
+✔ 비용 · 숫자 확인 · 1.0s
+✔ 릴리스 · 숫자 확인 · 1.4s
+Passed 6/6
+report: runs/lab02-20261101-185339.json
+
+$ uv run tools/flow.py test cases/lab02-phrasing.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-ask · 6 case(s) × 1
+✔ '에러' → 실행 · 1.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "에러 많이 났어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "에러 많이 났어?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "2026년 10월 26일부터 30일까지 총 357회 실행 중 21회 에러가 발생하여 에러율은 5.88%입니다. 주요 실패 원인은 \"Search FAQ\" 노드에서 1000ms 타임아웃 초과로 16회 발생했습니다. 현재 시스템 상태는 빨간색(위험)입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✘ '장애' 는 낱말 목록에 없음 → 운영 밖으로 거절 · 2.2s · area = runs (expected unknown); refused = false (expected true); reason = null (expected out_of_scope)
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "장애 났어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "장애 났어?",
+        "area": "runs",
+        "router": "llm",
+        "refused": false,
+        "reason": null,
+        "answer": "네, 2026년 10월 26일부터 30일까지 장애가 발생했습니다. 전체 357건 중 21건(5.88%)에서 오류가 있었고, 주요 장애는 'Search FAQ' 노드에서 1000ms 타임아웃 초과로 16건 발생했습니다. 시스템 상태는 빨간색(위험)입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ 두 영역이 한 번씩 → 앞의 영역 (알림) · 1.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "알림이랑 DLQ 둘 다 알려 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "알림이랑 DLQ 둘 다 알려 줘",
+        "area": "alerts",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "알림은 총 6건이며, 이 중 3건은 높은 심각도입니다. DLQ 관련 정보는 제공된 사실에 포함되어 있지 않습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ '꺼 줘' → 작업 요청으로 거절 · 0.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "카나리 꺼 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "카나리 꺼 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+✔ '배포'(1) 보다 '상태 · 요약'(2) → 전체 · 1.7s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "배포 상태 요약해 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "배포 상태 요약해 줘",
+        "area": "overview",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "배포 상태 요약입니다. 10월 26일부터 30일까지 총 357회 실행 중 오류율은 5.88%이며, 주요 오류는 'Search FAQ' 노드에서 1000ms 타임아웃이 16회 발생했습니다. 전체 상태는 'red'로, 실행, DLQ, 릴리스가 심각한 문제를 보이고 있습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✘ 낱말 없는 비용 질문 → 거절 (과제 1에서 LLM 라우터로) · 1.9s · refused = false (expected true); reason = null (expected out_of_scope)
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "AI 쓰는 데 얼마나 나갔어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "AI 쓰는 데 얼마나 나갔어?",
+        "area": "cost",
+        "router": "llm",
+        "refused": false,
+        "reason": null,
+        "answer": "2026년 10월 26일부터 30일까지 AI 사용 비용은 총 0.0736달러였습니다. 하루 평균 비용은 약 0.08달러이며, 전체 사용량의 92.01%가 사용되었습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+Passed 4/6
+report: runs/lab02-phrasing-20261101-185347.json

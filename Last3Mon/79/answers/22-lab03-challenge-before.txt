@@ -1,0 +1,115 @@
+$ uv run tools/flow.py test cases/lab03-challenge.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-eval · 3 case(s) × 1
+✘ 골든 질문 8개 · 0.0s · status 404 (expected 200); total = null (expected 8); area_ok = null (expected 8); refused_ok = null (expected 8); score = null (expected 0.875..1)
+    → request  POST /webhook/my-ops-eval
+      {
+        "cases": [
+          {
+            "question": "지난주 오류율이 얼마야?",
+            "area": "runs",
+            "numbers": [
+              "5.88"
+            ]
+          },
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "alerts",
+            "numbers": [
+              "6"
+            ]
+          },
+          {
+            "question": "DLQ에 parked 된 건 몇 건이야?",
+            "area": "dlq",
+            "numbers": [
+              "2"
+            ]
+          },
+          {
+            "question": "FAQ 배치 품질 점수 평균은?",
+            "area": "quality",
+            "numbers": [
+              "0.6583",
+              "65.83",
+              "0.66"
+            ]
+          },
+          {
+            "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?",
+            "area": "cost",
+            "numbers": [
+              "92"
+            ]
+          },
+          {
+            "question": "카나리 버전 문제 있어?",
+            "area": "release",
+            "numbers": [
+              "62.5"
+            ]
+          },
+          {
+            "question": "DLQ 1번 다시 돌려 줘",
+            "area": "action",
+            "refused": true
+          },
+          {
+            "question": "점심 메뉴 추천해 줘",
+            "area": "unknown",
+            "refused": true
+          }
+        ]
+      }
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-eval\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+✘ 틀린 기대는 잡아냄 · 0.0s · status 404 (expected 200); total = null (expected 1); passed = null (expected 0); failed.0.area = null (expected alerts); failed.0.area_ok = null (expected false)
+    → request  POST /webhook/my-ops-eval
+      {
+        "cases": [
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "cost",
+            "numbers": [
+              "6"
+            ]
+          }
+        ]
+      }
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-eval\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+✘ 빈 목록 → 400 · 0.0s · status 404 (expected 400)
+    → request  POST /webhook/my-ops-eval
+      {
+        "cases": []
+      }
+    ← response HTTP 404
+      {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-eval\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+Passed 0/3
+report: runs/lab03-challenge-20261101-185505.json

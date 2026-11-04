@@ -1,0 +1,116 @@
+$ uv run tools/flow.py push reference/lab02-example2-ask.json
+! unpublished '79 Ops ask (reference)' (w7ab48263bf09133): it used the same webhook path
+✔ pushed '79 Ops ask + refuse + number check (reference)' (id w48289056bc6d55d)
+   POST http://localhost:5678/webhook/my-ops-ask
+
+$ uv run tools/flow.py test cases/lab02.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-ask · 6 case(s) × 1
+✔ 실행 · 오류율 · 2.7s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "지난주 오류율이 얼마야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "지난주 오류율이 얼마야?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ DLQ · parked · 1.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "DLQ에 parked 된 건 몇 건이야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "DLQ에 parked 된 건 몇 건이야?",
+        "area": "dlq",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "DLQ에 parked 된 건은 2건입니다. 전체 DLQ 크기는 3건이며, 대기 중인 건은 1건입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ 운영과 상관없는 질문은 거절 · 0.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "점심 메뉴 추천해 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "점심 메뉴 추천해 줘",
+        "area": "unknown",
+        "router": "keyword",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+✔ 작업 요청은 거절 (읽기만) · 0.0s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "DLQ 1번 다시 돌려 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+✔ 비용 · 숫자 확인 · 1.1s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?",
+        "area": "cost",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "오늘 LLM 비용은 예산의 92.01%에 해당합니다. 일일 비용은 0.08달러이며, 현재 사용 비율은 0.9201입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ 릴리스 · 숫자 확인 · 1.5s
+    → request  POST /webhook/my-ops-ask
+      {
+        "question": "카나리 버전 문제 있어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "카나리 버전 문제 있어?",
+        "area": "release",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "카나리 버전 1.2.0의 반복 발생률은 62.5%로 매우 높아 문제가 있는 것으로 보입니다. 현재 전체 시스템 상태는 빨간색(위험)입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+Passed 6/6
+report: runs/lab02-20261101-185304.json

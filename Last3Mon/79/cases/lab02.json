@@ -1,0 +1,96 @@
+{
+  "webhook": "my-ops-ask",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "실행 · 오류율",
+      "body": {
+        "question": "지난주 오류율이 얼마야?"
+      },
+      "expect": {
+        "equals": {
+          "area": "runs",
+          "refused": false
+        },
+        "contains": {
+          "answer": "5.88"
+        }
+      }
+    },
+    {
+      "name": "DLQ · parked",
+      "body": {
+        "question": "DLQ에 parked 된 건 몇 건이야?"
+      },
+      "expect": {
+        "equals": {
+          "area": "dlq",
+          "refused": false
+        },
+        "contains": {
+          "answer": "2"
+        }
+      }
+    },
+    {
+      "name": "운영과 상관없는 질문은 거절",
+      "body": {
+        "question": "점심 메뉴 추천해 줘"
+      },
+      "expect": {
+        "equals": {
+          "area": "unknown",
+          "refused": true,
+          "reason": "out_of_scope"
+        }
+      }
+    },
+    {
+      "name": "작업 요청은 거절 (읽기만)",
+      "body": {
+        "question": "DLQ 1번 다시 돌려 줘"
+      },
+      "expect": {
+        "equals": {
+          "refused": true,
+          "reason": "read_only"
+        }
+      }
+    },
+    {
+      "name": "비용 · 숫자 확인",
+      "body": {
+        "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?"
+      },
+      "expect": {
+        "equals": {
+          "area": "cost",
+          "numbers_ok": true
+        },
+        "contains": {
+          "answer": "92"
+        }
+      }
+    },
+    {
+      "name": "릴리스 · 숫자 확인",
+      "body": {
+        "question": "카나리 버전 문제 있어?"
+      },
+      "expect": {
+        "equals": {
+          "area": "release",
+          "numbers_ok": true
+        },
+        "contains": {
+          "answer": "62.5"
+        }
+      }
+    }
+  ]
+}

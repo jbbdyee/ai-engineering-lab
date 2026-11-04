@@ -1,0 +1,180 @@
+{
+  "name": "79 Ops ask (team baseline)",
+  "nodes": [
+    {
+      "name": "Ask webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "base-ops-ask",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "cacb2fe4-6d95-5bdc-ace5-d418b067f9f2",
+      "webhookId": "17b262ab-6142-5063-99bc-1689af27b62b"
+    },
+    {
+      "name": "Get facts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://localhost:5678/webhook/my-ops-facts",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          },
+          "timeout": 30000
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({}) }}"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "d19a4c49-1318-5d1f-b074-feb88ba1895f"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $('Ask webhook').first().json.body.question }}\n운영 데이터: {{ JSON.stringify($json) }}",
+        "options": {
+          "systemMessage": "You are a helpful operations assistant for an IT helpdesk team. Answer the operator's request in Korean.",
+          "maxIterations": 1
+        }
+      },
+      "onError": "continueRegularOutput",
+      "position": [
+        440,
+        300
+      ],
+      "id": "1471ab65-56b3-5a9e-9857-3588af91bb7d"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        440,
+        520
+      ],
+      "id": "522004dd-9a0f-5713-8527-eb56487ebff0"
+    },
+    {
+      "name": "Make answer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: { question: $('Ask webhook').first().json.body.question, answer: String($json.output ?? '') } }];"
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "2404ff7d-7934-5db7-957f-3f9ea817018f"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "ee9a10b6-d4d1-5801-9147-89e67b2bed92"
+    }
+  ],
+  "connections": {
+    "Ask webhook": {
+      "main": [
+        [
+          {
+            "node": "Get facts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get facts": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "Make answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make answer": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

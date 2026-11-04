@@ -1,0 +1,356 @@
+{
+  "name": "79 Ops ask + refuse + number check (reference)",
+  "nodes": [
+    {
+      "name": "Ask webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-ops-ask",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "e0cc9a1d-38cf-580a-b52e-3f6d8bb1cab2",
+      "position": [
+        0,
+        300
+      ],
+      "id": "dc6271e7-1050-5416-bf0a-26688d2d29ab"
+    },
+    {
+      "name": "Route",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const q = String($('Ask webhook').first().json.body?.question ?? '').trim();\nconst lower = q.toLowerCase();\nconst words = {\n  runs: ['오류', '에러', '실패율', '느려', '느린', '응답 시간', 'p95', '실행'],\n  alerts: ['알림', '경보'],\n  dlq: ['dlq', '재처리', '쌓인', 'parked', '접수 실패'],\n  quality: ['품질', '배치', '격리'],\n  cost: ['비용', '돈', '예산', '토큰', '요금'],\n  release: ['릴리스', '버전', '카나리', '배포'],\n  overview: ['괜찮', '상태', '요약', '전체', '브리핑'],\n};\nconst action = /(다시 돌려|재처리해|지워|삭제해|꺼 ?줘|켜 ?줘|배포해|되돌려|롤백해|바꿔 ?줘|올려 ?줘|내려 ?줘|비워 ?줘)/.test(q);\nif (action) return [{ json: { question: q, area: 'action', router: 'keyword' } }];\nlet area = 'unknown', best = 0;\nfor (const [k, list] of Object.entries(words)) {\n  const n = list.filter((w) => lower.includes(w)).length;\n  if (n > best) { best = n; area = k; }\n}\nreturn [{ json: { question: q, area, router: 'keyword' } }];"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "f9ebba3b-b71b-5cef-81d3-d2701e982ee8"
+    },
+    {
+      "name": "Action?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.area === 'action' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "1c6e30aa-01a8-51bd-b897-d46bf26619bc"
+    },
+    {
+      "name": "Refuse action",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ question: $json.question, area: 'action', router: $json.router, refused: true, reason: 'read_only', answer: '운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요.' }) }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        560
+      ],
+      "id": "0648af6b-cd57-59c3-933b-b2aa0b83b4cb"
+    },
+    {
+      "name": "Known area?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.area !== 'unknown' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "fde1fecc-4f44-52dd-93ef-12ac37a6e362"
+    },
+    {
+      "name": "Out of scope",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ question: $json.question, area: 'unknown', router: $json.router, refused: true, reason: 'out_of_scope', answer: '운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다.' }) }}",
+        "options": {}
+      },
+      "position": [
+        880,
+        560
+      ],
+      "id": "c218ca92-1811-5f8a-82cd-ab5f63d67c9a"
+    },
+    {
+      "name": "Get facts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://localhost:5678/webhook/my-ops-facts",
+        "options": {
+          "timeout": 30000
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $('Ask webhook').first().json.body?.from ?? '', to: $('Ask webhook').first().json.body?.to ?? '' }) }}"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "45a16e6c-5137-5047-9e26-2baadb544368"
+    },
+    {
+      "name": "Pick facts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Route').first().json;\nconst f = $('Get facts').first().json;\nconst part = r.area === 'overview' ? f : { period: f.period, [r.area]: f[r.area], ...(f.health ? { health: f.health[r.area] } : {}) };\nreturn [{ json: { ...r, facts: part } }];"
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "bb44be68-2a9f-5615-abf7-3931749039e6"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $json.question }}\n사실(JSON): {{ JSON.stringify($json.facts) }}",
+        "options": {
+          "systemMessage": "You are the operations assistant of a company IT helpdesk team. Answer the operator's question in Korean, 2-3 sentences, using only the facts JSON you are given. Use only numbers that appear in the facts (a ratio like 0.0588 may be written as 5.88%). Do not guess causes that are not in the facts. Do not offer to run any action; you can only read.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "53eb5e17-4cef-5f54-bdef-371560ec5368"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        1320,
+        520
+      ],
+      "id": "2db947c2-c91c-57a4-ab27-5376b329d71c"
+    },
+    {
+      "name": "Check numbers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Pick facts').first().json;\nconst answer = String($json.output ?? '').trim();\nconst allowed = new Set();\nconst add = (v) => { for (const d of [0, 1, 2, 3, 4, 6]) allowed.add(Number(v.toFixed(d))); };\nconst walk = (v) => {\n  if (typeof v === 'number') { add(v); add(v * 100); }\n  else if (typeof v === 'string') { for (const m of v.match(/\\d+(?:\\.\\d+)?/g) ?? []) add(Number(m)); }\n  else if (v && typeof v === 'object') { for (const [k, x] of Object.entries(v)) { walk(k); walk(x); } }\n};\nwalk(r.facts);\nconst versions = JSON.stringify(r.facts).match(/\\d+\\.\\d+\\.\\d+/g) ?? [];\nlet text = answer;\nfor (const v of versions) text = text.split(v).join(' ');\nconst unknown = (text.match(/\\d+(?:\\.\\d+)?/g) ?? []).filter((m) => !allowed.has(Number(m)));\nreturn [{ json: { question: r.question, area: r.area, router: r.router, refused: false, reason: null, answer,\n  numbers_ok: unknown.length === 0, unknown_numbers: [...new Set(unknown)] } }];"
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "1f4d46b1-ab0c-521c-babb-3cbd460c2ea0"
+    },
+    {
+      "name": "Send answer",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "f18b4f0d-663b-59cd-a45b-44523b719d9b"
+    }
+  ],
+  "connections": {
+    "Ask webhook": {
+      "main": [
+        [
+          {
+            "node": "Route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route": {
+      "main": [
+        [
+          {
+            "node": "Action?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Action?": {
+      "main": [
+        [
+          {
+            "node": "Refuse action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Known area?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known area?": {
+      "main": [
+        [
+          {
+            "node": "Get facts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Out of scope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get facts": {
+      "main": [
+        [
+          {
+            "node": "Pick facts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick facts": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "Check numbers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check numbers": {
+      "main": [
+        [
+          {
+            "node": "Send answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

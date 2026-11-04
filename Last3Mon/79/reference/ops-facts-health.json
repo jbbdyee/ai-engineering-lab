@@ -1,0 +1,281 @@
+{
+  "name": "79 Ops facts + health (provided for Lab 02-03)",
+  "nodes": [
+    {
+      "name": "Facts webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-ops-facts",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "663cb969-bc5a-52e7-929e-7e0161c2806d",
+      "position": [
+        0,
+        300
+      ],
+      "id": "fcc947d9-3c20-5ca9-a9f1-966a2ef67e09"
+    },
+    {
+      "name": "Get logs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/logs/query",
+        "options": {},
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $('Facts webhook').first().json.body?.from || '2026-10-26', to: $('Facts webhook').first().json.body?.to || '2026-10-30' }) }}"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "2a61508c-26f2-511f-b5d0-4f2dee19a446"
+    },
+    {
+      "name": "Get alerts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/alerts",
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "720fe6aa-a30d-5d21-a1ad-fb66166923c2"
+    },
+    {
+      "name": "Get DLQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/dlq",
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "05f59149-ec34-5045-97d1-238457326818"
+    },
+    {
+      "name": "Get quality",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/quality-log",
+        "options": {}
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "1e25a884-a558-5e19-8776-978b058878cb"
+    },
+    {
+      "name": "Get quarantine",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/quarantine",
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "31851fd7-0d3f-5000-9ebc-349ffae0174b"
+    },
+    {
+      "name": "Get usage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/usage/summary",
+        "options": {}
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "05b55404-3a20-5921-ae5f-83d3adfede60"
+    },
+    {
+      "name": "Get budget",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/budget",
+        "options": {}
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "a2a75df9-ba29-5a1a-8b7f-1c04a62a8fa6"
+    },
+    {
+      "name": "Get release",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/releases/helpdesk",
+        "options": {}
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "1097609c-e4f6-5332-8ffc-b31da541e5c6"
+    },
+    {
+      "name": "Make facts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const body = $('Facts webhook').first().json.body ?? {};\nconst from = body.from || '2026-10-26', to = body.to || '2026-10-30';\nconst r4 = (v) => Math.round(v * 10000) / 10000;\nconst logs = $('Get logs').first().json.logs ?? [];\nconst total = logs.length, errors = logs.filter((l) => l.status === 'error').length;\nconst d = logs.map((l) => l.duration_ms).sort((a, b) => a - b);\nconst p95 = d.length ? d[Math.max(0, Math.ceil(0.95 * d.length) - 1)] : 0;\nconst groups = {};\nfor (const l of logs.filter((x) => x.status === 'error')) { const k = l.error_node + '\\u0000' + l.error_message; groups[k] = (groups[k] ?? 0) + 1; }\nconst top = Object.entries(groups).sort((a, b) => b[1] - a[1])[0];\nconst rel = {};\nfor (const l of logs.filter((x) => x.route === '자동 답변')) { const x = (rel[l.release] ??= { answers: 0, repeats: 0 }); x.answers += 1; if (l.repeat) x.repeats += 1; }\nconst rate = (name) => rel[name] ? r4(rel[name].repeats / rel[name].answers) : null;\nconst alerts = $('Get alerts').first().json.alerts ?? [];\nconst byReason = {};\nfor (const a of alerts) byReason[a.reason ?? 'unknown'] = (byReason[a.reason ?? 'unknown'] ?? 0) + 1;\nconst dlq = $('Get DLQ').first().json.items ?? [];\nconst q = $('Get quality').first().json.items ?? [];\nconst quarantine = $('Get quarantine').first().json.size ?? 0;\nconst usage = $('Get usage').first().json, budget = $('Get budget').first().json;\nconst users = Object.entries(usage.by_user ?? {}).sort((a, b) => b[1].cost_usd - a[1].cost_usd);\nconst release = $('Get release').first().json;\nconst facts = {\n  period: { from, to },\n  runs: { total, errors, error_rate: total ? r4(errors / total) : 0, p95_ms: p95,\n    unanswered_rate: total ? r4(logs.filter((l) => l.route === '담당자 연결').length / total) : 0,\n    top_failure: top ? { node: top[0].split('\\u0000')[0], message: top[0].split('\\u0000')[1], count: top[1] } : null },\n  alerts: { count: alerts.length, high: alerts.filter((a) => a.severity === 'high').length, by_reason: byReason },\n  dlq: { size: dlq.length, parked: dlq.filter((x) => x.parked).length, waiting: dlq.filter((x) => !x.parked).length },\n  quality: { batches: q.length, avg_score: q.length ? r4(q.reduce((s, x) => s + x.score, 0) / q.length) : 0,\n    last_score: q.length ? q.at(-1).score : null, rejected_batches: q.filter((x) => x.rejected).length, quarantine },\n  cost: { requests: usage.requests ?? 0, calls: usage.calls ?? 0, cost_usd: Math.round((usage.cost_usd ?? 0) * 1e6) / 1e6,\n    daily_usd: budget.daily_usd, used_ratio: budget.daily_usd ? r4(budget.used_usd / budget.daily_usd) : 0,\n    top_user: users.length ? { user: users[0][0], cost_usd: Math.round(users[0][1].cost_usd * 1e6) / 1e6, share: r4(users[0][1].cost_usd / usage.cost_usd) } : null },\n  release: { active: release.active, canary_release: release.canary?.release ?? null, canary_percent: release.canary?.percent ?? 0,\n    active_repeat_rate: rate(release.active), canary_repeat_rate: release.canary ? rate(release.canary.release) : null },\n};\nconst s = (red, yellow) => (red ? 'red' : yellow ? 'yellow' : 'green');\nconst f = facts;\nconst canaryBad = f.release.canary_release && f.release.canary_repeat_rate !== null && f.release.active_repeat_rate !== null\n  && f.release.canary_repeat_rate > 2 * f.release.active_repeat_rate;\nconst health = {\n  runs: s(f.runs.error_rate > 0.01, f.runs.unanswered_rate > 0.02),\n  alerts: s(f.alerts.high >= 5, f.alerts.count >= 1),\n  dlq: s(f.dlq.parked > 0, f.dlq.size > 0),\n  quality: s(f.quality.last_score !== null && f.quality.last_score < 0.8, (f.quality.last_score !== null && f.quality.last_score < 0.9) || f.quality.quarantine > 0),\n  cost: s(f.cost.used_ratio >= 1, f.cost.used_ratio >= 0.8),\n  release: s(canaryBad, Boolean(f.release.canary_release)),\n};\nconst order = ['runs', 'alerts', 'dlq', 'quality', 'cost', 'release'];\nfacts.health = health;\nfacts.red = order.filter((k) => health[k] === 'red');\nfacts.yellow = order.filter((k) => health[k] === 'yellow');\nfacts.overall = facts.red.length ? 'red' : facts.yellow.length ? 'yellow' : 'green';\nreturn [{ json: facts }];"
+      },
+      "position": [
+        1980,
+        300
+      ],
+      "id": "f2c672e6-06db-5af2-9559-e0dd5ff7fa67"
+    },
+    {
+      "name": "Send facts",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        2200,
+        300
+      ],
+      "id": "5fc1c214-e990-5522-9897-4644f07837a3"
+    }
+  ],
+  "connections": {
+    "Facts webhook": {
+      "main": [
+        [
+          {
+            "node": "Get logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get logs": {
+      "main": [
+        [
+          {
+            "node": "Get alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get alerts": {
+      "main": [
+        [
+          {
+            "node": "Get DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get DLQ": {
+      "main": [
+        [
+          {
+            "node": "Get quality",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get quality": {
+      "main": [
+        [
+          {
+            "node": "Get quarantine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get quarantine": {
+      "main": [
+        [
+          {
+            "node": "Get usage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get usage": {
+      "main": [
+        [
+          {
+            "node": "Get budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get budget": {
+      "main": [
+        [
+          {
+            "node": "Get release",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get release": {
+      "main": [
+        [
+          {
+            "node": "Make facts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make facts": {
+      "main": [
+        [
+          {
+            "node": "Send facts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

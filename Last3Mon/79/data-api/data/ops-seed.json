@@ -1,0 +1,2114 @@
+{
+ "seeded_at": "2026-11-04T08:30:00",
+ "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+ "budget": {
+  "daily_usd": 0.08,
+  "user_limit_per_min": 20,
+  "max_question_chars": 500
+ },
+ "releases": {
+  "helpdesk": {
+   "active": "1.1.0",
+   "canary": {
+    "release": "1.2.0",
+    "percent": 20
+   }
+  }
+ },
+ "alerts": [
+  {
+   "workflow": "helpdesk",
+   "node": "Search FAQ",
+   "severity": "high",
+   "reason": "timeout",
+   "message": "timeout of 1000ms exceeded",
+   "at": "2026-10-26T09:10:00"
+  },
+  {
+   "workflow": "helpdesk",
+   "node": "Answer",
+   "severity": "high",
+   "reason": "rate_limit",
+   "message": "429 Rate limit reached for requests",
+   "at": "2026-10-29T15:20:00"
+  },
+  {
+   "workflow": "faq-import",
+   "node": "Batch ok?",
+   "severity": "high",
+   "reason": "batch_rejected",
+   "batch": "B-1",
+   "message": "B-1 rejected",
+   "at": "2026-11-03T10:40:00"
+  },
+  {
+   "workflow": "faq-import",
+   "node": "Low score?",
+   "severity": "medium",
+   "reason": "low_quality",
+   "batch": "B-2",
+   "score": 0.8,
+   "message": "B-2 quality 0.8",
+   "at": "2026-11-03T11:05:00"
+  },
+  {
+   "workflow": "faq-import",
+   "node": "Low score?",
+   "severity": "medium",
+   "reason": "low_quality",
+   "batch": "B-3",
+   "score": 0.8333,
+   "message": "B-3 quality 0.8333",
+   "at": "2026-11-03T11:20:00"
+  },
+  {
+   "workflow": "intake",
+   "node": "Create ticket",
+   "severity": "medium",
+   "reason": "api_error",
+   "message": "tickets API 503",
+   "at": "2026-11-03T22:15:00"
+  }
+ ],
+ "dlq": [
+  {
+   "dlq_id": 1,
+   "workflow": "intake",
+   "item": {
+    "key": "K-1031-07",
+    "title": "모니터 깜빡임",
+    "requester": "강민수"
+   },
+   "reason": "tickets API 503",
+   "attempts": 3,
+   "parked": true,
+   "at": "2026-11-03T22:15:00"
+  },
+  {
+   "dlq_id": 2,
+   "workflow": "intake",
+   "item": {
+    "key": "K-1031-08",
+    "title": "프린터 용지 걸림",
+    "requester": "서지아"
+   },
+   "reason": "tickets API 503",
+   "attempts": 3,
+   "parked": true,
+   "at": "2026-11-03T22:16:00"
+  },
+  {
+   "dlq_id": 3,
+   "workflow": "intake",
+   "item": {
+    "key": "K-1104-01",
+    "title": "VPN 접속 안 됨",
+    "requester": "윤하늘"
+   },
+   "reason": "timeout",
+   "attempts": 1,
+   "parked": false,
+   "at": "2026-11-04T07:50:00"
+  }
+ ],
+ "quality_log": [
+  {
+   "batch": "B-1",
+   "dataset": "faq",
+   "total": 13,
+   "valid": 5,
+   "quarantined": 0,
+   "rejected": true,
+   "score": 0,
+   "codes": {
+    "title_missing": 1,
+    "id_format": 1,
+    "answer_missing": 1,
+    "answer_too_long": 1,
+    "duplicate_in_batch": 1,
+    "keywords_missing": 1,
+    "pii": 1,
+    "external_link": 1
+   },
+   "at": "2026-11-03T10:40:00"
+  },
+  {
+   "batch": "B-2",
+   "dataset": "faq",
+   "total": 10,
+   "valid": 8,
+   "quarantined": 2,
+   "rejected": false,
+   "score": 0.8,
+   "codes": {
+    "pii": 1,
+    "llm_mismatch": 1
+   },
+   "at": "2026-11-03T11:05:00"
+  },
+  {
+   "batch": "B-3",
+   "dataset": "faq",
+   "total": 6,
+   "valid": 5,
+   "quarantined": 1,
+   "rejected": false,
+   "score": 0.8333,
+   "codes": {
+    "answer_too_short": 1
+   },
+   "at": "2026-11-03T11:20:00"
+  },
+  {
+   "batch": "B-2-fix",
+   "dataset": "faq",
+   "total": 2,
+   "valid": 2,
+   "quarantined": 0,
+   "rejected": false,
+   "score": 1,
+   "codes": {},
+   "at": "2026-11-03T14:30:00"
+  }
+ ],
+ "quarantine": [
+  {
+   "row_id": "FAQ-305",
+   "batch": "B-3",
+   "row": {
+    "id": "FAQ-305",
+    "title": "교육 신청",
+    "keywords": [
+     "교육"
+    ],
+    "answer": "짧"
+   },
+   "errors": [
+    "answer_too_short"
+   ],
+   "at": "2026-11-03T11:20:00"
+  }
+ ],
+ "usage": [
+  {
+   "request_id": "r-1",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 532,
+   "completion_tokens": 80,
+   "cost_usd": 0.0003408,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-2",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 557,
+   "completion_tokens": 123,
+   "cost_usd": 0.0004196,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-2",
+   "user": "서지아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 419,
+   "completion_tokens": 68,
+   "cost_usd": 6.91e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-3",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 408,
+   "completion_tokens": 122,
+   "cost_usd": 0.0003584,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-3",
+   "user": "배수아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 563,
+   "completion_tokens": 99,
+   "cost_usd": 9.59e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-4",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 591,
+   "completion_tokens": 107,
+   "cost_usd": 0.0004076,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-5",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 477,
+   "completion_tokens": 73,
+   "cost_usd": 0.0003076,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-6",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 504,
+   "completion_tokens": 65,
+   "cost_usd": 0.0003056,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-7",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 496,
+   "completion_tokens": 70,
+   "cost_usd": 0.0003104,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-8",
+   "user": "오세훈",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 540,
+   "completion_tokens": 74,
+   "cost_usd": 0.0003344,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-9",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 449,
+   "completion_tokens": 104,
+   "cost_usd": 0.000346,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-9",
+   "user": "서지아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 436,
+   "completion_tokens": 100,
+   "cost_usd": 8.36e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-10",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 396,
+   "completion_tokens": 64,
+   "cost_usd": 0.0002608,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-10",
+   "user": "김민지",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 529,
+   "completion_tokens": 130,
+   "cost_usd": 0.0001049,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-11",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 417,
+   "completion_tokens": 100,
+   "cost_usd": 0.0003268,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-12",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 557,
+   "completion_tokens": 94,
+   "cost_usd": 0.0003732,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-13",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 385,
+   "completion_tokens": 127,
+   "cost_usd": 0.0003572,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-14",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 508,
+   "completion_tokens": 139,
+   "cost_usd": 0.0004256,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-15",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 536,
+   "completion_tokens": 130,
+   "cost_usd": 0.0004224,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-16",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 589,
+   "completion_tokens": 114,
+   "cost_usd": 0.000418,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-16",
+   "user": "배수아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 411,
+   "completion_tokens": 61,
+   "cost_usd": 6.55e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-17",
+   "user": "오세훈",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 563,
+   "completion_tokens": 89,
+   "cost_usd": 0.0003676,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-18",
+   "user": "정다은",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 505,
+   "completion_tokens": 89,
+   "cost_usd": 0.0003444,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-19",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 443,
+   "completion_tokens": 130,
+   "cost_usd": 0.0003852,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-20",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 609,
+   "completion_tokens": 78,
+   "cost_usd": 0.0003684,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-20",
+   "user": "이서준",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 501,
+   "completion_tokens": 71,
+   "cost_usd": 7.85e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-21",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 472,
+   "completion_tokens": 130,
+   "cost_usd": 0.0003968,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-22",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 397,
+   "completion_tokens": 82,
+   "cost_usd": 0.00029,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-23",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 558,
+   "completion_tokens": 85,
+   "cost_usd": 0.0003592,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-24",
+   "user": "윤하늘",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 452,
+   "completion_tokens": 115,
+   "cost_usd": 0.0003648,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-25",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 441,
+   "completion_tokens": 84,
+   "cost_usd": 0.0003108,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-26",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 425,
+   "completion_tokens": 73,
+   "cost_usd": 0.0002868,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-26",
+   "user": "임도윤",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 391,
+   "completion_tokens": 135,
+   "cost_usd": 9.31e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-27",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 579,
+   "completion_tokens": 74,
+   "cost_usd": 0.00035,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-28",
+   "user": "오세훈",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 553,
+   "completion_tokens": 99,
+   "cost_usd": 0.0003796,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-29",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 588,
+   "completion_tokens": 128,
+   "cost_usd": 0.00044,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-30",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 509,
+   "completion_tokens": 97,
+   "cost_usd": 0.0003588,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-31",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 610,
+   "completion_tokens": 102,
+   "cost_usd": 0.0004072,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-32",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 418,
+   "completion_tokens": 88,
+   "cost_usd": 0.000308,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-33",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 560,
+   "completion_tokens": 108,
+   "cost_usd": 0.0003968,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-33",
+   "user": "이서준",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 586,
+   "completion_tokens": 137,
+   "cost_usd": 0.0001134,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-34",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 604,
+   "completion_tokens": 77,
+   "cost_usd": 0.0003648,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-35",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 540,
+   "completion_tokens": 118,
+   "cost_usd": 0.0004048,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-36",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 397,
+   "completion_tokens": 121,
+   "cost_usd": 0.0003524,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-37",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 505,
+   "completion_tokens": 116,
+   "cost_usd": 0.0003876,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-37",
+   "user": "김민지",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 480,
+   "completion_tokens": 130,
+   "cost_usd": 0.0001,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-38",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 415,
+   "completion_tokens": 68,
+   "cost_usd": 0.0002748,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-39",
+   "user": "정다은",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 429,
+   "completion_tokens": 91,
+   "cost_usd": 0.0003172,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-39",
+   "user": "정다은",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 453,
+   "completion_tokens": 119,
+   "cost_usd": 9.29e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-40",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 459,
+   "completion_tokens": 120,
+   "cost_usd": 0.0003756,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-41",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 466,
+   "completion_tokens": 110,
+   "cost_usd": 0.0003624,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-42",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 399,
+   "completion_tokens": 87,
+   "cost_usd": 0.0002988,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-43",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 429,
+   "completion_tokens": 100,
+   "cost_usd": 0.0003316,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-44",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 587,
+   "completion_tokens": 118,
+   "cost_usd": 0.0004236,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-45",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 544,
+   "completion_tokens": 127,
+   "cost_usd": 0.0004208,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-46",
+   "user": "윤하늘",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 539,
+   "completion_tokens": 136,
+   "cost_usd": 0.0004332,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-47",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 425,
+   "completion_tokens": 73,
+   "cost_usd": 0.0002868,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-47",
+   "user": "한유나",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 472,
+   "completion_tokens": 86,
+   "cost_usd": 8.16e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-48",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 412,
+   "completion_tokens": 129,
+   "cost_usd": 0.0003712,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-48",
+   "user": "배수아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 394,
+   "completion_tokens": 133,
+   "cost_usd": 9.26e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-49",
+   "user": "오세훈",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 452,
+   "completion_tokens": 64,
+   "cost_usd": 0.0002832,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-50",
+   "user": "윤하늘",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 503,
+   "completion_tokens": 134,
+   "cost_usd": 0.0004156,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-51",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 487,
+   "completion_tokens": 88,
+   "cost_usd": 0.0003356,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-51",
+   "user": "임도윤",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 461,
+   "completion_tokens": 81,
+   "cost_usd": 7.85e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-52",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 521,
+   "completion_tokens": 139,
+   "cost_usd": 0.0004308,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-53",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 581,
+   "completion_tokens": 116,
+   "cost_usd": 0.000418,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-54",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 518,
+   "completion_tokens": 91,
+   "cost_usd": 0.0003528,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-54",
+   "user": "배수아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 399,
+   "completion_tokens": 110,
+   "cost_usd": 8.39e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-55",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 386,
+   "completion_tokens": 120,
+   "cost_usd": 0.0003464,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-56",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 542,
+   "completion_tokens": 90,
+   "cost_usd": 0.0003608,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-57",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 618,
+   "completion_tokens": 111,
+   "cost_usd": 0.0004248,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-57",
+   "user": "한유나",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 402,
+   "completion_tokens": 88,
+   "cost_usd": 7.54e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-58",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 493,
+   "completion_tokens": 127,
+   "cost_usd": 0.0004004,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-59",
+   "user": "오세훈",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 448,
+   "completion_tokens": 88,
+   "cost_usd": 0.00032,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-59",
+   "user": "오세훈",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 451,
+   "completion_tokens": 111,
+   "cost_usd": 8.95e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-60",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 552,
+   "completion_tokens": 86,
+   "cost_usd": 0.0003584,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-60",
+   "user": "강민수",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 602,
+   "completion_tokens": 73,
+   "cost_usd": 8.94e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-61",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 535,
+   "completion_tokens": 97,
+   "cost_usd": 0.0003692,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-61",
+   "user": "배수아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 538,
+   "completion_tokens": 110,
+   "cost_usd": 9.78e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-62",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 548,
+   "completion_tokens": 112,
+   "cost_usd": 0.0003984,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-63",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 447,
+   "completion_tokens": 100,
+   "cost_usd": 0.0003388,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-64",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 566,
+   "completion_tokens": 118,
+   "cost_usd": 0.0004152,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-65",
+   "user": "윤하늘",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 526,
+   "completion_tokens": 78,
+   "cost_usd": 0.0003352,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-65",
+   "user": "윤하늘",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 510,
+   "completion_tokens": 75,
+   "cost_usd": 8.1e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-66",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 521,
+   "completion_tokens": 114,
+   "cost_usd": 0.0003908,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-67",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 465,
+   "completion_tokens": 117,
+   "cost_usd": 0.0003732,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-68",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 601,
+   "completion_tokens": 138,
+   "cost_usd": 0.0004612,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-69",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 598,
+   "completion_tokens": 87,
+   "cost_usd": 0.0003784,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-70",
+   "user": "정다은",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 444,
+   "completion_tokens": 134,
+   "cost_usd": 0.000392,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-71",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 413,
+   "completion_tokens": 76,
+   "cost_usd": 0.0002868,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-71",
+   "user": "이서준",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 562,
+   "completion_tokens": 101,
+   "cost_usd": 9.66e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-72",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 555,
+   "completion_tokens": 81,
+   "cost_usd": 0.0003516,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-73",
+   "user": "정다은",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 423,
+   "completion_tokens": 78,
+   "cost_usd": 0.000294,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-74",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 464,
+   "completion_tokens": 96,
+   "cost_usd": 0.0003392,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-74",
+   "user": "임도윤",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 461,
+   "completion_tokens": 105,
+   "cost_usd": 8.81e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-75",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 398,
+   "completion_tokens": 73,
+   "cost_usd": 0.000276,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-76",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 444,
+   "completion_tokens": 101,
+   "cost_usd": 0.0003392,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-76",
+   "user": "임도윤",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 561,
+   "completion_tokens": 83,
+   "cost_usd": 8.93e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-77",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 542,
+   "completion_tokens": 137,
+   "cost_usd": 0.000436,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-78",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 561,
+   "completion_tokens": 71,
+   "cost_usd": 0.000338,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-79",
+   "user": "윤하늘",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 490,
+   "completion_tokens": 137,
+   "cost_usd": 0.0004152,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-80",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 418,
+   "completion_tokens": 116,
+   "cost_usd": 0.0003528,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-80",
+   "user": "강민수",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 400,
+   "completion_tokens": 77,
+   "cost_usd": 7.08e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-81",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 386,
+   "completion_tokens": 95,
+   "cost_usd": 0.0003064,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-82",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 501,
+   "completion_tokens": 140,
+   "cost_usd": 0.0004244,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-83",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 554,
+   "completion_tokens": 128,
+   "cost_usd": 0.0004264,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-83",
+   "user": "이서준",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 512,
+   "completion_tokens": 63,
+   "cost_usd": 7.64e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-84",
+   "user": "오세훈",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 592,
+   "completion_tokens": 67,
+   "cost_usd": 0.000344,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-85",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 591,
+   "completion_tokens": 85,
+   "cost_usd": 0.0003724,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-86",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 477,
+   "completion_tokens": 104,
+   "cost_usd": 0.0003572,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-86",
+   "user": "김민지",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 432,
+   "completion_tokens": 136,
+   "cost_usd": 9.76e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-87",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 501,
+   "completion_tokens": 108,
+   "cost_usd": 0.0003732,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-88",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 398,
+   "completion_tokens": 131,
+   "cost_usd": 0.0003688,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-88",
+   "user": "이서준",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 437,
+   "completion_tokens": 65,
+   "cost_usd": 6.97e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-89",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 598,
+   "completion_tokens": 134,
+   "cost_usd": 0.0004536,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-90",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 492,
+   "completion_tokens": 85,
+   "cost_usd": 0.0003328,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-90",
+   "user": "김민지",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 586,
+   "completion_tokens": 93,
+   "cost_usd": 9.58e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-91",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 488,
+   "completion_tokens": 60,
+   "cost_usd": 0.0002912,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-92",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 474,
+   "completion_tokens": 90,
+   "cost_usd": 0.0003336,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-92",
+   "user": "임도윤",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 580,
+   "completion_tokens": 114,
+   "cost_usd": 0.0001036,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-93",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 615,
+   "completion_tokens": 99,
+   "cost_usd": 0.0004044,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-93",
+   "user": "김민지",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 419,
+   "completion_tokens": 135,
+   "cost_usd": 9.59e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-94",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 423,
+   "completion_tokens": 68,
+   "cost_usd": 0.000278,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-95",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 420,
+   "completion_tokens": 76,
+   "cost_usd": 0.0002896,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-95",
+   "user": "배수아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 389,
+   "completion_tokens": 78,
+   "cost_usd": 7.01e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-96",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 596,
+   "completion_tokens": 126,
+   "cost_usd": 0.00044,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-97",
+   "user": "윤하늘",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 573,
+   "completion_tokens": 73,
+   "cost_usd": 0.000346,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-97",
+   "user": "윤하늘",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 513,
+   "completion_tokens": 102,
+   "cost_usd": 9.21e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-98",
+   "user": "강민수",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 598,
+   "completion_tokens": 69,
+   "cost_usd": 0.0003496,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-98",
+   "user": "강민수",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 545,
+   "completion_tokens": 80,
+   "cost_usd": 8.65e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-99",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 470,
+   "completion_tokens": 106,
+   "cost_usd": 0.0003576,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-99",
+   "user": "배수아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 546,
+   "completion_tokens": 97,
+   "cost_usd": 9.34e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-100",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 528,
+   "completion_tokens": 71,
+   "cost_usd": 0.0003248,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-101",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 440,
+   "completion_tokens": 99,
+   "cost_usd": 0.0003344,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-102",
+   "user": "윤하늘",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 389,
+   "completion_tokens": 78,
+   "cost_usd": 0.0002804,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-103",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 574,
+   "completion_tokens": 140,
+   "cost_usd": 0.0004536,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-104",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 401,
+   "completion_tokens": 110,
+   "cost_usd": 0.0003364,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-104",
+   "user": "배수아",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 530,
+   "completion_tokens": 91,
+   "cost_usd": 8.94e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-105",
+   "user": "오세훈",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 424,
+   "completion_tokens": 93,
+   "cost_usd": 0.0003184,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-106",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 431,
+   "completion_tokens": 60,
+   "cost_usd": 0.0002684,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-107",
+   "user": "서지아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 500,
+   "completion_tokens": 82,
+   "cost_usd": 0.0003312,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-108",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 532,
+   "completion_tokens": 64,
+   "cost_usd": 0.0003152,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-108",
+   "user": "한유나",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 568,
+   "completion_tokens": 61,
+   "cost_usd": 8.12e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-109",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 546,
+   "completion_tokens": 93,
+   "cost_usd": 0.0003672,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-110",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 573,
+   "completion_tokens": 120,
+   "cost_usd": 0.0004212,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-111",
+   "user": "정다은",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 605,
+   "completion_tokens": 137,
+   "cost_usd": 0.0004612,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-112",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 485,
+   "completion_tokens": 60,
+   "cost_usd": 0.00029,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-113",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 423,
+   "completion_tokens": 124,
+   "cost_usd": 0.0003676,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-114",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 391,
+   "completion_tokens": 81,
+   "cost_usd": 0.000286,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-115",
+   "user": "임도윤",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 535,
+   "completion_tokens": 111,
+   "cost_usd": 0.0003916,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-116",
+   "user": "한유나",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 573,
+   "completion_tokens": 114,
+   "cost_usd": 0.0004116,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-117",
+   "user": "이서준",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 572,
+   "completion_tokens": 80,
+   "cost_usd": 0.0003568,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-117",
+   "user": "이서준",
+   "step": "judge",
+   "model": "gpt-5.4-nano",
+   "prompt_tokens": 489,
+   "completion_tokens": 82,
+   "cost_usd": 8.17e-05,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-118",
+   "user": "윤하늘",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 618,
+   "completion_tokens": 120,
+   "cost_usd": 0.0004392,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-119",
+   "user": "배수아",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 469,
+   "completion_tokens": 86,
+   "cost_usd": 0.0003252,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-120",
+   "user": "김민지",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 528,
+   "completion_tokens": 80,
+   "cost_usd": 0.0003392,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-121",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 906,
+   "completion_tokens": 169,
+   "cost_usd": 0.0006328,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-122",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1181,
+   "completion_tokens": 236,
+   "cost_usd": 0.00085,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-123",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1011,
+   "completion_tokens": 173,
+   "cost_usd": 0.0006812,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-124",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1268,
+   "completion_tokens": 242,
+   "cost_usd": 0.0008944,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-125",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1062,
+   "completion_tokens": 173,
+   "cost_usd": 0.0007016,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-126",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1079,
+   "completion_tokens": 243,
+   "cost_usd": 0.0008204,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-127",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 936,
+   "completion_tokens": 198,
+   "cost_usd": 0.0006912,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-128",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1047,
+   "completion_tokens": 198,
+   "cost_usd": 0.0007356,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-129",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1223,
+   "completion_tokens": 201,
+   "cost_usd": 0.0008108,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-130",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1189,
+   "completion_tokens": 192,
+   "cost_usd": 0.0007828,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-131",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1221,
+   "completion_tokens": 161,
+   "cost_usd": 0.000746,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-132",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1195,
+   "completion_tokens": 188,
+   "cost_usd": 0.0007788,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-133",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 979,
+   "completion_tokens": 166,
+   "cost_usd": 0.0006572,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-134",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1048,
+   "completion_tokens": 169,
+   "cost_usd": 0.0006896,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-135",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1166,
+   "completion_tokens": 202,
+   "cost_usd": 0.0007896,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-136",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1277,
+   "completion_tokens": 160,
+   "cost_usd": 0.0007668,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-137",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1133,
+   "completion_tokens": 172,
+   "cost_usd": 0.0007284,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-138",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 962,
+   "completion_tokens": 208,
+   "cost_usd": 0.0007176,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-139",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1109,
+   "completion_tokens": 202,
+   "cost_usd": 0.0007668,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-140",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 930,
+   "completion_tokens": 211,
+   "cost_usd": 0.0007096,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-141",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1192,
+   "completion_tokens": 222,
+   "cost_usd": 0.000832,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-142",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1239,
+   "completion_tokens": 207,
+   "cost_usd": 0.0008268,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-143",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 905,
+   "completion_tokens": 214,
+   "cost_usd": 0.0007044,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-144",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 963,
+   "completion_tokens": 179,
+   "cost_usd": 0.0006716,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-145",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1277,
+   "completion_tokens": 257,
+   "cost_usd": 0.000922,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-146",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1140,
+   "completion_tokens": 249,
+   "cost_usd": 0.0008544,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-147",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 936,
+   "completion_tokens": 219,
+   "cost_usd": 0.0007248,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-148",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1013,
+   "completion_tokens": 204,
+   "cost_usd": 0.0007316,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-149",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 965,
+   "completion_tokens": 246,
+   "cost_usd": 0.0007796,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-150",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1207,
+   "completion_tokens": 204,
+   "cost_usd": 0.0008092,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-151",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1051,
+   "completion_tokens": 193,
+   "cost_usd": 0.0007292,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-152",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1156,
+   "completion_tokens": 227,
+   "cost_usd": 0.0008256,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-153",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1048,
+   "completion_tokens": 168,
+   "cost_usd": 0.000688,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-154",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1130,
+   "completion_tokens": 177,
+   "cost_usd": 0.0007352,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-155",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1221,
+   "completion_tokens": 150,
+   "cost_usd": 0.0007284,
+   "route": "자동 답변"
+  },
+  {
+   "request_id": "r-156",
+   "user": "test-bot",
+   "step": "answer",
+   "model": "gpt-4.1-mini",
+   "prompt_tokens": 1109,
+   "completion_tokens": 169,
+   "cost_usd": 0.000714,
+   "route": "자동 답변"
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+{
+ "period": {
+  "from": "2026-10-26",
+  "to": "2026-10-30"
+ },
+ "runs": {
+  "total": 357,
+  "errors": 21,
+  "error_rate": 0.0588,
+  "p95_ms": 2598,
+  "unanswered_rate": 0.0476,
+  "top_failure": {
+   "node": "Search FAQ",
+   "message": "timeout of 1000ms exceeded",
+   "count": 16
+  }
+ },
+ "alerts": {
+  "count": 6,
+  "high": 3,
+  "by_reason": {
+   "timeout": 1,
+   "rate_limit": 1,
+   "batch_rejected": 1,
+   "low_quality": 2,
+   "api_error": 1
+  }
+ },
+ "dlq": {
+  "size": 3,
+  "parked": 2,
+  "waiting": 1
+ },
+ "quality": {
+  "batches": 4,
+  "avg_score": 0.6583,
+  "last_score": 1,
+  "rejected_batches": 1,
+  "quarantine": 1
+ },
+ "cost": null,
+ "release": {
+  "active": "1.1.0",
+  "canary_release": "1.2.0",
+  "canary_percent": 20,
+  "active_repeat_rate": 0.0773,
+  "canary_repeat_rate": 0.625
+ },
+ "sources_down": [
+  "cost"
+ ],
+ "health": {
+  "runs": "red",
+  "alerts": "yellow",
+  "dlq": "red",
+  "quality": "yellow",
+  "cost": "unknown",
+  "release": "red"
+ },
+ "red": [
+  "runs",
+  "dlq",
+  "release"
+ ],
+ "yellow": [
+  "alerts",
+  "quality"
+ ],
+ "unknown": [
+  "cost"
+ ],
+ "overall": "red"
+}

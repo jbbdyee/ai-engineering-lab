@@ -1,0 +1,205 @@
+{
+  "name": "79 Ops facts (team baseline)",
+  "nodes": [
+    {
+      "name": "Facts webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "base-ops-facts",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        300
+      ],
+      "id": "e31e497c-4628-5404-98d8-d6cbafc7c5ee",
+      "webhookId": "29a51e92-50af-5329-aef4-8662be597525"
+    },
+    {
+      "name": "Get logs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/logs/query",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({}) }}"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "46df7394-80a0-51d6-b749-5ac183227830"
+    },
+    {
+      "name": "Get alerts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/alerts",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "d1bbadd5-3cbc-536a-8173-ac7a85579305"
+    },
+    {
+      "name": "Get DLQ",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/dlq",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "3f4c95d0-be36-5206-8b5a-741d1c43e7e0"
+    },
+    {
+      "name": "Get budget",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://data-api:8800/budget",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "63abc78c-ec4f-5c79-9b9a-f073d8a04a97"
+    },
+    {
+      "name": "Make facts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "// team baseline: the morning dashboard we put together last month\nconst logs = $('Get logs').first().json.logs ?? [];\nconst total = logs.length, errors = logs.filter((l) => l.status === 'error').length;\nconst alerts = $('Get alerts').first().json, dlq = $('Get DLQ').first().json, budget = $('Get budget').first().json;\nreturn [{ json: {\n  runs: { total, errors, error_rate: total ? errors / total * 100 : null },\n  alerts: { count: alerts.count },\n  dlq: { size: dlq.size },\n  cost: { used_usd: budget.used_usd, daily_usd: budget.daily_usd },\n} }];"
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "7dc18d76-23f3-583c-95e3-4d6c246c218a"
+    },
+    {
+      "name": "Send result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "627c47e0-68e1-5f61-892b-8a56a7d2a1cc"
+    }
+  ],
+  "connections": {
+    "Facts webhook": {
+      "main": [
+        [
+          {
+            "node": "Get logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get logs": {
+      "main": [
+        [
+          {
+            "node": "Get alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get alerts": {
+      "main": [
+        [
+          {
+            "node": "Get DLQ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get DLQ": {
+      "main": [
+        [
+          {
+            "node": "Get budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get budget": {
+      "main": [
+        [
+          {
+            "node": "Make facts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make facts": {
+      "main": [
+        [
+          {
+            "node": "Send result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

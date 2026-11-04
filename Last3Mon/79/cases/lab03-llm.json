@@ -1,0 +1,39 @@
+{
+  "webhook": "my-ops-brief",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "요약 세 문장 · 숫자 확인",
+      "body": {},
+      "expect": {
+        "equals": {
+          "numbers_ok": true,
+          "overall": "red"
+        },
+        "contains": {
+          "markdown": "## 요약"
+        }
+      }
+    },
+    {
+      "name": "요약에 급한 곳",
+      "body": {},
+      "expect": {
+        "contains": {
+          "summary": [
+            "DLQ",
+            "릴리스",
+            "카나리",
+            "실행",
+            "오류"
+          ]
+        }
+      }
+    }
+  ]
+}

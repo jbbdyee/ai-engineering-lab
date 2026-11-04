@@ -1,0 +1,229 @@
+$ uv run tools/flow.py push answers/79-lab03-challenge2-gate.json
+! unpublished '79 Ops assistant eval (answer)' (w7803df55a337611): it used the same webhook path
+✔ pushed '79 Ops assistant eval + gate (answer)' (id wb750a2ccc06d9a1)
+   POST http://localhost:5678/webhook/my-ops-eval
+
+$ uv run tools/flow.py test cases/lab03-challenge2.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-eval · 4 case(s) × 1
+✔ 기준을 안 주면 0.9 · 3.3s
+    → request  POST /webhook/my-ops-eval
+      {
+        "cases": [
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "alerts",
+            "numbers": [
+              "6"
+            ]
+          }
+        ]
+      }
+    ← response HTTP 200
+      {
+        "total": 1,
+        "passed": 1,
+        "score": 1,
+        "area_ok": 1,
+        "refused_ok": 1,
+        "number_ok": 1,
+        "grounded": 1,
+        "failed": [],
+        "min_score": 0.9,
+        "gate": "pass"
+      }
+✔ 골든 8 · 기준 0.8 → 통과 · 3.4s
+    → request  POST /webhook/my-ops-eval
+      {
+        "cases": [
+          {
+            "question": "지난주 오류율이 얼마야?",
+            "area": "runs",
+            "numbers": [
+              "5.88"
+            ]
+          },
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "alerts",
+            "numbers": [
+              "6"
+            ]
+          },
+          {
+            "question": "DLQ에 parked 된 건 몇 건이야?",
+            "area": "dlq",
+            "numbers": [
+              "2"
+            ]
+          },
+          {
+            "question": "FAQ 배치 품질 점수 평균은?",
+            "area": "quality",
+            "numbers": [
+              "0.6583",
+              "65.83",
+              "0.66"
+            ]
+          },
+          {
+            "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?",
+            "area": "cost",
+            "numbers": [
+              "92"
+            ]
+          },
+          {
+            "question": "카나리 버전 문제 있어?",
+            "area": "release",
+            "numbers": [
+              "62.5"
+            ]
+          },
+          {
+            "question": "DLQ 1번 다시 돌려 줘",
+            "area": "action",
+            "refused": true
+          },
+          {
+            "question": "점심 메뉴 추천해 줘",
+            "area": "unknown",
+            "refused": true
+          }
+        ],
+        "min_score": 0.8
+      }
+    ← response HTTP 200
+      {
+        "total": 8,
+        "passed": 8,
+        "score": 1,
+        "area_ok": 8,
+        "refused_ok": 8,
+        "number_ok": 8,
+        "grounded": 8,
+        "failed": [],
+        "min_score": 0.8,
+        "gate": "pass"
+      }
+✔ 틀린 기대 · 기준 0.9 → 실패 · 1.2s
+    → request  POST /webhook/my-ops-eval
+      {
+        "cases": [
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "cost",
+            "numbers": [
+              "6"
+            ]
+          }
+        ],
+        "min_score": 0.9
+      }
+    ← response HTTP 200
+      {
+        "total": 1,
+        "passed": 0,
+        "score": 0,
+        "area_ok": 0,
+        "refused_ok": 1,
+        "number_ok": 1,
+        "grounded": 1,
+        "failed": [
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "alerts",
+            "ok": false,
+            "area_ok": false,
+            "refused_ok": true,
+            "number_ok": true,
+            "grounded": true,
+            "answer": "알림은 총 6건이 와 있으며, 이 중 3건은 높은 심각도입니다. 알림 사유로는 타임아웃 1건, 속도 제한 1건, 배치 거부 1건, 저품질 2건, API 오류 1건이 있습니다."
+          }
+        ],
+        "min_score": 0.9,
+        "gate": "fail"
+      }
+✔ 실패하면 알림 한 건 · 0.0s
+    → request  POST http://localhost:8800/alerts/list
+      {
+        "reason": "eval_below"
+      }
+    ← response HTTP 200
+      {
+        "count": 1,
+        "alerts": [
+          {
+            "workflow": "ops-eval",
+            "node": "Below?",
+            "severity": "medium",
+            "reason": "eval_below",
+            "score": 0,
+            "min_score": 0.9,
+            "message": "ops assistant eval 0 < 0.9",
+            "at": 1793527072.438837
+          }
+        ]
+      }
+Passed 4/4
+report: runs/lab03-challenge2-20261101-185752.json
+
+$ uv run tools/flow.py test cases/lab03-challenge.json
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+POST http://localhost:5678/webhook/my-ops-eval · 3 case(s) × 1
+✔ 골든 질문 8개 · 2.2s
+✔ 틀린 기대는 잡아냄 · 1.1s
+✔ 빈 목록 → 400 · 0.0s
+Passed 3/3
+report: runs/lab03-challenge-20261101-185755.json
+
+$ uv run tools/flow.py morning
+seeded morning 2026-11-04T08:30:00 · {"alerts": 7, "dlq": 3, "quality_log": 4, "quarantine": 1, "usage": 192}
+alerts: 7 (high 3)
+  [high] helpdesk/Answer · rate_limit · 429 Rate limit reached for requests
+  [high] faq-import/Batch ok? · batch_rejected · B-1 rejected
+  [medium] faq-import/Low score? · low_quality · B-2 quality 0.8
+  [medium] faq-import/Low score? · low_quality · B-3 quality 0.8333
+  [medium] intake/Create ticket · api_error · tickets API 503
+  [medium] ops-eval/Below? · eval_below · ops assistant eval 0 < 0.9
+DLQ: 3 (parked 2)
+  #1  attempts 3  parked True  tickets API 503
+  #2  attempts 3  parked True  tickets API 503
+  #3  attempts 1  parked False  timeout
+quality log: 4 (scores [0, 0.8, 0.8333, 1]) · quarantine 1
+usage: 156 requests · 192 calls · $0.073604
+budget: used $0.073604 of $0.08
+release: active 1.1.0 · canary {"release": "1.2.0", "percent": 20}
+
+$ uv run tools/flow.py ops --reset
+✔ back to the seeded operations morning (alerts · DLQ · quality · usage · budget · release), live logs · added FAQ · tickets emptied, fault switch all ok
+
+$ uv run tools/flow.py doctor
+! n8n install folder /Users/[USER]/day65-n8n
+   → day 65 SETUP-N8N 5단계 (get.n8n.io 설치). 다른 곳에 설치했다면 Last3Mon/65/n8n/.env 에 N8N_HOME=<폴더>
+✔ n8n container day65-n8n-n8n-1
+✔ n8n http://localhost:5678
+✔ data API http://localhost:8800
+✔ dead letter queue /dlq · alerts · fault switch dlq (day 76 data API)
+✔ run logs /logs (666 seeded runs) · FAQ additions /faq-extra (day 77 data API)
+✔ schemas faq · employee · ticket, quarantine, quality log (day 78 data API)
+✔ operations morning /ops/seed-info (day 79 data API)
+✔ n8n → http://data-api:8800
+✔ credential 'OpenAI (.env)' (openAiCourse0001)
+✔ node catalog (for check)
+✔ CLI coding agent: codex, claude, agy
+ready

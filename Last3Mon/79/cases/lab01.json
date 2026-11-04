@@ -1,0 +1,96 @@
+{
+  "webhook": "my-ops-facts",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "지난주 실행 (기본 기간)",
+      "body": {},
+      "expect": {
+        "equals": {
+          "period.from": "2026-10-26",
+          "runs.total": 357,
+          "runs.errors": 21,
+          "runs.error_rate": 0.0588,
+          "runs.p95_ms": 2598,
+          "runs.top_failure.node": "Search FAQ",
+          "runs.top_failure.count": 16
+        }
+      }
+    },
+    {
+      "name": "지금 상태 · 알림 · DLQ · 품질",
+      "body": {},
+      "expect": {
+        "equals": {
+          "alerts.count": 6,
+          "alerts.high": 3,
+          "alerts.by_reason.low_quality": 2,
+          "dlq.size": 3,
+          "dlq.parked": 2,
+          "quality.avg_score": 0.6583,
+          "quality.last_score": 1,
+          "quality.quarantine": 1
+        }
+      }
+    },
+    {
+      "name": "비용 · 릴리스",
+      "body": {},
+      "expect": {
+        "equals": {
+          "cost.requests": 156,
+          "cost.used_ratio": 0.9201,
+          "cost.top_user.user": "test-bot",
+          "cost.top_user.share": 0.3699,
+          "release.active": "1.1.0",
+          "release.canary_release": "1.2.0",
+          "release.canary_repeat_rate": 0.625,
+          "release.active_repeat_rate": 0.0773
+        }
+      }
+    },
+    {
+      "name": "첫 주 (기간을 바꾸면 실행만 바뀜)",
+      "request": "requests/week1.json",
+      "expect": {
+        "equals": {
+          "runs.total": 309,
+          "runs.errors": 0,
+          "runs.top_failure": null,
+          "release.canary_repeat_rate": null,
+          "dlq.size": 3
+        }
+      }
+    },
+    {
+      "name": "상태가 바뀌면 숫자도 (DLQ #3 처리)",
+      "before": [
+        {
+          "url": "http://localhost:8800/dlq/update",
+          "body": {
+            "dlq_id": 3,
+            "remove": true
+          }
+        }
+      ],
+      "body": {},
+      "expect": {
+        "equals": {
+          "dlq.size": 2,
+          "dlq.waiting": 0
+        }
+      }
+    }
+  ]
+}

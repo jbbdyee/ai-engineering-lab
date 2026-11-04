@@ -1,0 +1,34 @@
+{
+ "events": [
+  {
+   "t": 1793526843.503,
+   "kind": "ops-ask",
+   "question": "DLQ 1번 다시 돌려 줘",
+   "area": "action",
+   "router": "keyword",
+   "refused": true,
+   "reason": "read_only",
+   "numbers_ok": null
+  },
+  {
+   "t": 1793526845.149,
+   "kind": "ops-ask",
+   "question": "점심 메뉴 추천해 줘",
+   "area": "unknown",
+   "router": "llm",
+   "refused": true,
+   "reason": "out_of_scope",
+   "numbers_ok": null
+  },
+  {
+   "t": 1793526846.297,
+   "kind": "ops-ask",
+   "question": "지난주 오류율이 얼마야?",
+   "area": "runs",
+   "router": "keyword",
+   "refused": false,
+   "reason": null,
+   "numbers_ok": true
+  }
+ ]
+}

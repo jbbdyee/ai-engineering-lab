@@ -1,0 +1,134 @@
+{
+  "cases": "lab02-challenge2.json",
+  "webhook": "my-ops-ask",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "case": "작업 요청",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "DLQ 1번 다시 돌려 줘"
+      },
+      "response": {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+    },
+    {
+      "case": "운영 밖",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.6,
+      "status": 200,
+      "request": {
+        "question": "점심 메뉴 추천해 줘"
+      },
+      "response": {
+        "question": "점심 메뉴 추천해 줘",
+        "area": "unknown",
+        "router": "llm",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+    },
+    {
+      "case": "답한 질문",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.1,
+      "status": 200,
+      "request": {
+        "question": "지난주 오류율이 얼마야?"
+      },
+      "response": {
+        "question": "지난주 오류율이 얼마야?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    },
+    {
+      "case": "감사 기록 세 줄 · 거절 이유와 함께",
+      "webhook": "http://localhost:8800/audit/list",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {},
+      "response": {
+        "events": [
+          {
+            "t": 1793526843.503,
+            "kind": "ops-ask",
+            "question": "DLQ 1번 다시 돌려 줘",
+            "area": "action",
+            "router": "keyword",
+            "refused": true,
+            "reason": "read_only",
+            "numbers_ok": null
+          },
+          {
+            "t": 1793526845.149,
+            "kind": "ops-ask",
+            "question": "점심 메뉴 추천해 줘",
+            "area": "unknown",
+            "router": "llm",
+            "refused": true,
+            "reason": "out_of_scope",
+            "numbers_ok": null
+          },
+          {
+            "t": 1793526846.297,
+            "kind": "ops-ask",
+            "question": "지난주 오류율이 얼마야?",
+            "area": "runs",
+            "router": "keyword",
+            "refused": false,
+            "reason": null,
+            "numbers_ok": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "응답은 그대로 (감사는 곁가지)",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "question": "DLQ 1번 다시 돌려 줘"
+      },
+      "response": {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "area": "action",
+        "router": "keyword",
+        "refused": true,
+        "reason": "read_only",
+        "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+      }
+    }
+  ]
+}

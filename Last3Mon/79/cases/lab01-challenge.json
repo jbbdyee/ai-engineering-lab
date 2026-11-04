@@ -1,0 +1,110 @@
+{
+  "webhook": "my-ops-facts",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "지난주 영역별 상태",
+      "body": {},
+      "expect": {
+        "equals": {
+          "health.runs": "red",
+          "health.alerts": "yellow",
+          "health.dlq": "red",
+          "health.quality": "yellow",
+          "health.cost": "yellow",
+          "health.release": "red",
+          "overall": "red"
+        }
+      }
+    },
+    {
+      "name": "빨강 · 노랑 목록 (정해진 순서)",
+      "body": {},
+      "expect": {
+        "equals": {
+          "red": [
+            "runs",
+            "dlq",
+            "release"
+          ],
+          "yellow": [
+            "alerts",
+            "quality",
+            "cost"
+          ]
+        }
+      }
+    },
+    {
+      "name": "첫 주: 오류는 없지만 답 못 함 · 카나리 비교 불가",
+      "request": "requests/week1.json",
+      "expect": {
+        "equals": {
+          "health.runs": "yellow",
+          "health.release": "yellow",
+          "red": [
+            "dlq"
+          ]
+        }
+      }
+    },
+    {
+      "name": "예산을 늘리면 비용은 초록",
+      "before": [
+        {
+          "url": "http://localhost:8800/budget",
+          "body": {
+            "daily_usd": 1
+          }
+        }
+      ],
+      "body": {},
+      "expect": {
+        "equals": {
+          "health.cost": "green",
+          "cost.used_ratio": 0.0736
+        }
+      }
+    },
+    {
+      "name": "parked를 처리하면 DLQ는 노랑",
+      "before": [
+        {
+          "url": "http://localhost:8800/dlq/update",
+          "body": {
+            "dlq_id": 1,
+            "remove": true
+          }
+        },
+        {
+          "url": "http://localhost:8800/dlq/update",
+          "body": {
+            "dlq_id": 2,
+            "remove": true
+          }
+        }
+      ],
+      "body": {},
+      "expect": {
+        "equals": {
+          "health.dlq": "yellow",
+          "red": [
+            "runs",
+            "release"
+          ]
+        }
+      }
+    }
+  ]
+}

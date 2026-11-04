@@ -1,0 +1,153 @@
+$ uv run tools/flow.py test cases/lab01.json --webhook base-ops-facts -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/base-ops-facts · 5 case(s) × 1
+✘ 지난주 실행 (기본 기간) · 0.4s · period.from = null (expected 2026-10-26); runs.total = 666 (expected 357); runs.error_rate = 3.153153153153153 (expected 0.0588); runs.p95_ms = null (expected 2598); runs.top_failure.node = null (expected Search FAQ); runs.top_failure.count = null (expected 16)
+    → request  POST /webhook/base-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 3
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+✘ 지금 상태 · 알림 · DLQ · 품질 · 0.1s · alerts.high = null (expected 3); alerts.by_reason.low_quality = null (expected 2); dlq.parked = null (expected 2); quality.avg_score = null (expected 0.6583); quality.last_score = null (expected 1); quality.quarantine = null (expected 1)
+    → request  POST /webhook/base-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 3
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+✘ 비용 · 릴리스 · 0.1s · cost.requests = null (expected 156); cost.used_ratio = null (expected 0.9201); cost.top_user.user = null (expected test-bot); cost.top_user.share = null (expected 0.3699); release.active = null (expected 1.1.0); release.canary_release = null (expected 1.2.0); release.canary_repeat_rate = null (expected 0.625); release.active_repeat_rate = null (expected 0.0773)
+    → request  POST /webhook/base-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 3
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+✘ 첫 주 (기간을 바꾸면 실행만 바뀜) · 0.1s · runs.total = 666 (expected 309); runs.errors = 21 (expected 0)
+    → request  POST /webhook/base-ops-facts
+      {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      }
+    ← response HTTP 200
+      {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 3
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+✔ before: POST http://localhost:8800/dlq/update · HTTP 200 · 0.0s · {"removed": true, "size": 2}
+    → request  POST http://localhost:8800/dlq/update
+      {
+        "dlq_id": 3,
+        "remove": true
+      }
+    ← response HTTP 200
+      {
+        "removed": true,
+        "size": 2
+      }
+✘ 상태가 바뀌면 숫자도 (DLQ #3 처리) · 0.1s · dlq.waiting = null (expected 0)
+    → request  POST /webhook/base-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 2
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+Passed 0/5
+report: runs/lab01-20261101-185111.json
+✔ after: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }

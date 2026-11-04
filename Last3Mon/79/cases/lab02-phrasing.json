@@ -1,0 +1,84 @@
+{
+  "webhook": "my-ops-ask",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "'에러' → 실행",
+      "body": {
+        "question": "에러 많이 났어?"
+      },
+      "expect": {
+        "equals": {
+          "area": "runs",
+          "router": "keyword",
+          "refused": false
+        }
+      }
+    },
+    {
+      "name": "'장애' 는 낱말 목록에 없음 → 운영 밖으로 거절",
+      "body": {
+        "question": "장애 났어?"
+      },
+      "expect": {
+        "equals": {
+          "area": "unknown",
+          "refused": true,
+          "reason": "out_of_scope"
+        }
+      }
+    },
+    {
+      "name": "두 영역이 한 번씩 → 앞의 영역 (알림)",
+      "body": {
+        "question": "알림이랑 DLQ 둘 다 알려 줘"
+      },
+      "expect": {
+        "equals": {
+          "area": "alerts"
+        }
+      }
+    },
+    {
+      "name": "'꺼 줘' → 작업 요청으로 거절",
+      "body": {
+        "question": "카나리 꺼 줘"
+      },
+      "expect": {
+        "equals": {
+          "area": "action",
+          "refused": true,
+          "reason": "read_only"
+        }
+      }
+    },
+    {
+      "name": "'배포'(1) 보다 '상태 · 요약'(2) → 전체",
+      "body": {
+        "question": "배포 상태 요약해 줘"
+      },
+      "expect": {
+        "equals": {
+          "area": "overview"
+        }
+      }
+    },
+    {
+      "name": "낱말 없는 비용 질문 → 거절 (과제 1에서 LLM 라우터로)",
+      "body": {
+        "question": "AI 쓰는 데 얼마나 나갔어?"
+      },
+      "expect": {
+        "equals": {
+          "refused": true,
+          "reason": "out_of_scope"
+        }
+      }
+    }
+  ]
+}

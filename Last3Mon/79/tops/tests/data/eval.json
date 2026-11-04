@@ -1,0 +1,37 @@
+{
+ "pass": {
+  "total": 8,
+  "passed": 8,
+  "score": 1,
+  "area_ok": 8,
+  "refused_ok": 8,
+  "number_ok": 8,
+  "grounded": 8,
+  "failed": [],
+  "min_score": 0.8,
+  "gate": "pass"
+ },
+ "fail": {
+  "total": 1,
+  "passed": 0,
+  "score": 0,
+  "area_ok": 0,
+  "refused_ok": 1,
+  "number_ok": 1,
+  "grounded": 1,
+  "failed": [
+   {
+    "question": "알림이 몇 건 와 있어?",
+    "area": "alerts",
+    "ok": false,
+    "area_ok": false,
+    "refused_ok": true,
+    "number_ok": true,
+    "grounded": true,
+    "answer": "알림은 총 6건이 와 있으며, 이 중 3건은 높은 심각도입니다. 알림 사유로는 타임아웃 1건, 속도 제한 1건, 배치 거부 1건, 저품질 2건, API 오류 1건이 있습니다."
+   }
+  ],
+  "min_score": 0.9,
+  "gate": "fail"
+ }
+}

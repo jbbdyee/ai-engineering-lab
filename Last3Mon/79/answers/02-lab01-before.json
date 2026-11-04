@@ -1,0 +1,174 @@
+{
+  "cases": "lab01.json",
+  "webhook": "base-ops-facts",
+  "passed": 0,
+  "total": 5,
+  "results": [
+    {
+      "case": "지난주 실행 (기본 기간)",
+      "webhook": "base-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "period.from = null (expected 2026-10-26)",
+        "runs.total = 666 (expected 357)",
+        "runs.error_rate = 3.153153153153153 (expected 0.0588)",
+        "runs.p95_ms = null (expected 2598)",
+        "runs.top_failure.node = null (expected Search FAQ)",
+        "runs.top_failure.count = null (expected 16)"
+      ],
+      "seconds": 0.4,
+      "status": 200,
+      "request": {},
+      "response": {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 3
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+    },
+    {
+      "case": "지금 상태 · 알림 · DLQ · 품질",
+      "webhook": "base-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "alerts.high = null (expected 3)",
+        "alerts.by_reason.low_quality = null (expected 2)",
+        "dlq.parked = null (expected 2)",
+        "quality.avg_score = null (expected 0.6583)",
+        "quality.last_score = null (expected 1)",
+        "quality.quarantine = null (expected 1)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 3
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+    },
+    {
+      "case": "비용 · 릴리스",
+      "webhook": "base-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "cost.requests = null (expected 156)",
+        "cost.used_ratio = null (expected 0.9201)",
+        "cost.top_user.user = null (expected test-bot)",
+        "cost.top_user.share = null (expected 0.3699)",
+        "release.active = null (expected 1.1.0)",
+        "release.canary_release = null (expected 1.2.0)",
+        "release.canary_repeat_rate = null (expected 0.625)",
+        "release.active_repeat_rate = null (expected 0.0773)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 3
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+    },
+    {
+      "case": "첫 주 (기간을 바꾸면 실행만 바뀜)",
+      "webhook": "base-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "runs.total = 666 (expected 309)",
+        "runs.errors = 21 (expected 0)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      },
+      "response": {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 3
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+    },
+    {
+      "case": "상태가 바뀌면 숫자도 (DLQ #3 처리)",
+      "webhook": "base-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "dlq.waiting = null (expected 0)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "runs": {
+          "total": 666,
+          "errors": 21,
+          "error_rate": 3.153153153153153
+        },
+        "alerts": {
+          "count": 6
+        },
+        "dlq": {
+          "size": 2
+        },
+        "cost": {
+          "used_usd": 0.073604,
+          "daily_usd": 0.08
+        }
+      }
+    }
+  ]
+}

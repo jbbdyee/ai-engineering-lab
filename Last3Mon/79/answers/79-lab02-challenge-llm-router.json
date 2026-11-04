@@ -1,0 +1,523 @@
+{
+  "name": "79 Ops ask + LLM router (answer)",
+  "nodes": [
+    {
+      "name": "Ask webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-ops-ask",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "e0cc9a1d-38cf-580a-b52e-3f6d8bb1cab2",
+      "position": [
+        0,
+        300
+      ],
+      "id": "a2d5e198-0074-5f7f-9cd6-5203c98b0bb1"
+    },
+    {
+      "name": "Route",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const q = String($('Ask webhook').first().json.body?.question ?? '').trim();\nconst lower = q.toLowerCase();\nconst words = {\n  runs: ['오류', '에러', '실패율', '느려', '느린', '응답 시간', 'p95', '실행'],\n  alerts: ['알림', '경보'],\n  dlq: ['dlq', '재처리', '쌓인', 'parked', '접수 실패'],\n  quality: ['품질', '배치', '격리'],\n  cost: ['비용', '돈', '예산', '토큰', '요금'],\n  release: ['릴리스', '버전', '카나리', '배포'],\n  overview: ['괜찮', '상태', '요약', '전체', '브리핑'],\n};\nconst action = /(다시 돌려|재처리해|지워|삭제해|꺼 ?줘|켜 ?줘|배포해|되돌려|롤백해|바꿔 ?줘|올려 ?줘|내려 ?줘|비워 ?줘)/.test(q);\nif (action) return [{ json: { question: q, area: 'action', router: 'keyword' } }];\nlet area = 'unknown', best = 0;\nfor (const [k, list] of Object.entries(words)) {\n  const n = list.filter((w) => lower.includes(w)).length;\n  if (n > best) { best = n; area = k; }\n}\nreturn [{ json: { question: q, area, router: 'keyword' } }];"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "a5744b67-3600-5a8a-8607-d6c0896313f1"
+    },
+    {
+      "name": "Action?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.area === 'action' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "48f78459-b87c-527d-a569-b3e753e4c0d4"
+    },
+    {
+      "name": "Refuse action",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ question: $json.question, area: 'action', router: $json.router, refused: true, reason: 'read_only', answer: '운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요.' }) }}",
+        "options": {}
+      },
+      "position": [
+        660,
+        560
+      ],
+      "id": "6ede178d-153c-53d7-a773-9b2bda2af049"
+    },
+    {
+      "name": "Keyword hit?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.area !== 'unknown' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "bd2aea65-6cee-5229-b19a-5ec357ba6bc1"
+    },
+    {
+      "name": "Classify",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.question }}",
+        "options": {
+          "systemMessage": "Classify an IT helpdesk operator's question (Korean) into one area of the operations data. Areas: runs (helpdesk runs: errors, failures, slowness, response time / 실행 · 오류 · 느림), alerts (alert messages / 알림), dlq (intake items that failed and wait for replay / 접수 못 한 것 · 남은 것 · 재처리 대기), quality (FAQ data batches, quality scores, quarantine / 데이터 품질 · FAQ 배치 · 격리), cost (LLM spending, money, budget, tokens / 비용 · 돈 · 지출 · 얼마 나갔나), release (versions, canary, rollout to some users / 버전 · 새 판 · 일부에게 먼저 내보냄), overview (is everything ok, general status), none (anything not about operating the helpdesk). Reply with only the area word.",
+          "maxIterations": 1
+        }
+      },
+      "onError": "continueRegularOutput",
+      "position": [
+        880,
+        140
+      ],
+      "id": "6747acdd-c6b6-54a5-9707-f995bcf54be6"
+    },
+    {
+      "name": "Classify model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        880,
+        -60
+      ],
+      "id": "9e1b1e99-9563-50eb-ae41-edba7312bd00"
+    },
+    {
+      "name": "Read class",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Route').first().json;\nconst word = String($json.output ?? '').trim().toLowerCase().replace(/[^a-z]/g, '');\nconst known = ['runs', 'alerts', 'dlq', 'quality', 'cost', 'release', 'overview'];\nreturn [{ json: { ...r, area: known.includes(word) ? word : 'unknown', router: 'llm' } }];"
+      },
+      "position": [
+        1100,
+        140
+      ],
+      "id": "a36bcee6-b885-5021-9b88-5321ed56c3b4"
+    },
+    {
+      "name": "Routed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "return [{ json: $input.first().json }];"
+      },
+      "position": [
+        1320,
+        300
+      ],
+      "id": "db234186-80da-5094-9fdc-9b85b9fffd56"
+    },
+    {
+      "name": "Known area?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.area !== 'unknown' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "position": [
+        1540,
+        300
+      ],
+      "id": "a904a046-a9d2-5f43-bc24-45c10bb803fb"
+    },
+    {
+      "name": "Out of scope",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ question: $json.question, area: 'unknown', router: $json.router, refused: true, reason: 'out_of_scope', answer: '운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다.' }) }}",
+        "options": {}
+      },
+      "position": [
+        1760,
+        560
+      ],
+      "id": "047a7d3f-bc56-5a24-ae65-8b2143880a44"
+    },
+    {
+      "name": "Get facts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://localhost:5678/webhook/my-ops-facts",
+        "options": {
+          "timeout": 30000
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $('Ask webhook').first().json.body?.from ?? '', to: $('Ask webhook').first().json.body?.to ?? '' }) }}"
+      },
+      "position": [
+        1760,
+        300
+      ],
+      "id": "adea6e67-7abd-55a9-8659-98b7e285cce3"
+    },
+    {
+      "name": "Pick facts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Routed').first().json;\nconst f = $('Get facts').first().json;\nconst part = r.area === 'overview' ? f : { period: f.period, [r.area]: f[r.area], ...(f.health ? { health: f.health[r.area] } : {}) };\nreturn [{ json: { ...r, facts: part } }];"
+      },
+      "position": [
+        1980,
+        300
+      ],
+      "id": "7550791a-4b6c-57a0-82a8-1f97ab9dbe79"
+    },
+    {
+      "name": "Answer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=질문: {{ $json.question }}\n사실(JSON): {{ JSON.stringify($json.facts) }}",
+        "options": {
+          "systemMessage": "You are the operations assistant of a company IT helpdesk team. Answer the operator's question in Korean, 2-3 sentences, using only the facts JSON you are given. Use only numbers that appear in the facts (a ratio like 0.0588 may be written as 5.88%). Do not guess causes that are not in the facts. Do not offer to run any action; you can only read.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        2200,
+        300
+      ],
+      "id": "83bb5d6e-92c7-5d43-bc11-78f9d4b23568"
+    },
+    {
+      "name": "Answer model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        2200,
+        520
+      ],
+      "id": "3e644835-aa33-5c70-b0aa-c18d300579b3"
+    },
+    {
+      "name": "Check numbers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Pick facts').first().json;\nconst answer = String($json.output ?? '').trim();\nconst allowed = new Set();\nconst add = (v) => { for (const d of [0, 1, 2, 3, 4, 6]) allowed.add(Number(v.toFixed(d))); };\nconst walk = (v) => {\n  if (typeof v === 'number') { add(v); add(v * 100); }\n  else if (typeof v === 'string') { for (const m of v.match(/\\d+(?:\\.\\d+)?/g) ?? []) add(Number(m)); }\n  else if (v && typeof v === 'object') { for (const [k, x] of Object.entries(v)) { walk(k); walk(x); } }\n};\nwalk(r.facts);\nconst versions = JSON.stringify(r.facts).match(/\\d+\\.\\d+\\.\\d+/g) ?? [];\nlet text = answer;\nfor (const v of versions) text = text.split(v).join(' ');\nconst unknown = (text.match(/\\d+(?:\\.\\d+)?/g) ?? []).filter((m) => !allowed.has(Number(m)));\nreturn [{ json: { question: r.question, area: r.area, router: r.router, refused: false, reason: null, answer,\n  numbers_ok: unknown.length === 0, unknown_numbers: [...new Set(unknown)] } }];"
+      },
+      "position": [
+        2420,
+        300
+      ],
+      "id": "51f5e16b-f31f-5606-8b33-7271c651764f"
+    },
+    {
+      "name": "Send answer",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        2640,
+        300
+      ],
+      "id": "a1f84cfd-5942-59f2-81c8-613559203d2a"
+    }
+  ],
+  "connections": {
+    "Ask webhook": {
+      "main": [
+        [
+          {
+            "node": "Route",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route": {
+      "main": [
+        [
+          {
+            "node": "Action?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Action?": {
+      "main": [
+        [
+          {
+            "node": "Refuse action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Keyword hit?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keyword hit?": {
+      "main": [
+        [
+          {
+            "node": "Routed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify": {
+      "main": [
+        [
+          {
+            "node": "Read class",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read class": {
+      "main": [
+        [
+          {
+            "node": "Routed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Routed": {
+      "main": [
+        [
+          {
+            "node": "Known area?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known area?": {
+      "main": [
+        [
+          {
+            "node": "Get facts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Out of scope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get facts": {
+      "main": [
+        [
+          {
+            "node": "Pick facts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pick facts": {
+      "main": [
+        [
+          {
+            "node": "Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer": {
+      "main": [
+        [
+          {
+            "node": "Check numbers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check numbers": {
+      "main": [
+        [
+          {
+            "node": "Send answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

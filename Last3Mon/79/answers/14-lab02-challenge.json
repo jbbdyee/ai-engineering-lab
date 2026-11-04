@@ -1,0 +1,116 @@
+{
+  "cases": "lab02-challenge.json",
+  "webhook": "my-ops-ask",
+  "passed": 5,
+  "total": 5,
+  "results": [
+    {
+      "case": "낱말이 없는 비용 질문",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 4.9,
+      "status": 200,
+      "request": {
+        "question": "이번 주에 AI 쓰는 데 얼마나 나갔어?"
+      },
+      "response": {
+        "question": "이번 주에 AI 쓰는 데 얼마나 나갔어?",
+        "area": "cost",
+        "router": "llm",
+        "refused": false,
+        "reason": null,
+        "answer": "이번 주 AI 사용 비용은 총 0.073604달러입니다. 일일 평균 비용은 약 0.08달러이며, 사용 비율은 92.01%입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    },
+    {
+      "case": "낱말이 없는 DLQ 질문",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.7,
+      "status": 200,
+      "request": {
+        "question": "어젯밤에 접수 못 하고 남은 건 몇 건이야?"
+      },
+      "response": {
+        "question": "어젯밤에 접수 못 하고 남은 건 몇 건이야?",
+        "area": "dlq",
+        "router": "llm",
+        "refused": false,
+        "reason": null,
+        "answer": "어젯밤에 접수 못 하고 남은 건은 총 3건입니다. 이 중 2건은 대기 중이고 1건은 주차 상태입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    },
+    {
+      "case": "낱말이 없는 릴리스 질문",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.8,
+      "status": 200,
+      "request": {
+        "question": "새 판을 일부 사용자에게 먼저 내보낸 거 어떻게 되고 있어?"
+      },
+      "response": {
+        "question": "새 판을 일부 사용자에게 먼저 내보낸 거 어떻게 되고 있어?",
+        "area": "release",
+        "router": "llm",
+        "refused": false,
+        "reason": null,
+        "answer": "새 판 1.2.0은 일부 사용자 20%에게 먼저 내보내졌으며, 이 버전의 재사용률은 62.5%로 나타났습니다. 현재 전체 시스템 상태는 빨간색(문제 있음)입니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    },
+    {
+      "case": "LLM도 운영 밖이면 거절",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 0.9,
+      "status": 200,
+      "request": {
+        "question": "점심 메뉴 추천해 줘"
+      },
+      "response": {
+        "question": "점심 메뉴 추천해 줘",
+        "area": "unknown",
+        "router": "llm",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+    },
+    {
+      "case": "낱말이 있으면 LLM을 부르지 않음",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "지난주 오류율이 얼마야?"
+      },
+      "response": {
+        "question": "지난주 오류율이 얼마야?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    }
+  ]
+}

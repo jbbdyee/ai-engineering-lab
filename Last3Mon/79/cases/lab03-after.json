@@ -1,0 +1,117 @@
+{
+  "webhook": "my-ops-brief",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "아침 그대로",
+      "body": {},
+      "expect": {
+        "equals": {
+          "red": [
+            "runs",
+            "dlq",
+            "release"
+          ],
+          "actions.0.area": "runs",
+          "actions.1.area": "dlq"
+        }
+      }
+    },
+    {
+      "name": "parked 둘을 처리하면 → DLQ는 노랑, 먼저 볼 것에 알림",
+      "before": [
+        {
+          "url": "http://localhost:8800/dlq/update",
+          "body": {
+            "dlq_id": 1,
+            "remove": true
+          }
+        },
+        {
+          "url": "http://localhost:8800/dlq/update",
+          "body": {
+            "dlq_id": 2,
+            "remove": true
+          }
+        }
+      ],
+      "body": {},
+      "expect": {
+        "equals": {
+          "red": [
+            "runs",
+            "release"
+          ],
+          "actions.1.area": "release",
+          "actions.2.area": "alerts"
+        },
+        "contains": {
+          "markdown": "| DLQ | 🟡 | 1건 (parked 0) |"
+        }
+      }
+    },
+    {
+      "name": "카나리를 끄면 → 릴리스는 초록",
+      "before": [
+        {
+          "url": "http://localhost:8800/releases/helpdesk",
+          "body": {
+            "canary": null
+          }
+        }
+      ],
+      "body": {},
+      "expect": {
+        "equals": {
+          "red": [
+            "runs"
+          ],
+          "actions.1.area": "alerts",
+          "actions.2.area": "dlq"
+        },
+        "contains": {
+          "markdown": "| 릴리스 | 🟢 | 1.1.0 |"
+        }
+      }
+    },
+    {
+      "name": "예산을 올리면 → 비용도 초록",
+      "before": [
+        {
+          "url": "http://localhost:8800/budget",
+          "body": {
+            "daily_usd": 0.2
+          }
+        }
+      ],
+      "body": {},
+      "expect": {
+        "equals": {
+          "red": [
+            "runs"
+          ],
+          "yellow": [
+            "alerts",
+            "dlq",
+            "quality"
+          ]
+        }
+      }
+    },
+    {
+      "name": "남은 빨강은 실행 하나 (사람이 고칠 일)",
+      "body": {},
+      "expect": {
+        "equals": {
+          "overall": "red",
+          "actions.0.area": "runs"
+        }
+      }
+    }
+  ]
+}

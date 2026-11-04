@@ -1,0 +1,158 @@
+$ uv run tools/flow.py test cases/lab01-challenge2.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "error", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "usage": "error"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "error",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+POST http://localhost:5678/webhook/my-ops-facts · 3 case(s) × 1
+✘ 비용 출처가 멈춰도 200 · 모르는 것은 모른다고 · 0.1s · status 500 (expected 200); sources_down = null (expected ["cost"]); health.cost = null (expected unknown); unknown = null (expected ["cost"])
+    → request  POST /webhook/my-ops-facts
+      {}
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+✘ 다른 영역은 그대로 · 0.1s · status 500 (expected 200); dlq.size = null (expected 3); health.dlq = null (expected red); red = null (expected ["runs", "dlq", "release"]); overall = null (expected red)
+    → request  POST /webhook/my-ops-facts
+      {}
+    ← response HTTP 500
+      {
+        "message": "Error in workflow"
+      }
+✔ before: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "usage": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }
+✘ 출처가 돌아오면 다시 노랑 · 0.1s · sources_down = null (expected []); unknown = null (expected [])
+    → request  POST /webhook/my-ops-facts
+      {}
+    ← response HTTP 200
+      {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        },
+        "health": {
+          "runs": "red",
+          "alerts": "yellow",
+          "dlq": "red",
+          "quality": "yellow",
+          "cost": "yellow",
+          "release": "red"
+        },
+        "red": [
+          "runs",
+          "dlq",
+          "release"
+        ],
+        "yellow": [
+          "alerts",
+          "quality",
+          "cost"
+        ],
+        "overall": "red"
+      }
+Passed 0/3
+report: runs/lab01-challenge2-20261101-185143.json
+✔ after: POST http://localhost:8800/admin/fault · HTTP 200 · 0.0s · {"faq": "ok", "tickets": "ok", "prompts": "ok", "usage": "ok", "dlq": "ok", "slow_seconds": 8}
+    → request  POST http://localhost:8800/admin/fault
+      {
+        "usage": "ok"
+      }
+    ← response HTTP 200
+      {
+        "faq": "ok",
+        "tickets": "ok",
+        "prompts": "ok",
+        "usage": "ok",
+        "dlq": "ok",
+        "slow_seconds": 8
+      }

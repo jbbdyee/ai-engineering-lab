@@ -1,0 +1,58 @@
+{
+ "DLQ 1번 다시 돌려 줘": {
+  "question": "DLQ 1번 다시 돌려 줘",
+  "area": "action",
+  "router": "keyword",
+  "refused": true,
+  "reason": "read_only",
+  "answer": "운영 도우미는 읽기만 합니다. 재처리 · 삭제 · 배포 같은 작업은 런북에 따라 담당자가 직접 해 주세요."
+ },
+ "점심 메뉴 추천해 줘": {
+  "question": "점심 메뉴 추천해 줘",
+  "area": "unknown",
+  "router": "llm",
+  "refused": true,
+  "reason": "out_of_scope",
+  "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+ },
+ "지난주 오류율이 얼마야?": {
+  "question": "지난주 오류율이 얼마야?",
+  "area": "runs",
+  "router": "keyword",
+  "refused": false,
+  "reason": null,
+  "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+  "numbers_ok": true,
+  "unknown_numbers": []
+ },
+ "이번 주에 AI 쓰는 데 얼마나 나갔어?": {
+  "question": "이번 주에 AI 쓰는 데 얼마나 나갔어?",
+  "area": "cost",
+  "router": "llm",
+  "refused": false,
+  "reason": null,
+  "answer": "이번 주 AI 사용 비용은 총 0.073604달러입니다. 일일 평균 비용은 약 0.08달러이며, 사용 비율은 92.01%입니다.",
+  "numbers_ok": true,
+  "unknown_numbers": []
+ },
+ "어젯밤에 접수 못 하고 남은 건 몇 건이야?": {
+  "question": "어젯밤에 접수 못 하고 남은 건 몇 건이야?",
+  "area": "dlq",
+  "router": "llm",
+  "refused": false,
+  "reason": null,
+  "answer": "어젯밤에 접수 못 하고 남은 건은 총 3건입니다. 이 중 2건은 대기 중이고 1건은 주차 상태입니다.",
+  "numbers_ok": true,
+  "unknown_numbers": []
+ },
+ "새 판을 일부 사용자에게 먼저 내보낸 거 어떻게 되고 있어?": {
+  "question": "새 판을 일부 사용자에게 먼저 내보낸 거 어떻게 되고 있어?",
+  "area": "release",
+  "router": "llm",
+  "refused": false,
+  "reason": null,
+  "answer": "새 판 1.2.0은 일부 사용자 20%에게 먼저 내보내졌으며, 이 버전의 재사용률은 62.5%로 나타났습니다. 현재 전체 시스템 상태는 빨간색(문제 있음)입니다.",
+  "numbers_ok": true,
+  "unknown_numbers": []
+ }
+}

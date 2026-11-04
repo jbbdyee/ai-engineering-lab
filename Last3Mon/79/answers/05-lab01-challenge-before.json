@@ -1,0 +1,377 @@
+{
+  "cases": "lab01-challenge.json",
+  "webhook": "my-ops-facts",
+  "passed": 0,
+  "total": 5,
+  "results": [
+    {
+      "case": "지난주 영역별 상태",
+      "webhook": "my-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "health.runs = null (expected red)",
+        "health.alerts = null (expected yellow)",
+        "health.dlq = null (expected red)",
+        "health.quality = null (expected yellow)",
+        "health.cost = null (expected yellow)",
+        "health.release = null (expected red)",
+        "overall = null (expected red)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        }
+      }
+    },
+    {
+      "case": "빨강 · 노랑 목록 (정해진 순서)",
+      "webhook": "my-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "red = null (expected [\"runs\", \"dlq\", \"release\"])",
+        "yellow = null (expected [\"alerts\", \"quality\", \"cost\"])"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        }
+      }
+    },
+    {
+      "case": "첫 주: 오류는 없지만 답 못 함 · 카나리 비교 불가",
+      "webhook": "my-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "health.runs = null (expected yellow)",
+        "health.release = null (expected yellow)",
+        "red = null (expected [\"dlq\"])"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "from": "2026-10-19",
+        "to": "2026-10-23"
+      },
+      "response": {
+        "period": {
+          "from": "2026-10-19",
+          "to": "2026-10-23"
+        },
+        "runs": {
+          "total": 309,
+          "errors": 0,
+          "error_rate": 0,
+          "p95_ms": 2525,
+          "unanswered_rate": 0.055,
+          "top_failure": null
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 0.08,
+          "used_ratio": 0.9201,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": null,
+          "canary_repeat_rate": null
+        }
+      }
+    },
+    {
+      "case": "예산을 늘리면 비용은 초록",
+      "webhook": "my-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "health.cost = null (expected green)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 3,
+          "parked": 2,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 1,
+          "used_ratio": 0.0736,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        }
+      }
+    },
+    {
+      "case": "parked를 처리하면 DLQ는 노랑",
+      "webhook": "my-ops-facts",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "health.dlq = null (expected yellow)",
+        "red = null (expected [\"runs\", \"release\"])"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {},
+      "response": {
+        "period": {
+          "from": "2026-10-26",
+          "to": "2026-10-30"
+        },
+        "runs": {
+          "total": 357,
+          "errors": 21,
+          "error_rate": 0.0588,
+          "p95_ms": 2598,
+          "unanswered_rate": 0.0476,
+          "top_failure": {
+            "node": "Search FAQ",
+            "message": "timeout of 1000ms exceeded",
+            "count": 16
+          }
+        },
+        "alerts": {
+          "count": 6,
+          "high": 3,
+          "by_reason": {
+            "timeout": 1,
+            "rate_limit": 1,
+            "batch_rejected": 1,
+            "low_quality": 2,
+            "api_error": 1
+          }
+        },
+        "dlq": {
+          "size": 1,
+          "parked": 0,
+          "waiting": 1
+        },
+        "quality": {
+          "batches": 4,
+          "avg_score": 0.6583,
+          "last_score": 1,
+          "rejected_batches": 1,
+          "quarantine": 1
+        },
+        "cost": {
+          "requests": 156,
+          "calls": 192,
+          "cost_usd": 0.073604,
+          "daily_usd": 1,
+          "used_ratio": 0.0736,
+          "top_user": {
+            "user": "test-bot",
+            "cost_usd": 0.027228,
+            "share": 0.3699
+          }
+        },
+        "release": {
+          "active": "1.1.0",
+          "canary_release": "1.2.0",
+          "canary_percent": 20,
+          "active_repeat_rate": 0.0773,
+          "canary_repeat_rate": 0.625
+        }
+      }
+    }
+  ]
+}

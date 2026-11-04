@@ -1,0 +1,136 @@
+{
+  "cases": "lab03-challenge.json",
+  "webhook": "my-ops-eval",
+  "passed": 0,
+  "total": 3,
+  "results": [
+    {
+      "case": "골든 질문 8개",
+      "webhook": "my-ops-eval",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "total = null (expected 8)",
+        "area_ok = null (expected 8)",
+        "refused_ok = null (expected 8)",
+        "score = null (expected 0.875..1)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "cases": [
+          {
+            "question": "지난주 오류율이 얼마야?",
+            "area": "runs",
+            "numbers": [
+              "5.88"
+            ]
+          },
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "alerts",
+            "numbers": [
+              "6"
+            ]
+          },
+          {
+            "question": "DLQ에 parked 된 건 몇 건이야?",
+            "area": "dlq",
+            "numbers": [
+              "2"
+            ]
+          },
+          {
+            "question": "FAQ 배치 품질 점수 평균은?",
+            "area": "quality",
+            "numbers": [
+              "0.6583",
+              "65.83",
+              "0.66"
+            ]
+          },
+          {
+            "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?",
+            "area": "cost",
+            "numbers": [
+              "92"
+            ]
+          },
+          {
+            "question": "카나리 버전 문제 있어?",
+            "area": "release",
+            "numbers": [
+              "62.5"
+            ]
+          },
+          {
+            "question": "DLQ 1번 다시 돌려 줘",
+            "area": "action",
+            "refused": true
+          },
+          {
+            "question": "점심 메뉴 추천해 줘",
+            "area": "unknown",
+            "refused": true
+          }
+        ]
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-eval\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "틀린 기대는 잡아냄",
+      "webhook": "my-ops-eval",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 200)",
+        "total = null (expected 1)",
+        "passed = null (expected 0)",
+        "failed.0.area = null (expected alerts)",
+        "failed.0.area_ok = null (expected false)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "cases": [
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "cost",
+            "numbers": [
+              "6"
+            ]
+          }
+        ]
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-eval\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "case": "빈 목록 → 400",
+      "webhook": "my-ops-eval",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "status 404 (expected 400)"
+      ],
+      "seconds": 0.0,
+      "status": 404,
+      "request": {
+        "cases": []
+      },
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST my-ops-eval\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}

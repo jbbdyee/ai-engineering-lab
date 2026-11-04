@@ -1,0 +1,77 @@
+{
+  "webhook": "my-ops-facts",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    },
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "usage": "error"
+      }
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/admin/fault",
+      "body": {
+        "usage": "ok"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "비용 출처가 멈춰도 200 · 모르는 것은 모른다고",
+      "body": {},
+      "expect": {
+        "equals": {
+          "cost": null,
+          "sources_down": [
+            "cost"
+          ],
+          "health.cost": "unknown",
+          "unknown": [
+            "cost"
+          ]
+        }
+      }
+    },
+    {
+      "name": "다른 영역은 그대로",
+      "body": {},
+      "expect": {
+        "equals": {
+          "dlq.size": 3,
+          "health.dlq": "red",
+          "red": [
+            "runs",
+            "dlq",
+            "release"
+          ],
+          "overall": "red"
+        }
+      }
+    },
+    {
+      "name": "출처가 돌아오면 다시 노랑",
+      "before": [
+        {
+          "url": "http://localhost:8800/admin/fault",
+          "body": {
+            "usage": "ok"
+          }
+        }
+      ],
+      "body": {},
+      "expect": {
+        "equals": {
+          "sources_down": [],
+          "unknown": [],
+          "health.cost": "yellow",
+          "cost.used_ratio": 0.9201
+        }
+      }
+    }
+  ]
+}

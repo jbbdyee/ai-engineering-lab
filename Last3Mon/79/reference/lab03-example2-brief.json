@@ -1,0 +1,198 @@
+{
+  "name": "79 Ops brief + summary (reference)",
+  "nodes": [
+    {
+      "name": "Brief webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "my-ops-brief",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "d8018a49-2915-5dd1-adc6-aa234e759aa9",
+      "position": [
+        0,
+        300
+      ],
+      "id": "4c8cf041-481f-5b3f-bda4-66b2e588a2ff"
+    },
+    {
+      "name": "Get facts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "url": "http://localhost:5678/webhook/my-ops-facts",
+        "options": {
+          "timeout": 30000
+        },
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: $json.body?.from ?? '', to: $json.body?.to ?? '' }) }}"
+      },
+      "position": [
+        220,
+        300
+      ],
+      "id": "a841ddde-8f4b-56c1-ae8a-c81c8d9d1690"
+    },
+    {
+      "name": "Make brief",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const f = $('Get facts').first().json;\nconst label = { runs: '실행', alerts: '알림', dlq: 'DLQ', quality: '데이터 품질', cost: '비용', release: '릴리스' };\nconst mark = { red: '🔴', yellow: '🟡', green: '🟢', unknown: '⚪' };\nconst actionsFor = {\"runs\": \"오류 묶음 1위 확인 · 고치기 (77일차)\", \"alerts\": \"높은 알림부터 확인하고 닫기 (76일차)\", \"dlq\": \"parked 건 원인 확인 뒤 런북대로 재처리 (76일차)\", \"quality\": \"격리함을 콘텐츠 담당자에게 (78일차)\", \"cost\": \"비용 1위 사용자 · 한도 확인 (75일차)\", \"release\": \"카나리 끄기 · 되돌리기 검토 (74일차)\"};\nconst pct = (v) => (Math.round(v * 10000) / 100) + '%';\nconst g = (k, fn) => (f[k] === null ? '출처 응답 없음' : fn());\nconst key = {\n  runs: g('runs', () => `오류율 ${pct(f.runs.error_rate)} · p95 ${f.runs.p95_ms}ms · 답 못 함 ${pct(f.runs.unanswered_rate)}`),\n  alerts: g('alerts', () => `${f.alerts.count}건 (높음 ${f.alerts.high})`),\n  dlq: g('dlq', () => `${f.dlq.size}건 (parked ${f.dlq.parked})`),\n  quality: g('quality', () => `평균 ${f.quality.avg_score} · 마지막 ${f.quality.last_score} · 격리 ${f.quality.quarantine}`),\n  cost: g('cost', () => `$${f.cost.cost_usd} / $${f.cost.daily_usd} (${pct(f.cost.used_ratio)})`),\n  release: g('release', () => `${f.release.active}` + (f.release.canary_release ? ` · 카나리 ${f.release.canary_release} ${f.release.canary_percent}% (다시 묻기 ${f.release.canary_repeat_rate === null ? '-' : pct(f.release.canary_repeat_rate)})` : '')),\n};\nconst order = ['runs', 'alerts', 'dlq', 'quality', 'cost', 'release'];\nconst focus = [...f.red, ...f.yellow].slice(0, 3);\nconst actions = focus.map((k) => ({ area: k, status: f.health[k], action: actionsFor[k] }));\nconst lines = [\n  `# 운영 브리핑 (${f.period.from} ~ ${f.period.to} 실행 기록 + 지금 상태)`, '',\n  `전체: ${mark[f.overall]} ${f.overall}`, '',\n  '| 영역 | 상태 | 숫자 |', '| --- | --- | --- |',\n  ...order.map((k) => `| ${label[k]} | ${mark[f.health[k]]} | ${key[k]} |`), '',\n  '## 먼저 볼 것', '',\n  ...actions.map((a, i) => `${i + 1}. ${mark[a.status]} ${label[a.area]}: ${a.action}`),\n];\nreturn [{ json: { overall: f.overall, red: f.red, yellow: f.yellow, actions, markdown: lines.join('\\n'), facts: f } }];"
+      },
+      "position": [
+        440,
+        300
+      ],
+      "id": "d8d05c5a-6a5d-5108-8983-3ee982fc0663"
+    },
+    {
+      "name": "Summarize",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "parameters": {
+        "promptType": "define",
+        "text": "=사실(JSON): {{ JSON.stringify($json.facts) }}",
+        "options": {
+          "systemMessage": "You write the morning operations summary for an IT helpdesk team lead. Korean, exactly 3 sentences: overall state, the most urgent area, what to do first. Use only numbers from the facts JSON (a ratio like 0.0588 may be written as 5.88%). Do not guess causes.",
+          "maxIterations": 1
+        }
+      },
+      "position": [
+        660,
+        300
+      ],
+      "id": "eb2cf7af-1b3a-5ef8-a3c0-7fbd0c5fd155"
+    },
+    {
+      "name": "Summary model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0
+        }
+      },
+      "credentials": {
+        "openAiApi": {
+          "id": "openAiCourse0001",
+          "name": "OpenAI (.env)"
+        }
+      },
+      "position": [
+        660,
+        520
+      ],
+      "id": "a16dab74-014f-5d6e-9da6-ccc337283b08"
+    },
+    {
+      "name": "Check summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const r = $('Make brief').first().json;\nconst answer = String($json.output ?? '').trim();\nconst allowed = new Set();\nconst add = (v) => { for (const d of [0, 1, 2, 3, 4, 6]) allowed.add(Number(v.toFixed(d))); };\nconst walk = (v) => {\n  if (typeof v === 'number') { add(v); add(v * 100); }\n  else if (typeof v === 'string') { for (const m of v.match(/\\d+(?:\\.\\d+)?/g) ?? []) add(Number(m)); }\n  else if (v && typeof v === 'object') { for (const [k, x] of Object.entries(v)) { walk(k); walk(x); } }\n};\nwalk(r.facts);\nconst versions = JSON.stringify(r.facts).match(/\\d+\\.\\d+\\.\\d+/g) ?? [];\nlet text = answer;\nfor (const v of versions) text = text.split(v).join(' ');\nconst unknown = (text.match(/\\d+(?:\\.\\d+)?/g) ?? []).filter((m) => !allowed.has(Number(m)));\nconst { facts, ...rest } = r;\nreturn [{ json: { ...rest, summary: answer, markdown: r.markdown + '\\n\\n## 요약\\n\\n' + answer, numbers_ok: unknown.length === 0, unknown_numbers: [...new Set(unknown)] } }];"
+      },
+      "position": [
+        880,
+        300
+      ],
+      "id": "eaf526e2-064c-5d5c-ad13-67d237d99c4c"
+    },
+    {
+      "name": "Send brief",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "position": [
+        1100,
+        300
+      ],
+      "id": "9c60667c-d76b-585b-b79d-462504312f77"
+    }
+  ],
+  "connections": {
+    "Brief webhook": {
+      "main": [
+        [
+          {
+            "node": "Get facts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get facts": {
+      "main": [
+        [
+          {
+            "node": "Make brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Make brief": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Check summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check summary": {
+      "main": [
+        [
+          {
+            "node": "Send brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "cases": [
+    {
+      "question": "지난주 오류율이 얼마야?",
+      "area": "runs",
+      "numbers": [
+        "5.88"
+      ]
+    },
+    {
+      "question": "알림이 몇 건 와 있어?",
+      "area": "alerts",
+      "numbers": [
+        "6"
+      ]
+    },
+    {
+      "question": "DLQ에 parked 된 건 몇 건이야?",
+      "area": "dlq",
+      "numbers": [
+        "2"
+      ]
+    },
+    {
+      "question": "FAQ 배치 품질 점수 평균은?",
+      "area": "quality",
+      "numbers": [
+        "0.6583",
+        "65.83",
+        "0.66"
+      ]
+    },
+    {
+      "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?",
+      "area": "cost",
+      "numbers": [
+        "92"
+      ]
+    },
+    {
+      "question": "카나리 버전 문제 있어?",
+      "area": "release",
+      "numbers": [
+        "62.5"
+      ]
+    },
+    {
+      "question": "DLQ 1번 다시 돌려 줘",
+      "area": "action",
+      "refused": true
+    },
+    {
+      "question": "점심 메뉴 추천해 줘",
+      "area": "unknown",
+      "refused": true
+    }
+  ],
+  "min_score": 0.8
+}

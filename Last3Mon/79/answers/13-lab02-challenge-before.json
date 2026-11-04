@@ -1,0 +1,127 @@
+{
+  "cases": "lab02-challenge.json",
+  "webhook": "my-ops-ask",
+  "passed": 1,
+  "total": 5,
+  "results": [
+    {
+      "case": "낱말이 없는 비용 질문",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "area = unknown (expected cost)",
+        "router = keyword (expected llm)",
+        "refused = true (expected false)",
+        "numbers_ok = null (expected true)"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "question": "이번 주에 AI 쓰는 데 얼마나 나갔어?"
+      },
+      "response": {
+        "question": "이번 주에 AI 쓰는 데 얼마나 나갔어?",
+        "area": "unknown",
+        "router": "keyword",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+    },
+    {
+      "case": "낱말이 없는 DLQ 질문",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "area = unknown (expected dlq)",
+        "router = keyword (expected llm)",
+        "numbers_ok = null (expected true)",
+        "answer has none of ['3']"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "question": "어젯밤에 접수 못 하고 남은 건 몇 건이야?"
+      },
+      "response": {
+        "question": "어젯밤에 접수 못 하고 남은 건 몇 건이야?",
+        "area": "unknown",
+        "router": "keyword",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+    },
+    {
+      "case": "낱말이 없는 릴리스 질문",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "area = unknown (expected release)",
+        "router = keyword (expected llm)",
+        "numbers_ok = null (expected true)",
+        "answer has none of ['62.5']"
+      ],
+      "seconds": 0.0,
+      "status": 200,
+      "request": {
+        "question": "새 판을 일부 사용자에게 먼저 내보낸 거 어떻게 되고 있어?"
+      },
+      "response": {
+        "question": "새 판을 일부 사용자에게 먼저 내보낸 거 어떻게 되고 있어?",
+        "area": "unknown",
+        "router": "keyword",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+    },
+    {
+      "case": "LLM도 운영 밖이면 거절",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": false,
+      "problems": [
+        "router = keyword (expected llm)"
+      ],
+      "seconds": 0.1,
+      "status": 200,
+      "request": {
+        "question": "점심 메뉴 추천해 줘"
+      },
+      "response": {
+        "question": "점심 메뉴 추천해 줘",
+        "area": "unknown",
+        "router": "keyword",
+        "refused": true,
+        "reason": "out_of_scope",
+        "answer": "운영 데이터(실행 · 알림 · DLQ · 품질 · 비용 · 릴리스)로 답할 수 있는 질문만 받습니다."
+      }
+    },
+    {
+      "case": "낱말이 있으면 LLM을 부르지 않음",
+      "webhook": "my-ops-ask",
+      "run": 1,
+      "passed": true,
+      "problems": [],
+      "seconds": 1.0,
+      "status": 200,
+      "request": {
+        "question": "지난주 오류율이 얼마야?"
+      },
+      "response": {
+        "question": "지난주 오류율이 얼마야?",
+        "area": "runs",
+        "router": "keyword",
+        "refused": false,
+        "reason": null,
+        "answer": "지난주 오류율은 5.88%였습니다. 총 357회 실행 중 21회 오류가 발생했습니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+    }
+  ]
+}

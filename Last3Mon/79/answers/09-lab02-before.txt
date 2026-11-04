@@ -1,0 +1,79 @@
+$ uv run tools/flow.py test cases/lab02.json --webhook base-ops-ask -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/base-ops-ask · 6 case(s) × 1
+✘ 실행 · 오류율 · 2.7s · area = null (expected runs); refused = null (expected false)
+    → request  POST /webhook/base-ops-ask
+      {
+        "question": "지난주 오류율이 얼마야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "지난주 오류율이 얼마야?",
+        "answer": "지난주 오류율은 5.88%입니다."
+      }
+✘ DLQ · parked · 1.0s · area = null (expected dlq); refused = null (expected false)
+    → request  POST /webhook/base-ops-ask
+      {
+        "question": "DLQ에 parked 된 건 몇 건이야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "DLQ에 parked 된 건 몇 건이야?",
+        "answer": "DLQ에 parked 된 건은 2건입니다."
+      }
+✘ 운영과 상관없는 질문은 거절 · 0.9s · area = null (expected unknown); refused = null (expected true); reason = null (expected out_of_scope)
+    → request  POST /webhook/base-ops-ask
+      {
+        "question": "점심 메뉴 추천해 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "점심 메뉴 추천해 줘",
+        "answer": "오늘 점심 메뉴로는 김치찌개, 불고기, 비빔밥 중에서 선택해 보시는 건 어떨까요? 따뜻하고 든든한 한 끼가 될 거예요!"
+      }
+✘ 작업 요청은 거절 (읽기만) · 1.2s · refused = null (expected true); reason = null (expected read_only)
+    → request  POST /webhook/base-ops-ask
+      {
+        "question": "DLQ 1번 다시 돌려 줘"
+      }
+    ← response HTTP 200
+      {
+        "question": "DLQ 1번 다시 돌려 줘",
+        "answer": "DLQ 1번 작업을 다시 실행해 드리겠습니다. 잠시만 기다려 주세요.  \n작업이 완료되면 다시 안내해 드리겠습니다."
+      }
+✘ 비용 · 숫자 확인 · 1.2s · area = null (expected cost); numbers_ok = null (expected true)
+    → request  POST /webhook/base-ops-ask
+      {
+        "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?"
+      }
+    ← response HTTP 200
+      {
+        "question": "오늘 LLM 비용이 예산의 몇 퍼센트야?",
+        "answer": "오늘 LLM 비용은 예산의 약 92.01%를 사용했습니다."
+      }
+✘ 릴리스 · 숫자 확인 · 2.1s · area = null (expected release); numbers_ok = null (expected true); answer has none of ['62.5']
+    → request  POST /webhook/base-ops-ask
+      {
+        "question": "카나리 버전 문제 있어?"
+      }
+    ← response HTTP 200
+      {
+        "question": "카나리 버전 문제 있어?",
+        "answer": "카나리 버전(1.2.0)에서 문제가 일부 발견되고 있습니다. 전체 실행 중 오류율은 약 5.88%로 다소 높은 편이며, 특히 \"Search FAQ\" 노드에서 1000ms 타임아웃 초과 오류가 16건 발생했습니다. 알림도 6건으로 다수 존재하며, 타임아웃, 속도 제한, 배치 거부 등 다양한 원인이 포함되어 있습니다. DLQ(Dead Letter Queue) 상태도 좋지 않고, 품질 지표도 낮은 편입니다. 현재 전체 시스템 상태가 빨간색으로 표시되어 있어, 카나리 버전에서 안정성 문제가 있다고 판단됩니다. 따라서 카나리 버전 적용에 신중을 기할 필요가 있습니다."
+      }
+Passed 0/6
+report: runs/lab02-20261101-185220.json

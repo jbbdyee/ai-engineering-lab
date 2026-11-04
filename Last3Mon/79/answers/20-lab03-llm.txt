@@ -1,0 +1,112 @@
+$ uv run tools/flow.py push reference/lab03-example2-brief.json
+! unpublished '79 Ops brief (reference)' (w97397012b52e601): it used the same webhook path
+✔ pushed '79 Ops brief + summary (reference)' (id w871e57398bd7b32)
+   POST http://localhost:5678/webhook/my-ops-brief
+
+$ uv run tools/flow.py test cases/lab03-llm.json -v
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+    → request  POST http://localhost:8800/ops-reset
+      {}
+    ← response HTTP 200
+      {
+        "seeded_at": "2026-11-04T08:30:00",
+        "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)",
+        "counts": {
+          "alerts": 6,
+          "dlq": 3,
+          "quality_log": 4,
+          "quarantine": 1,
+          "usage": 192
+        }
+      }
+POST http://localhost:5678/webhook/my-ops-brief · 2 case(s) × 1
+✔ 요약 세 문장 · 숫자 확인 · 3.5s
+    → request  POST /webhook/my-ops-brief
+      {}
+    ← response HTTP 200
+      {
+        "overall": "red",
+        "red": [
+          "runs",
+          "dlq",
+          "release"
+        ],
+        "yellow": [
+          "alerts",
+          "quality",
+          "cost"
+        ],
+        "actions": [
+          {
+            "area": "runs",
+            "status": "red",
+            "action": "오류 묶음 1위 확인 · 고치기 (77일차)"
+          },
+          {
+            "area": "dlq",
+            "status": "red",
+            "action": "parked 건 원인 확인 뒤 런북대로 재처리 (76일차)"
+          },
+          {
+            "area": "release",
+            "status": "red",
+            "action": "카나리 끄기 · 되돌리기 검토 (74일차)"
+          }
+        ],
+        "markdown": "# 운영 브리핑 (2026-10-26 ~ 2026-10-30 실행 기록 + 지금 상태)\n\n전체: 🔴 red\n\n| 영역 | 상태 | 숫자 |\n| --- | --- | --- |\n| 실행 | 🔴 | 오류율 5.88% · p95 2598ms · 답 못 함 4.76% |\n| 알림 | 🟡 | 6건 (높음 3) |\n| DLQ | 🔴 | 3건 (parked 2) |\n| 데이터 품질 | 🟡 | 평균 0.6583 · 마지막 1 · 격리 1 |\n| 비용 | 🟡 | $0.073604 / $0.08 (92.01%) |\n| 릴리스 | 🔴 | 1.1.0 · 카나리 1.2.0 20% (다시 묻기 62.5%) |\n\n## 먼저 볼 것\n\n1. 🔴 실행: 오류 묶음 1위 확인 · 고치기 (77일차)\n2. 🔴 DLQ: parked 건 원인 확인 뒤 런북대로 재처리 (76일차)\n3. 🔴 릴리스: 카나리 끄기 · 되돌리기 검토 (74일차)\n\n## 요약\n\n전체 시스템 상태는 빨간색으로, 오류율은 5.88%이며 DLQ 크기는 3입니다. 가장 긴급한 문제는 'Search FAQ' 노드에서 발생하는 1000ms 타임아웃 오류로 16건이 보고되었습니다. 우선 이 타임아웃 문제를 해결하는 데 집중해야 합니다.",
+        "summary": "전체 시스템 상태는 빨간색으로, 오류율은 5.88%이며 DLQ 크기는 3입니다. 가장 긴급한 문제는 'Search FAQ' 노드에서 발생하는 1000ms 타임아웃 오류로 16건이 보고되었습니다. 우선 이 타임아웃 문제를 해결하는 데 집중해야 합니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+✔ 요약에 급한 곳 · 1.1s
+    → request  POST /webhook/my-ops-brief
+      {}
+    ← response HTTP 200
+      {
+        "overall": "red",
+        "red": [
+          "runs",
+          "dlq",
+          "release"
+        ],
+        "yellow": [
+          "alerts",
+          "quality",
+          "cost"
+        ],
+        "actions": [
+          {
+            "area": "runs",
+            "status": "red",
+            "action": "오류 묶음 1위 확인 · 고치기 (77일차)"
+          },
+          {
+            "area": "dlq",
+            "status": "red",
+            "action": "parked 건 원인 확인 뒤 런북대로 재처리 (76일차)"
+          },
+          {
+            "area": "release",
+            "status": "red",
+            "action": "카나리 끄기 · 되돌리기 검토 (74일차)"
+          }
+        ],
+        "markdown": "# 운영 브리핑 (2026-10-26 ~ 2026-10-30 실행 기록 + 지금 상태)\n\n전체: 🔴 red\n\n| 영역 | 상태 | 숫자 |\n| --- | --- | --- |\n| 실행 | 🔴 | 오류율 5.88% · p95 2598ms · 답 못 함 4.76% |\n| 알림 | 🟡 | 6건 (높음 3) |\n| DLQ | 🔴 | 3건 (parked 2) |\n| 데이터 품질 | 🟡 | 평균 0.6583 · 마지막 1 · 격리 1 |\n| 비용 | 🟡 | $0.073604 / $0.08 (92.01%) |\n| 릴리스 | 🔴 | 1.1.0 · 카나리 1.2.0 20% (다시 묻기 62.5%) |\n\n## 먼저 볼 것\n\n1. 🔴 실행: 오류 묶음 1위 확인 · 고치기 (77일차)\n2. 🔴 DLQ: parked 건 원인 확인 뒤 런북대로 재처리 (76일차)\n3. 🔴 릴리스: 카나리 끄기 · 되돌리기 검토 (74일차)\n\n## 요약\n\n전체 시스템 상태는 빨간색으로, 오류율은 5.88%이며, 응답하지 않은 비율은 4.76%입니다. 가장 긴급한 문제는 'Search FAQ' 노드에서 발생한 16건의 타임아웃 오류입니다. 우선 이 타임아웃 문제를 해결하는 데 집중해야 합니다.",
+        "summary": "전체 시스템 상태는 빨간색으로, 오류율은 5.88%이며, 응답하지 않은 비율은 4.76%입니다. 가장 긴급한 문제는 'Search FAQ' 노드에서 발생한 16건의 타임아웃 오류입니다. 우선 이 타임아웃 문제를 해결하는 데 집중해야 합니다.",
+        "numbers_ok": true,
+        "unknown_numbers": []
+      }
+Passed 2/2
+report: runs/lab03-llm-20261101-185454.json
+
+$ uv run tools/flow.py test cases/lab03.json
+✔ before: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali
+POST http://localhost:5678/webhook/my-ops-brief · 4 case(s) × 1
+✔ 전체 · 먼저 볼 것 셋 · 1.3s
+✔ 표에 숫자 · 1.1s
+✔ 할 일은 규칙에서 · 1.1s
+✔ before: POST http://localhost:8800/dlq-clear · HTTP 200 · 0.0s · {"cleared": 3}
+✔ DLQ를 비운 뒤 · 1.2s
+Passed 4/4
+report: runs/lab03-20261101-185459.json
+✔ after: POST http://localhost:8800/ops-reset · HTTP 200 · 0.0s · {"seeded_at": "2026-11-04T08:30:00", "note": "79일차 운영 아침 상태 (연습 데이터, seed 79)", "counts": {"alerts": 6, "dlq": 3, "quali

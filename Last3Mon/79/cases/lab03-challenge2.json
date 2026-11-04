@@ -1,0 +1,84 @@
+{
+  "webhook": "my-ops-eval",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "기준을 안 주면 0.9",
+      "body": {
+        "cases": [
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "alerts",
+            "numbers": [
+              "6"
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "equals": {
+          "min_score": 0.9,
+          "gate": "pass",
+          "score": 1
+        }
+      }
+    },
+    {
+      "name": "골든 8 · 기준 0.8 → 통과",
+      "request": "requests/ops-golden-gate.json",
+      "expect": {
+        "equals": {
+          "total": 8,
+          "gate": "pass",
+          "min_score": 0.8
+        },
+        "range": {
+          "score": [
+            0.875,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "name": "틀린 기대 · 기준 0.9 → 실패",
+      "body": {
+        "cases": [
+          {
+            "question": "알림이 몇 건 와 있어?",
+            "area": "cost",
+            "numbers": [
+              "6"
+            ]
+          }
+        ],
+        "min_score": 0.9
+      },
+      "expect": {
+        "equals": {
+          "score": 0,
+          "gate": "fail"
+        }
+      }
+    },
+    {
+      "name": "실패하면 알림 한 건",
+      "url": "http://localhost:8800/alerts/list",
+      "body": {
+        "reason": "eval_below"
+      },
+      "expect": {
+        "equals": {
+          "count": 1,
+          "alerts.0.workflow": "ops-eval",
+          "alerts.0.score": 0
+        }
+      }
+    }
+  ]
+}

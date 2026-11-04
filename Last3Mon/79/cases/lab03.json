@@ -1,0 +1,72 @@
+{
+  "webhook": "my-ops-brief",
+  "before": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "after": [
+    {
+      "url": "http://localhost:8800/ops-reset",
+      "body": {}
+    }
+  ],
+  "cases": [
+    {
+      "name": "전체 · 먼저 볼 것 셋",
+      "body": {},
+      "expect": {
+        "equals": {
+          "overall": "red",
+          "red": [
+            "runs",
+            "dlq",
+            "release"
+          ],
+          "actions.0.area": "runs",
+          "actions.1.area": "dlq",
+          "actions.2.area": "release"
+        }
+      }
+    },
+    {
+      "name": "표에 숫자",
+      "body": {},
+      "expect": {
+        "contains": {
+          "markdown": "| DLQ | 🔴 | 3건 (parked 2) |"
+        }
+      }
+    },
+    {
+      "name": "할 일은 규칙에서",
+      "body": {},
+      "expect": {
+        "contains": {
+          "markdown": "카나리 끄기 · 되돌리기 검토 (74일차)",
+          "actions.1.action": "parked"
+        }
+      }
+    },
+    {
+      "name": "DLQ를 비운 뒤",
+      "before": [
+        {
+          "url": "http://localhost:8800/dlq-clear",
+          "body": {}
+        }
+      ],
+      "body": {},
+      "expect": {
+        "equals": {
+          "red": [
+            "runs",
+            "release"
+          ],
+          "actions.2.area": "alerts"
+        }
+      }
+    }
+  ]
+}
